@@ -1,6 +1,6 @@
-const { app, BrowserWindow } = require('electron')
-const url = require('url')
-const path = require('path')
+const { app, BrowserWindow } = require('electron');
+const url = require('url');
+const path = require('path'); 
 
 function createWindow () {
   // 브라우저 창을 생성합니다.
@@ -24,7 +24,7 @@ function createWindow () {
 // 이 메소드는 Electron의 초기화가 완료되고
 // 브라우저 윈도우가 생성될 준비가 되었을때 호출된다.
 // 어떤 API는 이 이벤트가 나타난 이후에만 사용할 수 있습니다.
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);
 
 // 모든 윈도우가 닫히면 종료된다.
 app.on('window-all-closed', () => {
@@ -42,5 +42,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
 // 이 파일에는 나머지 앱의 특정 주요 프로세스 코드를 포함시킬 수 있습니다. 별도의 파일에 추가할 수도 있으며 이 경우 require 구문이 필요합니다.

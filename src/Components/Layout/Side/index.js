@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { ipcRenderer } from 'electron';
 import styled from 'styled-components';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, Input, Row, Col } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   PlusOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
 
 const { Sider } = Layout;
 
 const Side = () => {
+  useEffect(() =>{
+    ipcRenderer.send('main-test1', 'start-ipc');
+    ipcRenderer.on('renderer-test1', (event, res) => {
+      console.log(res);
+    })
+  })
+
   const [state, setState] = useState({
     collapsed: false,
     Add: false 
@@ -37,13 +46,46 @@ const Side = () => {
   return (
     <CustomSider style={{ background: '#19171d' }}>
       <Button type="primary" onClick={toggleCollapsed} style={{ marginBottom: 16 }}>
-        {React.createElement(state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
+        {
+          state.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+        }
       </Button>
       <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
         {tempData}
       </CustomMenu>
-      <CustomPlusIcon onClick={toggleInsertMenu} />
-      <p style={{color: '#fff'}}>{state.Add ? 'asdasd' : 'flase'}</p>
+      {
+        state.Add 
+          ? (
+            <CustomRow>
+              <Col span={20}>
+                <CustomInput />
+              </Col>
+              <CustomPlusIconWrap span={4}>
+                <PlusOutlined />
+              </CustomPlusIconWrap>
+            </CustomRow>
+          )
+          : ''
+      }
+      <CustomRow>
+        <CustomPlusIconWrap onClick={toggleInsertMenu}>
+          {
+            state.Add
+              ? (
+                <>
+                  <CloseOutlined />
+                  <CustomSpan>Cancel</CustomSpan>
+                </>
+              )
+              : (
+                <>
+                  <PlusOutlined />
+                  <CustomSpan>Add</CustomSpan>
+                </>
+              )
+          }
+        </CustomPlusIconWrap>
+      </CustomRow>
     </CustomSider>
   );
 }
@@ -51,6 +93,7 @@ const Side = () => {
 const CustomSider = styled(Sider)`
   background: #19171d;
   border-right: 1px solid #2a272f;
+  color: rgba(255, 255, 255, 0.65);
 `;
 
 const CustomMenu = styled(Menu)`
@@ -61,14 +104,35 @@ const CustomMenuItem = styled(Menu.Item)`
   background-color: #19171d
 `;
 
-const CustomPlusIcon = styled(PlusOutlined)`
+const CustomRow = styled(Row)`
+  padding: 0 16px 0 24px;
+  height: 30px;
+  line-height: 40px;
+`;
+
+const CustomPlusIconWrap = styled(Col)`
+  text-align: center;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.65);
-  padding: 10px 0 20px 24px;
 
   :hover {
     color: #fff;
   }
-`
+`;
+
+const CustomSpan = styled.span`
+  margin-left: 5px;
+`;
+
+const CustomInput = styled(Input)`
+  background: rgb(40 39 44);
+  border: 1px solid #4a4a4a;
+  padding: 1px 11px;
+  color: rgba(255, 255, 255, 0.65);
+
+  :focus, :hover {
+    border-color: #fff;
+    color: #fff;
+  }
+`;
 
 export default Side;

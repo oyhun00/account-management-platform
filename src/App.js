@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
-import Account from './Components/Account';
 import Side from './Components/Layout/Side';
 import ContentBox from './Components/Layout/Content';
 
