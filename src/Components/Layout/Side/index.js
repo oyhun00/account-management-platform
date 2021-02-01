@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ipcRenderer } from 'electron';
 import styled from 'styled-components';
-import { Layout, Menu, Button, Input, Row, Col } from 'antd';
+import { Layout, Menu, Button, Input, Row, Col, Tabs } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -9,15 +8,17 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
+import Table from '../Content/Table';
 
 const { Sider } = Layout;
+const { TabPane } = Tabs;
 
 const Side = () => {
   useEffect(() =>{
-    ipcRenderer.send('main-test1', 'start-ipc');
-    ipcRenderer.on('renderer-test1', (event, res) => {
-      console.log(res);
-    })
+    // ipcRenderer.send('main-test1', 'start-ipc');
+    // ipcRenderer.on('renderer-test1', (event, res) => {
+    //   console.log(res);
+    // })
   })
 
   const [state, setState] = useState({
@@ -41,7 +42,11 @@ const Side = () => {
 
   console.log(state);
   
-  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} style={{ backgroundColor: '#19171d' }}>{v.menuName}</CustomMenuItem>));
+  // const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} style={{ backgroundColor: '#19171d' }}>{v.menuName}</CustomMenuItem>));
+  
+  const tempData = MenuList.map(
+    (v) => (<TabPane key={v.id} tab={v.menuName}><Table data={v}></Table></TabPane>)
+  );
 
   return (
     <CustomSider style={{ background: '#19171d' }}>
@@ -50,9 +55,12 @@ const Side = () => {
           state.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
         }
       </Button>
-      <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
+      <Tabs tabPosition="left">
         {tempData}
-      </CustomMenu>
+      </Tabs>
+      {/* <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
+        {tempData}
+      </CustomMenu> */}
       {
         state.Add 
           ? (

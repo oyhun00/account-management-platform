@@ -8,9 +8,9 @@ const App = () => {
   return (
     <Layout>
       <Side />
-      <CustomLayout>
+      {/* <CustomLayout>
         <ContentBox />
-      </CustomLayout>
+      </CustomLayout> */}
     </Layout>
   );
 }
