@@ -5,7 +5,7 @@ const Table = () => {
   const { Content } = Layout;
 
   return (
-    <Content>
+    <Content >
       asd
     </Content>
   );

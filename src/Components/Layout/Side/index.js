@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import styled from 'styled-components';
 import { Layout, Menu, Button, Input, Row, Col, Tabs } from 'antd';
 import {
@@ -8,17 +9,12 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
-import Table from '../Content/Table';
+
 
 const { Sider } = Layout;
-const { TabPane } = Tabs;
 
 const Side = () => {
   useEffect(() =>{
-    // ipcRenderer.send('main-test1', 'start-ipc');
-    // ipcRenderer.on('renderer-test1', (event, res) => {
-    //   console.log(res);
-    // })
   })
 
   const [state, setState] = useState({
@@ -27,10 +23,10 @@ const Side = () => {
   });
 
   const toggleCollapsed = () => {
-    setState({
-      ...state,
-      collapsed: !state.collapsed,
-    });
+    // setState({
+    //   ...state,
+    //   collapsed: !state.collapsed,
+    // });
   };
 
   const toggleInsertMenu = () => {
@@ -42,12 +38,8 @@ const Side = () => {
 
   console.log(state);
   
-  // const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} style={{ backgroundColor: '#19171d' }}>{v.menuName}</CustomMenuItem>));
+  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} style={{ backgroundColor: '#19171d' }}>{v.menuName}</CustomMenuItem>));
   
-  const tempData = MenuList.map(
-    (v) => (<TabPane key={v.id} tab={v.menuName}><Table data={v}></Table></TabPane>)
-  );
-
   return (
     <CustomSider style={{ background: '#19171d' }}>
       <Button type="primary" onClick={toggleCollapsed} style={{ marginBottom: 16 }}>
@@ -55,12 +47,9 @@ const Side = () => {
           state.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
         }
       </Button>
-      <Tabs tabPosition="left">
+      <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
         {tempData}
-      </Tabs>
-      {/* <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
-        {tempData}
-      </CustomMenu> */}
+      </CustomMenu>
       {
         state.Add 
           ? (

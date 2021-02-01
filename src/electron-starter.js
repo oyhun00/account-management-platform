@@ -1,9 +1,13 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path'); 
 
 function createWindow () {
   // 브라우저 창을 생성합니다.
+  ipcMain.on('main-test1', (event, res) => {
+    console.log(res); // 2
+  })
+
   const win = new BrowserWindow({
     width: 800,
     height: 600,
