@@ -4,15 +4,14 @@ const path = require('path');
 
 function createWindow () {
   // 브라우저 창을 생성합니다.
-  ipcMain.on('main-test1', (event, res) => {
-    console.log(res); // 2
-  })
 
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.resolve(__dirname, 'preload.js')
     },
   })
 

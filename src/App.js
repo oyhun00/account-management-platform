@@ -1,23 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
-import Side from './Components/Layout/Side';
-import ContentBox from './Components/Layout/Content';
+import MainComponent from './Components';
 
 const App = () => {
   return (
-    <Layout>
-      <Side />
-      <CustomLayout>
-        <ContentBox />
-      </CustomLayout>
-    </Layout>
+    <CustomLayout>
+      <MainComponent />
+    </CustomLayout>
   );
 }
 
 const CustomLayout = styled(Layout)`
   height: 100vh;
   background: #19171d;
+
+  .ant-layout {
+    background: #19171d;
+  }
 `;
 
 export default App;

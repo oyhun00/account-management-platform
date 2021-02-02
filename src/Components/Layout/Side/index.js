@@ -1,57 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
-import { Layout, Menu, Button, Input, Row, Col, Tabs } from 'antd';
+import { Menu, Input, Row, Col } from 'antd';
 import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   PlusOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
 
-
-const { Sider } = Layout;
-
-const Side = () => {
-  useEffect(() =>{
-  })
-
-  const [state, setState] = useState({
-    collapsed: false,
-    Add: false 
-  });
-
-  const toggleCollapsed = () => {
-    // setState({
-    //   ...state,
-    //   collapsed: !state.collapsed,
-    // });
-  };
-
-  const toggleInsertMenu = () => {
-    setState({
-      ...state,
-      Add: !state.Add,
-    });
-  }
-
-  console.log(state);
-  
-  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} style={{ backgroundColor: '#19171d' }}>{v.menuName}</CustomMenuItem>));
+const Side = ({ data, onAddToggle }) => {
+  const { collapsed, add } = data;
+  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id}>{v.menuName}</CustomMenuItem>));
   
   return (
-    <CustomSider style={{ background: '#19171d' }}>
-      <Button type="primary" onClick={toggleCollapsed} style={{ marginBottom: 16 }}>
-        {
-          state.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-        }
-      </Button>
-      <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark" inlineCollapsed={!state.collapsed}>
+    <CustomSider>
+      <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark">
         {tempData}
       </CustomMenu>
       {
-        state.Add 
+        add 
           ? (
             <CustomRow>
               <Col span={20}>
@@ -64,20 +31,18 @@ const Side = () => {
           )
           : ''
       }
-      <CustomRow>
-        <CustomPlusIconWrap onClick={toggleInsertMenu}>
+      <CustomRow style={ collapsed ? { padding: '0' } : {}}>
+        <CustomPlusIconWrap onClick={onAddToggle} style={ collapsed ? { margin: '0 auto' } : {}}>
           {
-            state.Add
+            add
               ? (
                 <>
-                  <CloseOutlined />
-                  <CustomSpan>Cancel</CustomSpan>
+                  <CloseOutlined/>
                 </>
               )
               : (
                 <>
-                  <PlusOutlined />
-                  <CustomSpan>Add</CustomSpan>
+                  <PlusOutlined/>
                 </>
               )
           }
@@ -87,18 +52,22 @@ const Side = () => {
   );
 }
 
-const CustomSider = styled(Sider)`
+const CustomSider = styled.div`
+  margin-top: 48px;
   background: #19171d;
-  border-right: 1px solid #2a272f;
   color: rgba(255, 255, 255, 0.65);
 `;
 
 const CustomMenu = styled(Menu)`
   background: #19171d !important;
+
+  & .ant-menu-item-selected {
+    background-color: #242229 !important;
+  }
 `;
 
 const CustomMenuItem = styled(Menu.Item)`
-  background-color: #19171d
+  background-color: #19171d;
 `;
 
 const CustomRow = styled(Row)`
@@ -111,13 +80,9 @@ const CustomPlusIconWrap = styled(Col)`
   text-align: center;
   cursor: pointer;
 
-  :hover {
+  & :hover {
     color: #fff;
   }
-`;
-
-const CustomSpan = styled.span`
-  margin-left: 5px;
 `;
 
 const CustomInput = styled(Input)`

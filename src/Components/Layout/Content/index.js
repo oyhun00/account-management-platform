@@ -1,9 +1,8 @@
 import React from 'react';
-import { Layout, Tabs } from 'antd';
+import { Layout } from 'antd';
 
 const ContentBox = () => {
   const { Content } = Layout;
-  const { TabPane } = Tabs;
 
   return (
     <Content>
