@@ -1,0 +1,6 @@
+[
+  { "id": 0, "siteNameKr": "코인원", "siteNameEng": "COINONE", "siteUrl": "https://coinone.co.kr/", "accountId": "CoinAccount", "accountPwd": "1234", "group": 1 },
+  { "id": 1, "siteNameKr": "네이버", "siteNameEng": "Naver", "siteUrl": "http://www.naver.com/", "accountId": "NaverAccount", "accountPwd": "1234", "group": 2 },
+  { "id": 2, "siteNameKr": "데모사이트", "siteNameEng": "Demo", "siteUrl": "https://demo.testfire.net/", "accountId": "DemoAccount", "accountPwd": "1234", "group": 2 },
+  { "id": 3, "siteNameKr": "다음", "siteNameEng": "Daum", "siteUrl": "https://www.daum.net/", "accountId": "DaumAccount", "accountPwd": "1234", "group": 1 }
+]

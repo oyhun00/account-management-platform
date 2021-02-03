@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import styled from 'styled-components';
 import { Menu, Input, Row, Col } from 'antd';
@@ -8,9 +8,19 @@ import {
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
 
-const Side = ({ data, onAddToggle }) => {
-  const { collapsed, add } = data;
+const Side = () => {
   const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id}>{v.menuName}</CustomMenuItem>));
+
+  const [state, setState] = useState({
+    add: false,
+  });
+
+  const toggleAdded = () => {
+    setState({
+      ...state,
+      add: !state.add,
+    });
+  };
   
   return (
     <CustomSider>
@@ -18,7 +28,7 @@ const Side = ({ data, onAddToggle }) => {
         {tempData}
       </CustomMenu>
       {
-        add 
+        state.add 
           ? (
             <CustomRow>
               <Col span={20}>
@@ -31,10 +41,10 @@ const Side = ({ data, onAddToggle }) => {
           )
           : ''
       }
-      <CustomRow style={ collapsed ? { padding: '0' } : {}}>
-        <CustomPlusIconWrap onClick={onAddToggle} style={ collapsed ? { margin: '0 auto' } : {}}>
+      <CustomRow>
+        <CustomPlusIconWrap onClick={toggleAdded}>
           {
-            add
+            state.add
               ? (
                 <>
                   <CloseOutlined/>
@@ -53,7 +63,6 @@ const Side = ({ data, onAddToggle }) => {
 }
 
 const CustomSider = styled.div`
-  margin-top: 48px;
   background: #19171d;
   color: rgba(255, 255, 255, 0.65);
 `;
