@@ -16,7 +16,7 @@ const CustomLayout = styled(Layout)`
   background: #19171d;
 
   .ant-layout {
-    background: #19171d;
+    background: #222529;
   }
 `;
 

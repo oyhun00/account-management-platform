@@ -8,27 +8,18 @@ import {
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
 
-const Side = () => {
-  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id}>{v.menuName}</CustomMenuItem>));
+const Side = ({ onGroupSelect }) => {
+  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>{v.menuName}</CustomMenuItem>));
 
-  const [state, setState] = useState({
-    add: false,
-  });
-
-  const toggleAdded = () => {
-    setState({
-      ...state,
-      add: !state.add,
-    });
-  };
+  const [add, setAdd] = useState(false);
   
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} mode="inline" theme="dark">
+      <CustomMenu defaultSelectedKeys={['0']} defaultOpenKeys={['sub0']} mode="inline" theme="dark">
         {tempData}
       </CustomMenu>
       {
-        state.add 
+        add
           ? (
             <CustomRow>
               <Col span={20}>
@@ -42,9 +33,9 @@ const Side = () => {
           : ''
       }
       <CustomRow>
-        <CustomPlusIconWrap onClick={toggleAdded}>
+        <CustomPlusIconWrap onClick={() => setAdd(!add)}>
           {
-            state.add
+            add
               ? (
                 <>
                   <CloseOutlined/>

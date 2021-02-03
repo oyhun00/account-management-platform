@@ -7,13 +7,24 @@ import ContentBox from './Layout/Content';
 const { Sider } = Layout;
 
 const MainComponent = () => {
+  const [state, setState] = useState({
+    selectGorup: 0,
+  });
+
+  const groupSelectHandle = (id) => {
+    setState({
+      ...state,
+      selectGorup: id,
+    })
+  }
+
   return (
     <>
       <CustomSider>
-        <Side/>
+        <Side onGroupSelect={groupSelectHandle} />
       </CustomSider>
       <Layout>
-        <ContentBox />
+        <ContentBox data={state} />
       </Layout>
     </>
   );
