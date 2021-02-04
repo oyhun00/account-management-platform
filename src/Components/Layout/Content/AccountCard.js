@@ -1,35 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card, Avatar, Row } from 'antd';
+import { Card, Avatar, Row, Divider } from 'antd';
 import {
   MoreOutlined
 } from '@ant-design/icons';
+import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 const AccountCard = ({ data }) => {
-  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd } = data;
-  
+  const { siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
+  const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
+  console.log(LinkedFavicon);
   return (
     <CustomCard>
       <CustomRow>
         <CustomAvatar src={siteIcon} />
-        <SiteInfo>
+        <PropWrap>
           <SiteName>
             <span>{siteNameKr}</span>
             <span>{siteNameEng}</span>
           </SiteName>
           <SiteUrl>{siteUrl}</SiteUrl>
-        </SiteInfo>
+        </PropWrap>
       </CustomRow>
-      <AccountInfo>
-        <AccountRow>
-          <Title>ID</Title>
-          <span>{accountId}</span>
-        </AccountRow>
-        <AccountRow>
-          <Title>PW</Title>
-          <span>{accountPwd}</span>
-        </AccountRow>
-      </AccountInfo>
+      <Divider />
+      <CustomRow>
+        { LinkedFavicon ? <CustomAvatar src={LinkedFavicon[0].favicon} /> : <CustomAvatar src={siteIcon} /> }
+        <PropWrap>
+          <AccountRow>
+            <Title>ID</Title>
+            <span>{accountId}</span>
+          </AccountRow>
+          <AccountRow>
+            <Title>PW</Title>
+            <span>{accountPwd}</span>
+          </AccountRow>
+        </PropWrap>
+      </CustomRow>
       <ActionButton />
     </CustomCard>
   );
@@ -49,16 +55,15 @@ const CustomCard = styled(Card)`
 
 const CustomRow = styled(Row)`
   align-items: center;
-  margin-bottom: 12px;
   flex-flow: row nowrap;
+
+  &:first-child {
+    margin-bottom: 12px;
+  }
 `;
 
 const AccountRow = styled(Row)`
   flex-flow: row nowrap;
-
-  &:first-child { 
-    margin-bottom: 3px;
-  }
 
   & > span:last-child {
     overflow: hidden;
@@ -71,8 +76,8 @@ const CustomAvatar = styled(Avatar)`
   height: 32px;
 `;
 
-const SiteInfo = styled.div`
-  margin-left: 12px;
+const PropWrap = styled.div`
+  margin-left: 18px;
   overflow: hidden;
 `;
 
@@ -98,9 +103,6 @@ const SiteUrl = styled.div`
   font-size: 11px;
   text-overflow: ellipsis;
   overflow: hidden;
-`;
-
-const AccountInfo = styled.div`
 `;
 
 const Title = styled.span`
