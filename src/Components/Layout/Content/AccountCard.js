@@ -1,10 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card, Avatar, Row, Divider } from 'antd';
+import { Card, Avatar, Row, Divider, Popover, List } from 'antd';
 import {
-  MoreOutlined
+  MoreOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import AccountLinkage from '../../../TempData/AccountLinkage.json';
+
+const popMenu = (
+  <>
+    <List>수정<EditOutlined /></List>
+    <List>삭제<DeleteOutlined /></List>
+  </>
+);
 
 const AccountCard = ({ data }) => {
   const { siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
@@ -22,7 +31,7 @@ const AccountCard = ({ data }) => {
           <SiteUrl>{siteUrl}</SiteUrl>
         </PropWrap>
       </CustomRow>
-      <Divider />
+      <CustomDivider />
       <CustomRow>
         { LinkedFavicon ? <CustomAvatar src={LinkedFavicon[0].favicon} /> : <CustomAvatar src={siteIcon} /> }
         <PropWrap>
@@ -36,7 +45,9 @@ const AccountCard = ({ data }) => {
           </AccountRow>
         </PropWrap>
       </CustomRow>
-      <ActionButton />
+      <Popover content={popMenu} trigger="click">
+        <ActionButton />
+      </Popover>
     </CustomCard>
   );
 }
@@ -113,8 +124,29 @@ const Title = styled.span`
 
 const ActionButton = styled(MoreOutlined)`
   position: absolute;
-  top: 64px;
-  right: 22px;
+  top: 14px;
+  right: 14px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+const CustomDivider = styled(Divider)`
+  margin: 12px 0;
+  border-top: 1px solid rgb(63 63 63);
+`;
+
+const CustomList = styled(List)`
+  & .ant-spin-container {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 export default AccountCard;

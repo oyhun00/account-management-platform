@@ -16,7 +16,13 @@ const ContentBox = ({ data }) => {
       <AccountCard data={v} />
     </Col>
   ));
-  
+  const test = () => {
+    console.log(window.ipcRenderer)
+    // window.ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    //   console.log(arg); 
+    // });
+    // window.ipcRenderer.send('asynchronous-message', 'ping');
+  }
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -33,7 +39,7 @@ const ContentBox = ({ data }) => {
           )
           : (
             <EmptyWrap>
-              <CustomEmpty />
+              <CustomEmpty onClick={test} />
             </EmptyWrap>
           )
       }

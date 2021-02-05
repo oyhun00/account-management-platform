@@ -1,5 +1,1 @@
-const fs = require('fs')
-
-window.test = function() {
-    console.log(fs)
-}
+window.ipcRenderer = require('electron').ipcRenderer;

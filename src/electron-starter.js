@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const url = require('url');
 const path = require('path'); 
 
@@ -6,12 +6,12 @@ function createWindow () {
   // 브라우저 창을 생성합니다.
 
   const win = new BrowserWindow({
-    width: 800,
+    width: 1200,
     height: 600,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.resolve(__dirname, 'preload.js')
+      preload: __dirname + './preload.js'
     },
   })
 
@@ -33,6 +33,7 @@ app.whenReady().then(createWindow);
 app.on('window-all-closed', () => {
   // macOS에서는 사용자가 명확하게 Cmd + Q를 누르기 전까지는
   // 애플리케이션이나 메뉴 바가 활성화된 상태로 머물러 있는 것이 일반적입니다.
+  console.log("ASd")
   if (process.platform !== 'darwin') {
     app.quit()
   }
