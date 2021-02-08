@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 import { Menu, Input, Row, Col } from 'antd';
@@ -7,11 +7,29 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import MenuList from '../../../TempData/MenuList.json';
+const { ipcRenderer } = window;
 
 const Side = ({ onGroupSelect }) => {
+  useEffect(() => {
+  });
+
+  ipcRenderer.on('addMenu', (event, arg) => {
+    console.log('renderer  : ' + arg);
+  })
   const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>{v.menuName}</CustomMenuItem>));
 
   const [add, setAdd] = useState(false);
+  const [menuName, setMenuName] = useState('');
+  const changeHandle = (e) => {
+    setMenuName(e.target.value);
+  }
+
+  const addMenu = () => {
+    console.log("Asd");
+    ipcRenderer.send('addMenu', {
+      newMenuName: menuName
+    })
+  }
   
   return (
     <CustomSider>
@@ -23,10 +41,10 @@ const Side = ({ onGroupSelect }) => {
           ? (
             <CustomRow>
               <Col span={20}>
-                <CustomInput />
+                <CustomInput onChange={changeHandle} />
               </Col>
-              <CustomPlusIconWrap span={4}>
-                <PlusOutlined />
+              <CustomPlusIconWrap span={4} onClick={addMenu} >
+                <PlusOutlined/>
               </CustomPlusIconWrap>
             </CustomRow>
           )

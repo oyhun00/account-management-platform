@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path'); 
 
@@ -11,7 +11,7 @@ function createWindow () {
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
-      preload: __dirname + './preload.js'
+      preload: __dirname + '\\preload.js'
     },
   })
 
@@ -29,11 +29,15 @@ function createWindow () {
 // 어떤 API는 이 이벤트가 나타난 이후에만 사용할 수 있습니다.
 app.whenReady().then(createWindow);
 
+ipcMain.on('addMenu', (event, arg) => {
+  console.log('server received : ', arg);
+  event.sender.send('foo', `hello ${arg.name}`);
+});
+
 // 모든 윈도우가 닫히면 종료된다.
 app.on('window-all-closed', () => {
   // macOS에서는 사용자가 명확하게 Cmd + Q를 누르기 전까지는
   // 애플리케이션이나 메뉴 바가 활성화된 상태로 머물러 있는 것이 일반적입니다.
-  console.log("ASd")
   if (process.platform !== 'darwin') {
     app.quit()
   }

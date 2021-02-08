@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Layout, Row, Col, Empty, Modal } from 'antd';
 import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
 import AccountForm from './Form/AccountForm';
 import AccountList from '../../../TempData/AccountList.json';
+const { ipcRenderer } = window;
+
 
 const { Content } = Layout;
 
 const ContentBox = ({ data }) => {
+
   const { selectGorup } = data;
   const filteredData = AccountList.filter((v) => v.group === selectGorup );
   const accountData = filteredData.map((v) => (
@@ -16,13 +19,17 @@ const ContentBox = ({ data }) => {
       <AccountCard data={v} />
     </Col>
   ));
+
   const test = () => {
-    console.log(window.ipcRenderer)
+    ipcRenderer.send('foo', {
+      name: 'hi'
+    })
     // window.ipcRenderer.on('asynchronous-reply', (event, arg) => {
     //   console.log(arg); 
     // });
     // window.ipcRenderer.send('asynchronous-message', 'ping');
   }
+
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
