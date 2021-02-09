@@ -12,10 +12,7 @@ const MainComponent = () => {
   });
 
   const groupSelectHandle = (id) => {
-    setState({
-      ...state,
-      selectGorup: id,
-    })
+    setState(id);
   }
 
   return (
@@ -34,6 +31,7 @@ const MainComponent = () => {
   background: #19171d;
   border-right: 1px solid #2a272f;
   box-sizing: content-box;
+  overflow: auto;
 `;
 
 export default MainComponent;

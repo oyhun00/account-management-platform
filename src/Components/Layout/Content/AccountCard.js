@@ -18,7 +18,7 @@ const popMenu = (
 const AccountCard = ({ data }) => {
   const { siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
-  console.log(LinkedFavicon);
+  
   return (
     <CustomCard>
       <CustomRow>

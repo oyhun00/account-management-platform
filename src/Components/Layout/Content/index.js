@@ -11,7 +11,6 @@ const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = ({ data }) => {
-
   const { selectGorup } = data;
   const filteredData = AccountList.filter((v) => v.group === selectGorup );
   const accountData = filteredData.map((v) => (

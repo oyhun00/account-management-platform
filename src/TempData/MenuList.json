@@ -1,7 +1,1 @@
-[
-  { "id": 0, "menuName": "Menu 1", "menuIndex": 0 },
-  { "id": 1, "menuName": "Menu 2", "menuIndex": 1 },
-  { "id": 2, "menuName": "Menu 3", "menuIndex": 2 },
-  { "id": 3, "menuName": "Menu 4", "menuIndex": 3 },
-  { "id": 4, "menuName": "Menu 5", "menuIndex": 4 }
-]
+[{"id":1,"menuName":"12d12d","menuIndex":1},{"id":2,"menuName":"12d12d","menuIndex":2}]

@@ -1,10 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path'); 
+const fs = require('fs');
 
 function createWindow () {
-  // 브라우저 창을 생성합니다.
-
   const win = new BrowserWindow({
     width: 1200,
     height: 600,
@@ -15,7 +14,6 @@ function createWindow () {
     },
   })
 
-  // React를 빌드할 경우 결과물은 build 폴더에 생성되기 때문에 loadURL 부분을 아래와 같이 작성합니다.
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, '/../build/index.html'),
     protocol: 'file:',
@@ -24,30 +22,60 @@ function createWindow () {
   win.loadURL(startUrl);
 }
 
-// 이 메소드는 Electron의 초기화가 완료되고
-// 브라우저 윈도우가 생성될 준비가 되었을때 호출된다.
-// 어떤 API는 이 이벤트가 나타난 이후에만 사용할 수 있습니다.
 app.whenReady().then(createWindow);
 
-ipcMain.on('addMenu', (event, arg) => {
-  console.log('server received : ', arg);
-  event.sender.send('foo', `hello ${arg.name}`);
+ipcMain.on('side/getMenuList', (event, arg) => {
+  fs.readFile('./src/TempData/MenuList.json', 'utf8', (error, data) => {
+    event.sender.send('side/getMenuList', JSON.parse(data));
+  })
 });
 
-// 모든 윈도우가 닫히면 종료된다.
+ipcMain.on('side/addMenu', (event, newMenuName) => {
+  fs.readFile('./src/TempData/MenuList.json', 'utf8', (error, data) => {
+    const prevMenuList = JSON.parse(data);
+    const newMenu = {
+      id: prevMenuList.length,
+      menuName: newMenuName,
+      menuIndex: prevMenuList.length
+    };
+
+    const newMenuList = prevMenuList.concat(newMenu);
+  
+    fs.writeFile('./src/TempData/MenuList.json', JSON.stringify(newMenuList), 'utf8', (error) => {
+      if (error) {
+        event.sender.send('side/addMenu', `error : ${error}`);
+      }
+      event.sender.send('side/getMenuList', newMenuList);
+    });
+  });
+});
+
+
+ipcMain.on('side/removeMenu', (event, id) => {
+  fs.readFile('./src/TempData/MenuList.json', 'utf8', (error, data) => {
+    const newMenuList = JSON.parse(data).filter((v) => v.id !== id);
+    if(error) {
+      event.sender.send('side/getMenuList', newMenuList);
+    }
+    
+    fs.writeFile('./src/TempData/MenuList.json', JSON.stringify(newMenuList), 'utf8', (error) => {
+      if (error) {
+        event.sender.send('side/getMenuList', newMenuList);
+      }
+      event.sender.send('side/getMenuList', newMenuList);
+    });
+  });
+});
+
+
 app.on('window-all-closed', () => {
-  // macOS에서는 사용자가 명확하게 Cmd + Q를 누르기 전까지는
-  // 애플리케이션이나 메뉴 바가 활성화된 상태로 머물러 있는 것이 일반적입니다.
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
 app.on('activate', () => {
-  // macOS에서는 dock 아이콘이 클릭되고 다른 윈도우가 열려있지 않았다면
-  // 앱에서 새로운 창을 다시 여는 것이 일반적입니다.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
 })
-// 이 파일에는 나머지 앱의 특정 주요 프로세스 코드를 포함시킬 수 있습니다. 별도의 파일에 추가할 수도 있으며 이 경우 require 구문이 필요합니다.

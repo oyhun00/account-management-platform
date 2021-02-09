@@ -1,35 +1,45 @@
 import React, { useState, useEffect } from 'react';
-
 import styled from 'styled-components';
 import { Menu, Input, Row, Col } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
-import MenuList from '../../../TempData/MenuList.json';
 const { ipcRenderer } = window;
 
 const Side = ({ onGroupSelect }) => {
-  useEffect(() => {
-  });
-
-  ipcRenderer.on('addMenu', (event, arg) => {
-    console.log('renderer  : ' + arg);
-  })
-  const tempData = MenuList.map((v) => (<CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>{v.menuName}</CustomMenuItem>));
-
   const [add, setAdd] = useState(false);
   const [menuName, setMenuName] = useState('');
+  const [menuList, setMenuList] = useState([]);
+
+  const addMenu = () => {
+    ipcRenderer.send('side/addMenu', menuName);
+    setAdd(!add);
+  }
+
+  const removeMenu = (e, id) => {
+    e.stopPropagation();
+    ipcRenderer.send('side/removeMenu', id);
+    onGroupSelect(0);
+  }
+
   const changeHandle = (e) => {
     setMenuName(e.target.value);
   }
 
-  const addMenu = () => {
-    console.log("Asd");
-    ipcRenderer.send('addMenu', {
-      newMenuName: menuName
-    })
-  }
+  useEffect(() => {
+    ipcRenderer.send('side/getMenuList');
+    ipcRenderer.on('side/getMenuList', (e, arg) => {
+      setMenuList(arg);
+    });
+  }, []);
+  
+  const tempData = menuList.map((v) => (
+    <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
+      {v.menuName}
+      <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
+    </CustomMenuItem>)
+  );
   
   return (
     <CustomSider>
