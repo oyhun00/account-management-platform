@@ -10,9 +10,9 @@ const { ipcRenderer } = window;
 
 const { Content } = Layout;
 
-const ContentBox = ({ data }) => {
-  const { selectGorup } = data;
-  const filteredData = AccountList.filter((v) => v.group === selectGorup );
+const ContentBox = ({ selectGroup }) => {
+  console.log(selectGroup);
+  const filteredData = AccountList.filter((v) => v.group === selectGroup );
   const accountData = filteredData.map((v) => (
     <Col key={v.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
       <AccountCard data={v} />
@@ -57,7 +57,7 @@ const ContentBox = ({ data }) => {
         onCancel={() => setModalVisible(false)}
         width={1000}
       >
-        <AccountForm groupId={selectGorup} />
+        <AccountForm groupId={selectGroup} />
       </Modal>
     </CustomContent>
   );

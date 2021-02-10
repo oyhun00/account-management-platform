@@ -7,9 +7,7 @@ import ContentBox from './Layout/Content';
 const { Sider } = Layout;
 
 const MainComponent = () => {
-  const [state, setState] = useState({
-    selectGorup: 0,
-  });
+  const [selectGroup, setState] = useState(0);
 
   const groupSelectHandle = (id) => {
     setState(id);
@@ -21,7 +19,7 @@ const MainComponent = () => {
         <Side onGroupSelect={groupSelectHandle} />
       </CustomSider>
       <Layout>
-        <ContentBox data={state} />
+        <ContentBox selectGroup={selectGroup} />
       </Layout>
     </>
   );

@@ -4,11 +4,13 @@ import { Menu, Input, Row, Col } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
+  EditOutlined,
 } from '@ant-design/icons';
 const { ipcRenderer } = window;
 
 const Side = ({ onGroupSelect }) => {
   const [add, setAdd] = useState(false);
+  const [updateValue, setUpdateValue] = useState('');
   const [menuName, setMenuName] = useState('');
   const [menuList, setMenuList] = useState([]);
 
@@ -20,7 +22,17 @@ const Side = ({ onGroupSelect }) => {
   const removeMenu = (e, id) => {
     e.stopPropagation();
     ipcRenderer.send('side/removeMenu', id);
-    onGroupSelect(0);
+  }
+
+  const updateMenu = (e, id) => {
+    e.stopPropagation();
+    setMenuList(
+      menuList.map(
+        (v) => v.id === id
+          ? { ...v, updateStatus: true }
+          : { ...v, updateStatus: false }
+      )
+    )
   }
 
   const changeHandle = (e) => {
@@ -34,12 +46,28 @@ const Side = ({ onGroupSelect }) => {
     });
   }, []);
   
-  const tempData = menuList.map((v) => (
-    <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
-      {v.menuName}
-      <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
-    </CustomMenuItem>)
+  const tempData = menuList.map((v) =>
+    (
+      <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
+        {v.updateStatus
+          ? (
+            <>
+              <CustomInput value={v.menuName} />
+              <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
+              <EditOutlined  onClick={(e) => updateMenu(e, v.id)} />
+            </>
+          )
+          : (
+            <>
+              {v.menuName}
+              <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
+              <EditOutlined  onClick={(e) => updateMenu(e, v.id)} />
+            </>
+          )}
+      </CustomMenuItem>
+    )
   );
+  console.log(tempData);
   
   return (
     <CustomSider>

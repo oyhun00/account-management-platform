@@ -36,7 +36,8 @@ ipcMain.on('side/addMenu', (event, newMenuName) => {
     const newMenu = {
       id: prevMenuList.length,
       menuName: newMenuName,
-      menuIndex: prevMenuList.length
+      menuIndex: prevMenuList.length,
+      updateStatus: false
     };
 
     const newMenuList = prevMenuList.concat(newMenu);
