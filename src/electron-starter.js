@@ -51,6 +51,13 @@ ipcMain.on('side/addMenu', (event, newMenuName) => {
   });
 });
 
+ipcMain.on('side/updateMenu', (event, data) => {
+  fs.writeFile('./src/TempData/MenuList.json', JSON.stringify(data), 'utf8', (error) => {
+    if (error) {
+      event.sender.send('side/getMenuList', newMenuList);
+    }
+  });
+})
 
 ipcMain.on('side/removeMenu', (event, id) => {
   fs.readFile('./src/TempData/MenuList.json', 'utf8', (error, data) => {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Menu, Input, Row, Col } from 'antd';
+import { Menu, Input, Row, Col, message } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
   EditOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 const { ipcRenderer } = window;
 
@@ -15,28 +16,56 @@ const Side = ({ onGroupSelect }) => {
   const [menuList, setMenuList] = useState([]);
 
   const addMenu = () => {
+    if(!menuName) {
+      message.warning('최소 1글자 이상 입력하세요.');
+      return;
+    }
+
     ipcRenderer.send('side/addMenu', menuName);
     setAdd(!add);
   }
 
   const removeMenu = (e, id) => {
-    e.stopPropagation();
     ipcRenderer.send('side/removeMenu', id);
   }
 
-  const updateMenu = (e, id) => {
+  const updateMenuToggle = (e, id) => {
     e.stopPropagation();
+
+    const { menuName } = menuList.find((v) => v.id === id);
+    
+    setUpdateValue(menuName);
     setMenuList(
       menuList.map(
         (v) => v.id === id
-          ? { ...v, updateStatus: true }
-          : { ...v, updateStatus: false }
+          ? { ...v, updateStatus: !v.updateStatus } 
+          : { ...v, updateStatus: v.updateStatus }
       )
-    )
+    );
   }
+
+  const updateMenuSubmit = (id) => {
+    if(!updateValue) {
+      message.warning('최소 1글자 이상 입력하세요.');
+      return;
+    }
+    
+    const updateMenuList = menuList.map(
+      (v) => v.id === id
+        ? { ...v, menuName: updateValue, updateStatus: false } 
+        : { ...v }
+    );
+    setMenuList(updateMenuList);
+
+    ipcRenderer.send('side/updateMenu', updateMenuList);
+  } 
 
   const changeHandle = (e) => {
     setMenuName(e.target.value);
+  }
+
+  const updateChangeHandle = (e) => {
+    setUpdateValue(e.target.value);
   }
 
   useEffect(() => {
@@ -48,26 +77,29 @@ const Side = ({ onGroupSelect }) => {
   
   const tempData = menuList.map((v) =>
     (
-      <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
+      <CustomMenuItem key={v.id}>
         {v.updateStatus
           ? (
-            <>
-              <CustomInput value={v.menuName} />
-              <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
-              <EditOutlined  onClick={(e) => updateMenu(e, v.id)} />
-            </>
+            <Row>
+              <Col span={16}>
+                <CustomInput value={updateValue} onChange={updateChangeHandle} />
+              </Col>
+              <Col span={8}>
+                <CheckOutlined onClick={() => updateMenuSubmit(v.id)}/>
+                <CloseOutlined onClick={() => updateMenuToggle()} />
+              </Col>
+            </Row>
           )
           : (
-            <>
+            <div onClick={() => onGroupSelect(v.id)}>
               {v.menuName}
               <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
-              <EditOutlined  onClick={(e) => updateMenu(e, v.id)} />
-            </>
+              <EditOutlined  onClick={(e) => updateMenuToggle(e, v.id)} />
+            </div>
           )}
       </CustomMenuItem>
     )
   );
-  console.log(tempData);
   
   return (
     <CustomSider>
