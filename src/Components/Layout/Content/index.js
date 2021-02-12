@@ -4,32 +4,43 @@ import { Layout, Row, Col, Empty, Modal } from 'antd';
 import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
 import AccountForm from './Form/AccountForm';
-import AccountList from '../../../TempData/AccountList.json';
+
 const { ipcRenderer } = window;
-
-
 const { Content } = Layout;
 
 const ContentBox = ({ selectGroup }) => {
-  console.log(selectGroup);
-  const filteredData = AccountList.filter((v) => v.group === selectGroup );
-  const accountData = filteredData.map((v) => (
-    <Col key={v.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
-      <AccountCard data={v} />
-    </Col>
-  ));
+  const [modalVisible, setModalVisible] = useState({
+    visible: false,
+    update: false
+  });
+  const [accountList, setAccountList] = useState([]);
+  const [accountFormat, setAccountFormat] = useState({
+    siteNameKr: '',
+    siteNameEng: '',
+    siteUrl: '',
+    siteIcon: '',
+    accountId: '',
+    accountPwd: '',
+    linkedId: '',
+  });
 
-  const test = () => {
-    ipcRenderer.send('foo', {
-      name: 'hi'
-    })
-    // window.ipcRenderer.on('asynchronous-reply', (event, arg) => {
-    //   console.log(arg); 
-    // });
-    // window.ipcRenderer.send('asynchronous-message', 'ping');
-  }
+  const { visible, update } = modalVisible;
 
-  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    ipcRenderer.send('main/getAccount');
+    ipcRenderer.on('main/getAccount', (e, arg) => {
+      setAccountList(arg);
+    });
+  }, []);
+
+  const accountData = accountList.reduce((acc, cur) => {
+    if(cur.group === selectGroup) acc.push(
+      <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
+        <AccountCard data={cur} />
+      </Col>
+    );
+    return acc;
+  }, []);
 
   return (
     <CustomContent>
@@ -38,26 +49,35 @@ const ContentBox = ({ selectGroup }) => {
           ? (
             <Row>
               {accountData}
-              <Col xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }} onClick={() => setModalVisible(!modalVisible)}>
+              <Col
+                xl={{ span: 6 }}
+                lg={{ span: 8 }}
+                md={{ span: 12 }}
+                sm={{ span: 24 }}
+                xs={{ span: 24 }}
+                onClick={() => setModalVisible({
+                  ...modalVisible,
+                  visible: !visible
+                })}>
                 <CreateAccountCard/>
               </Col>
             </Row> 
           )
           : (
             <EmptyWrap>
-              <CustomEmpty onClick={test} />
+              <CustomEmpty />
             </EmptyWrap>
           )
       }
       <Modal
-        title="Modal 1000px width"
+        title={update ? '계정 정보 수정' : '계정 정보 등록'}
         centered
-        visible={modalVisible}
+        visible={visible}
         onOk={() => setModalVisible(false)}
         onCancel={() => setModalVisible(false)}
         width={1000}
       >
-        <AccountForm groupId={selectGroup} />
+        <AccountForm groupId={selectGroup} setAccountFormat={setAccountFormat} />
       </Modal>
     </CustomContent>
   );

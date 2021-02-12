@@ -62,6 +62,7 @@ ipcMain.on('side/updateMenu', (event, data) => {
 ipcMain.on('side/removeMenu', (event, id) => {
   fs.readFile('./src/TempData/MenuList.json', 'utf8', (error, data) => {
     const newMenuList = JSON.parse(data).filter((v) => v.id !== id);
+
     if(error) {
       event.sender.send('side/getMenuList', newMenuList);
     }
@@ -75,6 +76,12 @@ ipcMain.on('side/removeMenu', (event, id) => {
   });
 });
 
+
+ipcMain.on('main/getAccount', (event, id) => {
+  fs.readFile('./src/TempData/AccountList.json', 'utf8', (error, data) => {
+    event.sender.send('main/getAccount', JSON.parse(data));
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
