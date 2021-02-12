@@ -4,9 +4,8 @@ import { Menu, Input, Row, Col, message } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
-  EditOutlined,
-  CheckOutlined,
 } from '@ant-design/icons';
+import MenuItem from './Menu';
 const { ipcRenderer } = window;
 
 const Side = ({ onGroupSelect }) => {
@@ -75,28 +74,18 @@ const Side = ({ onGroupSelect }) => {
     });
   }, []);
   
-  const tempData = menuList.map((v) =>
+  const menuItem = menuList.map((v) =>
     (
       <CustomMenuItem key={v.id}>
-        {v.updateStatus
-          ? (
-            <Row>
-              <Col span={16}>
-                <CustomInput value={updateValue} onChange={updateChangeHandle} />
-              </Col>
-              <Col span={8}>
-                <CheckOutlined onClick={() => updateMenuSubmit(v.id)}/>
-                <CloseOutlined onClick={() => updateMenuToggle()} />
-              </Col>
-            </Row>
-          )
-          : (
-            <div onClick={() => onGroupSelect(v.id)}>
-              {v.menuName}
-              <CloseOutlined onClick={(e) => removeMenu(e, v.id)} />
-              <EditOutlined  onClick={(e) => updateMenuToggle(e, v.id)} />
-            </div>
-          )}
+        <MenuItem
+          data={v}
+          updateValue={updateValue}
+          updateChangeHandle={updateChangeHandle}
+          updateMenuSubmit={updateMenuSubmit}
+          updateMenuToggle={updateMenuToggle}
+          removeMenu={removeMenu}
+          onGroupSelect={onGroupSelect}
+        />
       </CustomMenuItem>
     )
   );
@@ -104,7 +93,7 @@ const Side = ({ onGroupSelect }) => {
   return (
     <CustomSider>
       <CustomMenu defaultSelectedKeys={['0']} defaultOpenKeys={['sub0']} mode="inline" theme="dark">
-        {tempData}
+        {menuItem}
       </CustomMenu>
       {
         add
