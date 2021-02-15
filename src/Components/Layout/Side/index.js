@@ -20,7 +20,7 @@ const Side = ({ onGroupSelect }) => {
       return;
     }
 
-    ipcRenderer.send('side/addMenu', menuName);
+    ipcRenderer.send('side/createMenu', menuName);
     setAdd(!add);
   }
 
@@ -69,8 +69,19 @@ const Side = ({ onGroupSelect }) => {
 
   useEffect(() => {
     ipcRenderer.send('side/getMenuList');
-    ipcRenderer.on('side/getMenuList', (e, arg) => {
-      setMenuList(arg);
+    ipcRenderer.on('side/getMenuList', (e, result) => {
+      const { success } = result;
+
+      if (success) {
+        const { data, log } = result;
+        setMenuList(data);
+
+        if (log) {
+          message.success(log);
+        }
+      } else {
+        message.error(result.message);
+      }
     });
   }, []);
   

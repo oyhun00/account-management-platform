@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card, Avatar, Row, Divider, Popover, List } from 'antd';
+import { Card, Avatar, Row, Divider, Popover, List, Button } from 'antd';
 import {
   MoreOutlined,
   EditOutlined,
@@ -8,17 +8,19 @@ import {
 } from '@ant-design/icons';
 import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
-const popMenu = (
-  <>
-    <List>수정<EditOutlined /></List>
-    <List>삭제<DeleteOutlined /></List>
-  </>
-);
 
-const AccountCard = ({ data }) => {
-  const { siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
+const AccountCard = (props) => {
+  const { data, removeAccount, formUpdateToggle } = props;
+  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
+  const popMenu = (
+    <>
+      <List onClick={() => formUpdateToggle(id)}>수정<EditOutlined /></List>
+      <List onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></List>
+    </>
+  );
+
   return (
     <CustomCard>
       <CustomRow>
@@ -45,8 +47,10 @@ const AccountCard = ({ data }) => {
           </AccountRow>
         </PropWrap>
       </CustomRow>
-      <Popover content={popMenu} trigger="click">
-        <ActionButton />
+      <Popover content={popMenu} trigger="focus">
+        <ActionButton>
+          <MoreOutlined />
+        </ActionButton>
       </Popover>
     </CustomCard>
   );
@@ -122,14 +126,21 @@ const Title = styled.span`
   font-weight: 500;
 `;
 
-const ActionButton = styled(MoreOutlined)`
+const ActionButton = styled(Button)`
   position: absolute;
   top: 14px;
   right: 14px;
   cursor: pointer;
+  background: 0;
+  border: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.65);
 
-  &:hover {
+  &:hover, &:focus, &:active {
     opacity: 0.7;
+    background: 0;
+    border: 0;
+    box-shadow: none;
   }
 `;
 
