@@ -15,7 +15,6 @@ const ContentBox = ({ selectGroup }) => {
   });
   const [accountList, setAccountList] = useState([]);
   const [accountFormat, setAccountFormat] = useState({
-    id: '',
     siteNameKr: '',
     siteNameEng: '',
     siteUrl: '',
@@ -26,7 +25,6 @@ const ContentBox = ({ selectGroup }) => {
 
   const formClear = () => {
     setAccountFormat({
-      id: '',
       siteNameKr: '',
       siteNameEng: '',
       siteUrl: '',

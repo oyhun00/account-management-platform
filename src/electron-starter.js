@@ -199,10 +199,12 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
 
     const newAccountList = {
       sequence: _sequence,
-      list: list.concat({
-        id: _sequence,
-        newAccountData
-      })
+      list: list.concat(
+        {
+          ...newAccountData,
+          id: _sequence
+        }
+      )
     };
   
     fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8', (error) => {
@@ -248,7 +250,6 @@ ipcMain.on('main/removeAccount', (event, id) => {
 });
 
 ipcMain.on('main/updateAccount', (event, accountData) => {
-  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, id } = accountData;
 
   fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
     if (error) {
@@ -259,7 +260,7 @@ ipcMain.on('main/updateAccount', (event, accountData) => {
       });
       return;
     } 
-    
+    const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, id } = accountData;
     const { sequence, list } = JSON.parse(prevAccountData);
     const newAccountDataList = {
       sequence,

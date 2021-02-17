@@ -26,7 +26,7 @@ const MenuItem = (props) => {
           </Row>
         )
         : (
-          <div onClick={() => onGroupSelect(id)}>
+          <div>
             {menuName}
             <CloseOutlined onClick={(e) => removeMenu(e, id)} />
             <EditOutlined  onClick={(e) => updateMenuToggle(e, id)} />

@@ -88,7 +88,7 @@ const Side = ({ onGroupSelect }) => {
   
   const menuItem = menuList.map((v) =>
     (
-      <CustomMenuItem key={v.id}>
+      <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
         <MenuItem
           data={v}
           updateValue={updateValue}
