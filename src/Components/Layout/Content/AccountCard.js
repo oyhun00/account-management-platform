@@ -16,7 +16,7 @@ const AccountCard = (props) => {
   
   const popMenu = (
     <>
-      <List onClick={() => formUpdateToggle(id)}> 수정<EditOutlined /></List>
+      <List onClick={(e) => formUpdateToggle(e, id)}> 수정<EditOutlined /></List>
       <List onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></List>
     </>
   );

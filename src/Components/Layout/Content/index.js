@@ -72,7 +72,7 @@ const ContentBox = (props) => {
                   update: false,
                   visible: true
                 })}>
-                <CreateAccountCard/>
+                  <CreateAccountCard/>
               </Col>
             </Row> 
           )

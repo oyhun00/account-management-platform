@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Menu, Input, Row, Col, message } from 'antd';
+import { Menu, Input, Row, Col, message, Modal } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import MenuItem from './Menu';
 const { ipcRenderer } = window;
+const { confirm } = Modal;
 
 const Side = ({ onGroupSelect }) => {
   const [add, setAdd] = useState(false);
@@ -22,11 +24,20 @@ const Side = ({ onGroupSelect }) => {
 
     ipcRenderer.send('side/createMenu', menuName);
     setAdd(!add);
-  }
+  };
 
-  const removeMenu = (e, id) => {
-    ipcRenderer.send('side/removeMenu', id);
-  }
+  const removeMenu = (id) => {
+    confirm({
+      title: '정말로 삭제하시겠어요?',
+      icon: <ExclamationCircleOutlined />,
+      content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
+      onOk() {
+        ipcRenderer.send('side/removeMenu', id);
+      },
+      onCancel() {
+      },
+    });
+  };
 
   const updateMenuToggle = (e, id) => {
     e.stopPropagation();
@@ -41,7 +52,7 @@ const Side = ({ onGroupSelect }) => {
           : { ...v, updateStatus: v.updateStatus }
       )
     );
-  }
+  };
 
   const updateMenuSubmit = (id) => {
     if(!updateValue) {
@@ -57,15 +68,15 @@ const Side = ({ onGroupSelect }) => {
     setMenuList(updateMenuList);
 
     ipcRenderer.send('side/updateMenu', updateMenuList);
-  } 
+  };
 
   const changeHandle = (e) => {
     setMenuName(e.target.value);
-  }
+  };
 
   const updateChangeHandle = (e) => {
     setUpdateValue(e.target.value);
-  }
+  };
 
   useEffect(() => {
     ipcRenderer.send('side/getMenuList');

@@ -44,26 +44,6 @@ const AccountForm = (props) => {
     formClear();
   };
 
-  const formUpdateToggle = (selectId) => {
-    // const { id, siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, group } = accountList.filter((v) => v.id === selectId)[0];
-
-    // setAccountFormat({
-    //   ...accountFormat,
-    //   id,
-    //   siteNameKr,
-    //   siteNameEng,
-    //   siteUrl,
-    //   accountId,
-    //   accountPwd,
-    //   group,
-    // });
-
-    // setAccountFormVisible({
-    //   visible: true,
-    //   update: true
-    // });
-  };
-
   const formUpdateSubmit = () => {
     ipcRenderer.send('main/updateAccount', accountFormat);
 

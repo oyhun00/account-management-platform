@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 
 const MenuItem = (props) => {
-  const { data, updateValue, updateChangeHandle, updateMenuSubmit, updateMenuToggle, removeMenu, onGroupSelect } = props;
+  const { data, updateValue, updateChangeHandle, updateMenuSubmit, updateMenuToggle, removeMenu } = props;
   const { id, menuName, updateStatus } = data;
 
   return (
@@ -28,7 +28,7 @@ const MenuItem = (props) => {
         : (
           <div>
             {menuName}
-            <CloseOutlined onClick={(e) => removeMenu(e, id)} />
+            <CloseOutlined onClick={() => removeMenu(id)} />
             <EditOutlined  onClick={(e) => updateMenuToggle(e, id)} />
           </div>
         )}
