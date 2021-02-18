@@ -183,6 +183,29 @@ ipcMain.on('main/getAccount', (event, id) => {
   });
 });
 
+ipcMain.on('main/getAccountDetail', (event, id) => {
+  fs.readFile(AccountListPath, 'utf8', (error, data) => {
+    if (error) {
+      event.sender.send('main/getAccountDetail', {
+        success: false,
+        code: 2,
+        log: error,
+      });
+
+      return;
+    }
+    
+    const { list } = JSON.parse(data);
+    const detailData = list.filter((v) => v.id === id)[0];
+
+    event.sender.send('main/getAccountDetail', {
+      success: true,
+      code: 1,
+      data: detailData,
+    });
+  });
+});
+
 ipcMain.on('main/createAccount', (event, newAccountData) => {
   fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
     if (error) {

@@ -1,89 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Layout, Row, Col, Empty, Modal, message } from 'antd';
+import { Layout, Row, Col, Empty, message } from 'antd';
 import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
-import AccountForm from './Form/AccountForm';
 
 const { ipcRenderer } = window;
 const { Content } = Layout;
 
-const ContentBox = ({ selectGroup }) => {
-  const [modalVisible, setModalVisible] = useState({
-    visible: false,
-    update: false
-  });
+const ContentBox = (props) => {
+  const { selectGroup, setAccountFormVisible } = props;
   const [accountList, setAccountList] = useState([]);
-  const [accountFormat, setAccountFormat] = useState({
-    siteNameKr: '',
-    siteNameEng: '',
-    siteUrl: '',
-    accountId: '',
-    accountPwd: '',
-    group: selectGroup,
-  });
+  
+  const formUpdateToggle = (id) => {
+    ipcRenderer.send('main/getAccountDetail', id);
 
-  const formClear = () => {
-    setAccountFormat({
-      siteNameKr: '',
-      siteNameEng: '',
-      siteUrl: '',
-      accountId: '',
-      accountPwd: '',
-      group: selectGroup,
+    setAccountFormVisible({
+      update: true,
+      visible: true
     })
-  };
-
-  const { visible, update } = modalVisible;
-
-  const modalClosed = () => {
-    formClear();
-    setModalVisible(false);
-  };
-
-  const formChangeHandle = (e) => {
-    const { value, name } = e.target;
-
-    setAccountFormat({
-      ...accountFormat,
-      [name]: value
-    });
-  };
-
-  const formSubmit = () => {
-    ipcRenderer.send('main/createAccount', accountFormat);
-
-    setModalVisible(false);
-    
-    formClear();
-  };
-
-  const formUpdateToggle = (selectId) => {
-    const { id, siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, group } = accountList.filter((v) => v.id === selectId)[0];
-
-    setAccountFormat({
-      ...accountFormat,
-      id,
-      siteNameKr,
-      siteNameEng,
-      siteUrl,
-      accountId,
-      accountPwd,
-      group,
-    });
-
-    setModalVisible({
-      visible: true,
-      update: true
-    });
-  };
-
-  const formUpdateSubmit = () => {
-    ipcRenderer.send('main/updateAccount', accountFormat);
-
-    setModalVisible(!visible);
-
-    formClear();
   };
 
   const removeAccount = (id) => {
@@ -103,7 +37,7 @@ const ContentBox = ({ selectGroup }) => {
           message.success(log);
         }
       } else {
-        message.error(result.message);
+        message.error(result.log);
       }
     });
   }, []);
@@ -111,7 +45,10 @@ const ContentBox = ({ selectGroup }) => {
   const accountData = accountList.reduce((acc, cur) => {
     if(cur.group === selectGroup) acc.push(
       <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
-        <AccountCard data={cur} removeAccount={removeAccount} formUpdateToggle={formUpdateToggle} visible={visible} />
+        <AccountCard
+          data={cur}
+          removeAccount={removeAccount}
+          formUpdateToggle={formUpdateToggle} />
       </Col>
     );
     return acc;
@@ -131,9 +68,9 @@ const ContentBox = ({ selectGroup }) => {
                 md={{ span: 12 }}
                 sm={{ span: 24 }}
                 xs={{ span: 24 }}
-                onClick={() => setModalVisible({
-                  ...modalVisible,
-                  visible: !visible
+                onClick={() => setAccountFormVisible({
+                  update: false,
+                  visible: true
                 })}>
                 <CreateAccountCard/>
               </Col>
@@ -145,16 +82,6 @@ const ContentBox = ({ selectGroup }) => {
             </EmptyWrap>
           )
       }
-      <Modal
-        title={update ? '계정 정보 수정' : '계정 정보 등록'}
-        centered
-        visible={visible}
-        onOk={() => update ? formUpdateSubmit() : formSubmit()}
-        onCancel={modalClosed}
-        width={1000}
-      >
-        <AccountForm accountFormat={accountFormat} formChangeHandle={formChangeHandle} />
-      </Modal>
     </CustomContent>
   );
 }

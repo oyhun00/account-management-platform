@@ -70,7 +70,6 @@ const Side = ({ onGroupSelect }) => {
   useEffect(() => {
     ipcRenderer.send('side/getMenuList');
     ipcRenderer.on('side/getMenuList', (e, result) => {
-      console.log(result);
       const { success } = result;
 
       if (success) {
@@ -81,7 +80,7 @@ const Side = ({ onGroupSelect }) => {
           message.success(log);
         }
       } else {
-        message.error(result.message);
+        message.error(result.log);
       }
     });
   }, []);

@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, lazy } from 'react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
-import Side from './Layout/Side';
-import ContentBox from './Layout/Content';
+import Util from './Layout/Content/Util';
+const Side = lazy(() => import('./Layout/Side'));
+const ContentBox = lazy(() => import('./Layout/Content'));
 
 const { Sider } = Layout;
 
 const MainComponent = () => {
   const [selectGroup, setState] = useState(0);
+  const [accountFormVisible, setAccountFormVisible] = useState({
+    visible: false,
+    update: false
+  });
 
   const groupSelectHandle = (id) => {
     setState(id);
@@ -19,11 +24,19 @@ const MainComponent = () => {
         <Side onGroupSelect={groupSelectHandle} />
       </CustomSider>
       <Layout>
-        <ContentBox selectGroup={selectGroup} />
+        <ContentBox
+          selectGroup={selectGroup}
+          setAccountFormVisible={setAccountFormVisible}
+        />
       </Layout>
+      <Util
+        selectGroup={selectGroup}
+        accountFormVisible={accountFormVisible}
+        setAccountFormVisible={setAccountFormVisible}
+      />
     </>
   );
-}
+};
 
  const CustomSider = styled(Sider)`
   background: #19171d;

@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import 'antd/dist/antd.css';
 import reportWebVitals from './reportWebVitals';
+import App from './App';
+import Loading from './Components/Layout/Content/Util/Loading';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Suspense fallback={<Loading/>}>
     <App />
-  </React.StrictMode>,
+  </Suspense>,
   document.getElementById('root')
 );
 
