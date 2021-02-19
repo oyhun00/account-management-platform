@@ -16,8 +16,8 @@ const AccountCard = (props) => {
   
   const popMenu = (
     <>
-      <List onClick={(e) => formUpdateToggle(e, id)}> 수정<EditOutlined /></List>
-      <List onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></List>
+      <CustomList onClick={() => formUpdateToggle(id)}> 수정<EditOutlined /></CustomList>
+      <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
 
@@ -150,9 +150,18 @@ const CustomDivider = styled(Divider)`
 `;
 
 const CustomList = styled(List)`
+  &:not(:last-child) .ant-spin-container {
+    margin-bottom: 6px;
+  }
+
   & .ant-spin-container {
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    color: #000;
+
+    & span {
+      margin-left: 12px;
+    }
   }
 
   &:hover {

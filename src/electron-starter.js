@@ -146,6 +146,34 @@ ipcMain.on('side/removeMenu', (event, id) => {
       sequence,
       list: list.filter((v) => v.id !== id),
     }
+
+    fs.readFile(AccountListPath, 'utf8', (error, data) => {
+      if (error) {
+        event.sender.send('main/getAccount', {
+          success: false,
+          code: 2,
+          log: error,
+        });
+  
+        return;
+      }
+      
+      const { sequence, list } = JSON.parse(data);
+      const filteredAccount = {
+        sequence,
+        list: list.filter((v) => v.group !== id)
+      }
+
+      fs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8', (error) => {
+        const { list } = filteredAccount;
+  
+        event.sender.send('main/getAccount', {
+          success: true,
+          code: 1,
+          data: list,
+        });
+      });
+    });
     
     fs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8', (error) => {
       const { list } = newMenuList;

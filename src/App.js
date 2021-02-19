@@ -14,6 +14,7 @@ const App = () => {
 const CustomLayout = styled(Layout)`
   height: 100vh;
   background: #19171d;
+  overflow: hidden;
 
   .ant-layout {
     background: #222529;

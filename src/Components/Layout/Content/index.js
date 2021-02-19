@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Layout, Row, Col, Empty, message } from 'antd';
+import { Layout, Row, Col, Empty, Button, message } from 'antd';
 import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
 
@@ -78,7 +78,17 @@ const ContentBox = (props) => {
           )
           : (
             <EmptyWrap>
-              <CustomEmpty />
+              <CustomEmpty>
+                <Button
+                  type="primary"
+                  onClick={() => setAccountFormVisible({
+                    update: false,
+                    visible: true
+                  })}
+                >
+                  계정 정보 등록
+                </Button>
+              </CustomEmpty>
             </EmptyWrap>
           )
       }
