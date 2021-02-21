@@ -29,7 +29,7 @@ const AccountForm = (props) => {
   
   const formChangeHandle = (e) => {
     const { value, name } = e.target;
-    console.log(selectGroup)
+    console.log(accountFormat)
 
     setAccountFormat({
       ...accountFormat,
@@ -42,6 +42,7 @@ const AccountForm = (props) => {
 
     setAccountFormVisible(false);
 
+    console.log(selectGroup)
     console.log(accountFormat)
     
     formClear();
@@ -61,7 +62,6 @@ const AccountForm = (props) => {
   };
 
   useEffect(() => {
-    console.log(selectGroup);
     ipcRenderer.on('main/getAccountDetail', (e, result) => {
       const { success } = result;
 
@@ -72,7 +72,7 @@ const AccountForm = (props) => {
         message.error(result.log);
       }
     });
-  }, [selectGroup]);
+  }, [selectGroup, accountFormat]);
 
   const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
   return (

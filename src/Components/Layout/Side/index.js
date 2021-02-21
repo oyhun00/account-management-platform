@@ -155,10 +155,13 @@ const Side = ({ onGroupSelect }) => {
 const CustomSider = styled.div`
   background: #19171d;
   color: rgba(255, 255, 255, 0.65);
+  height: 100%;
 `;
 
 const CustomMenu = styled(Menu)`
   background: #19171d !important;
+  overflow: auto;
+  height: calc(100% - 75px);
 
   & .ant-menu-item-selected {
     background-color: #242229 !important;
