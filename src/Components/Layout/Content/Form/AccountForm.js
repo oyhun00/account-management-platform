@@ -33,7 +33,8 @@ const AccountForm = (props) => {
 
     setAccountFormat({
       ...accountFormat,
-      [name]: value
+      [name]: value, 
+      group: selectGroup,
     });
   };
 
@@ -41,9 +42,6 @@ const AccountForm = (props) => {
     ipcRenderer.send('main/createAccount', accountFormat);
 
     setAccountFormVisible(false);
-
-    console.log(selectGroup)
-    console.log(accountFormat)
     
     formClear();
   };
@@ -72,9 +70,9 @@ const AccountForm = (props) => {
         message.error(result.log);
       }
     });
-  }, [selectGroup, accountFormat]);
+  }, [selectGroup, accountFormat, visible]);
 
-  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
+  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, group } = accountFormat;
   return (
     <Modal
         title={update ? '계정 정보 수정' : '계정 정보 등록'}
@@ -100,6 +98,7 @@ const AccountForm = (props) => {
         <Form.Item label="계정 PW">
           <Input name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
+        {group}
       </Form>
     </Modal>
   );

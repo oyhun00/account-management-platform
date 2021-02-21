@@ -10,7 +10,9 @@ import MenuItem from './Menu';
 const { ipcRenderer } = window;
 const { confirm } = Modal;
 
-const Side = ({ onGroupSelect }) => {
+const Side = (props) => {
+  const { setSelectGroup, selectGroup } = props;
+
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
   const [menuName, setMenuName] = useState('');
@@ -33,6 +35,7 @@ const Side = ({ onGroupSelect }) => {
       content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
       onOk() {
         ipcRenderer.send('side/removeMenu', id);
+        setSelectGroup(8)
       },
       onCancel() {
       },
@@ -79,6 +82,7 @@ const Side = ({ onGroupSelect }) => {
   };
 
   useEffect(() => {
+    console.log("asd");
     ipcRenderer.send('side/getMenuList');
     ipcRenderer.on('side/getMenuList', (e, result) => {
       const { success } = result;
@@ -98,7 +102,7 @@ const Side = ({ onGroupSelect }) => {
   
   const menuItem = menuList.map((v) =>
     (
-      <CustomMenuItem key={v.id} onClick={() => onGroupSelect(v.id)}>
+      <CustomMenuItem key={v.id} onClick={() => setSelectGroup(v.id)}>
         <MenuItem
           data={v}
           updateValue={updateValue}
@@ -106,7 +110,6 @@ const Side = ({ onGroupSelect }) => {
           updateMenuSubmit={updateMenuSubmit}
           updateMenuToggle={updateMenuToggle}
           removeMenu={removeMenu}
-          onGroupSelect={onGroupSelect}
         />
       </CustomMenuItem>
     )
@@ -114,7 +117,7 @@ const Side = ({ onGroupSelect }) => {
   
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={['0']} defaultOpenKeys={['sub0']} mode="inline" theme="dark">
+      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} mode="inline" theme="dark">
         {menuItem}
       </CustomMenu>
       {

@@ -8,20 +8,21 @@ const ContentBox = lazy(() => import('./Layout/Content'));
 const { Sider } = Layout;
 
 const MainComponent = () => {
-  const [selectGroup, setState] = useState(0);
+  const [selectGroup, setSelectGroup] = useState(0);
   const [accountFormVisible, setAccountFormVisible] = useState({
     visible: false,
     update: false
   });
 
-  const groupSelectHandle = (id) => {
-    setState(id);
-  }
+  console.log(selectGroup);
 
   return (
     <>
       <CustomSider>
-        <Side onGroupSelect={groupSelectHandle} />
+        <Side
+          selectGroup={selectGroup}
+          setSelectGroup={setSelectGroup}
+        />
       </CustomSider>
       <CustomMainLayout>
         <ContentBox
