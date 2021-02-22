@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path'); 
 const fs = require('fs');
+const cheerio = require('cheerio-httpcli');
+const { resolve } = require('path');
 const MenuListPath = './src/TempData/MenuList.json';
 const AccountListPath = './src/TempData/AccountList.json';
 
@@ -25,6 +27,24 @@ function createWindow () {
 }
 
 app.whenReady().then(createWindow);
+
+ipcMain.on('main/getFavicon', (event, arg) => {
+  cheerio.fetch('https://www.naver.com/', (err, $, res) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    const getFaviconTag = $('link');
+    const ExtractedIconLink = [...getFaviconTag].filter(v => v.rel === 'shortcut icon')[0].href;
+
+    resolve(ExtractedIconLink);
+  }).then(link => {
+    event.sender.send('main/getFavicon', {
+      link: link
+    });
+  })
+});
 
 ipcMain.on('side/getMenuList', (event, arg) => {
   fs.readFile(MenuListPath, 'utf8', (error, data) => {

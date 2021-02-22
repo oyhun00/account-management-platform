@@ -35,7 +35,7 @@ const Side = (props) => {
       content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
       onOk() {
         ipcRenderer.send('side/removeMenu', id);
-        setSelectGroup(8)
+        setSelectGroup(menuList[0].id)
       },
       onCancel() {
       },
@@ -117,7 +117,7 @@ const Side = (props) => {
   
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} mode="inline" theme="dark">
+      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
         {menuItem}
       </CustomMenu>
       {

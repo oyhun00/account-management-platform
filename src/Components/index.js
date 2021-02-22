@@ -14,8 +14,6 @@ const MainComponent = () => {
     update: false
   });
 
-  console.log(selectGroup);
-
   return (
     <>
       <CustomSider>

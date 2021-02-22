@@ -98,7 +98,6 @@ const AccountForm = (props) => {
         <Form.Item label="계정 PW">
           <Input name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
-        {group}
       </Form>
     </Modal>
   );
