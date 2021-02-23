@@ -29,19 +29,19 @@ function createWindow () {
 app.whenReady().then(createWindow);
 
 ipcMain.on('main/getFavicon', (event, arg) => {
-  cheerio.fetch('https://www.naver.com/', (err, $, res) => {
+  cheerio.fetch('qef', (err, $, res) => {
     if (err) {
-      console.log(err);
+      event.sender.send('main/getFavicon', {
+        link: err
+      });
       return;
     }
+    
+    const getFaviconTag = $('link[rel="shortcut icon"]')[0] || $('link[rel="apple-touch-icon-precomposed"]')[0];
+    // const ExtractedIconLink = [...getFaviconTag].filter(v => v.rel === 'shortcut icon')[0].href;
 
-    const getFaviconTag = $('link');
-    const ExtractedIconLink = [...getFaviconTag].filter(v => v.rel === 'shortcut icon')[0].href;
-
-    resolve(ExtractedIconLink);
-  }).then(link => {
     event.sender.send('main/getFavicon', {
-      link: link
+      link: getFaviconTag
     });
   })
 });

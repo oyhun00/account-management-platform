@@ -72,7 +72,7 @@ const AccountForm = (props) => {
     });
   }, [selectGroup, accountFormat, visible]);
 
-  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, group } = accountFormat;
+  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
   return (
     <Modal
         title={update ? '계정 정보 수정' : '계정 정보 등록'}
