@@ -41,7 +41,7 @@ const ContentBox = (props) => {
       }
     });
     
-    ipcRenderer.send('main/getFavicon');
+    ipcRenderer.send('main/getFavicon', 'https://www.naver.com/');
     ipcRenderer.on('main/getFavicon', (e, result) => {
       console.log(result);
     });

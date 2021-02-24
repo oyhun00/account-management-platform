@@ -1,9 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const log = require('electron-log');
 const url = require('url');
 const path = require('path'); 
 const fs = require('fs');
 const cheerio = require('cheerio-httpcli');
-const { resolve } = require('path');
 const MenuListPath = './src/TempData/MenuList.json';
 const AccountListPath = './src/TempData/AccountList.json';
 
@@ -28,25 +28,34 @@ function createWindow () {
 
 app.whenReady().then(createWindow);
 
-ipcMain.on('main/getFavicon', (event, arg) => {
-  cheerio.fetch('qef', (err, $, res) => {
-    if (err) {
-      event.sender.send('main/getFavicon', {
-        link: err
-      });
-      return;
-    }
-    
-    const getFaviconTag = $('link[rel="shortcut icon"]')[0] || $('link[rel="apple-touch-icon-precomposed"]')[0];
-    // const ExtractedIconLink = [...getFaviconTag].filter(v => v.rel === 'shortcut icon')[0].href;
+ipcMain.on('main/getFavicon', (event, crawlUrl) => {
+  cheerio.fetch(crawlUrl)
+    .then((res) => {
+      const { $ } = res;
+      const { href } = $('link[rel="shortcut icon"]')[0].attribs || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
+      const faviconLocation = href.match('http') ? href : crawlUrl + href;
 
-    event.sender.send('main/getFavicon', {
-      link: getFaviconTag
-    });
-  })
+      event.sender.send('main/getFavicon', faviconLocation);
+    })
+
+  // cheerio.fetch(crawlUrl, (err, $, res) => {
+  //   if (err) {
+  //     event.sender.send('main/getFavicon', {
+  //       link: err
+  //     });
+  //     return;
+  //   }
+    
+  //   const { href } = $('link[rel="shortcut icon"]')[0].attribs || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
+  //   const faviconLocation = href.match('http') ? href : crawlUrl + href;
+
+  //   event.sender.send('main/getFavicon', faviconLocation);
+
+  // })
 });
 
 ipcMain.on('side/getMenuList', (event, arg) => {
+  log.info('test');
   fs.readFile(MenuListPath, 'utf8', (error, data) => {
     if (error) {
       event.sender.send('side/getMenuList', {
@@ -255,40 +264,60 @@ ipcMain.on('main/getAccountDetail', (event, id) => {
 });
 
 ipcMain.on('main/createAccount', (event, newAccountData) => {
-  fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
-    if (error) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-      return;
-    } 
+  cheerio.fetch(newAccountData.siteUrl)
+    .then((result) => {
+      log.info(result);
+      const { $ } = result;
+      const { href } = $('link[rel="shortcut icon"]')[0].attribs
+        || $('link[rel="icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
+
+      return href;
+    })
+    .then((href) => {
+      if (href) {
+        return href.match('http') ? href : newAccountData.siteUrl + href;
+      } else {
+        return false;
+      }
+    })
+    .then((faviconLocation) => {
+      fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
+        if (error) {
+          event.sender.send('main/getAccount', {
+            success: false,
+            code: 2,
+            log: error,
+          });
+          return;
+        } 
+        
+        const { sequence, list } = JSON.parse(prevAccountData);
+        const _sequence = sequence + 1;
+        const newAccountList = {
+          sequence: _sequence,
+          list: list.concat(
+            {
+              ...newAccountData,
+              siteIcon: faviconLocation,
+              id: _sequence
+            }
+          )
+        };
+      
+        fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8', (error) => {
+          const { list } = newAccountList;
     
-    const { sequence, list } = JSON.parse(prevAccountData);
-    const _sequence = sequence + 1;
-
-    const newAccountList = {
-      sequence: _sequence,
-      list: list.concat(
-        {
-          ...newAccountData,
-          id: _sequence
-        }
-      )
-    };
-  
-    fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8', (error) => {
-      const { list } = newAccountList;
-
-      event.sender.send('main/getAccount', {
-        success: true,
-        code: 1,
-        data: list,
-        log: '성공적으로 등록했어요.',
+          event.sender.send('main/getAccount', {
+            success: true,
+            code: 1,
+            data: list,
+            log: '성공적으로 등록했어요.',
+          });
+        });
       });
-    });
-  });
+    })
 });
 
 ipcMain.on('main/removeAccount', (event, id) => {
