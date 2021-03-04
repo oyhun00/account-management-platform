@@ -33,25 +33,10 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
     .then((res) => {
       const { $ } = res;
       const { href } = $('link[rel="shortcut icon"]')[0].attribs || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
-      const faviconLocation = href.match('http') ? href : crawlUrl + href;
+      const faviconLocation = href.match('http') || href.match('https') ? href : crawlUrl + href;
 
       event.sender.send('main/getFavicon', faviconLocation);
     })
-
-  // cheerio.fetch(crawlUrl, (err, $, res) => {
-  //   if (err) {
-  //     event.sender.send('main/getFavicon', {
-  //       link: err
-  //     });
-  //     return;
-  //   }
-    
-  //   const { href } = $('link[rel="shortcut icon"]')[0].attribs || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
-  //   const faviconLocation = href.match('http') ? href : crawlUrl + href;
-
-  //   event.sender.send('main/getFavicon', faviconLocation);
-
-  // })
 });
 
 ipcMain.on('side/getMenuList', (event, arg) => {
@@ -277,7 +262,7 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
     })
     .then((href) => {
       if (href) {
-        return href.match('http') ? href : newAccountData.siteUrl + href;
+        return href.match('http') || href.match('com') ? href : newAccountData.siteUrl + href;
       } else {
         return false;
       }

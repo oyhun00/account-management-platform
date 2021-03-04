@@ -83,12 +83,14 @@ const AccountRow = styled(Row)`
   & > span:last-child {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
 const CustomAvatar = styled(Avatar)`
   min-width: 32px;
   height: 32px;
+  user-select: none;
 `;
 
 const PropWrap = styled.div`
@@ -118,6 +120,7 @@ const SiteUrl = styled.div`
   font-size: 11px;
   text-overflow: ellipsis;
   overflow: hidden;
+  white-space: nowrap;
 `;
 
 const Title = styled.span`
