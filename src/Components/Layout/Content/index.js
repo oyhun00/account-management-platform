@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import styled from 'styled-components';
 import { Layout, Row, Col, Empty, Button, message } from 'antd';
 import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
+import Loading from '../../Layout/Content/Util/Loading';
 
 const { ipcRenderer } = window;
 const { Content } = Layout;
@@ -56,43 +57,45 @@ const ContentBox = (props) => {
 
 
   return (
-    <CustomContent>
-      {
-        accountData.length !== 0
-          ? (
-            <Row>
-              {accountData}
-              <Col
-                xl={{ span: 6 }}
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-                onClick={() => setAccountFormVisible({
-                  update: false,
-                  visible: true
-                })}>
-                  <CreateAccountCard/>
-              </Col>
-            </Row> 
-          )
-          : (
-            <EmptyWrap>
-              <CustomEmpty>
-                <Button
-                  type="primary"
+    <Suspense fallback={<Loading/>}>
+      <CustomContent>
+        {
+          accountData.length !== 0
+            ? (
+              <Row>
+                {accountData}
+                <Col
+                  xl={{ span: 6 }}
+                  lg={{ span: 8 }}
+                  md={{ span: 12 }}
+                  sm={{ span: 24 }}
+                  xs={{ span: 24 }}
                   onClick={() => setAccountFormVisible({
                     update: false,
                     visible: true
-                  })}
-                >
-                  계정 정보 등록
-                </Button>
-              </CustomEmpty>
-            </EmptyWrap>
-          )
-      }
-    </CustomContent>
+                  })}>
+                    <CreateAccountCard/>
+                </Col>
+              </Row> 
+            )
+            : (
+              <EmptyWrap>
+                <CustomEmpty>
+                  <Button
+                    type="primary"
+                    onClick={() => setAccountFormVisible({
+                      update: false,
+                      visible: true
+                    })}
+                  >
+                    계정 정보 등록
+                  </Button>
+                </CustomEmpty>
+              </EmptyWrap>
+            )
+        }
+      </CustomContent>
+    </Suspense>
   );
 }
 

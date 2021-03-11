@@ -6,6 +6,7 @@ import {
   CloseOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import MenuItem from './Menu';
 const { ipcRenderer } = window;
 const { confirm } = Modal;
@@ -100,8 +101,7 @@ const Side = (props) => {
     });
   }, []);
   
-  const menuItem = menuList.map((v) =>
-    (
+  const menuItem = menuList.map((v) => (
       <CustomMenuItem key={v.id} onClick={() => setSelectGroup(v.id)}>
         <MenuItem
           data={v}
@@ -114,12 +114,23 @@ const Side = (props) => {
       </CustomMenuItem>
     )
   );
+
+  const Temp = SortableContainer(() => {
+    return (
+    <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
+      {
+        SortableElement(() => 
+          menuItem
+        )
+      }
+    </CustomMenu>
+    )
+  })
   
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
-        {menuItem}
-      </CustomMenu>
+      <Temp />
+      
       {
         add
           ? (
@@ -145,7 +156,8 @@ const Side = (props) => {
               )
               : (
                 <>
-                  <PlusOutlined/>
+                  <CustomPlusOutlined/>
+                  <AddComment>그룹 추가</AddComment>
                 </>
               )
           }
@@ -164,7 +176,7 @@ const CustomSider = styled.div`
 const CustomMenu = styled(Menu)`
   background: #19171d !important;
   overflow: auto;
-  height: calc(100% - 75px);
+  // height: calc(100% - 75px);
 
   & .ant-menu-item-selected {
     background-color: #242229 !important;
@@ -185,9 +197,24 @@ const CustomPlusIconWrap = styled(Col)`
   text-align: center;
   cursor: pointer;
 
-  & :hover {
-    color: #fff;
+  :hover {
+    opacity: 0.7;
   }
+`;
+
+const CustomPlusOutlined = styled(PlusOutlined)`
+  background: #332f3c;
+  padding: 4px;
+  border-radius: 3px;
+
+  & > svg { 
+    width: 0.9em;
+    height: 0.9em;
+  }
+`;
+
+const AddComment = styled.span`
+  margin-left: 8px;
 `;
 
 const CustomInput = styled(Input)`
