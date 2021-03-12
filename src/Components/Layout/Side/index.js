@@ -5,6 +5,7 @@ import {
   PlusOutlined,
   CloseOutlined,
   ExclamationCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import MenuItem from './Menu';
@@ -83,7 +84,6 @@ const Side = (props) => {
   };
 
   useEffect(() => {
-    console.log("asd");
     ipcRenderer.send('side/getMenuList');
     ipcRenderer.on('side/getMenuList', (e, result) => {
       const { success } = result;
@@ -101,7 +101,8 @@ const Side = (props) => {
     });
   }, []);
   
-  const menuItem = menuList.map((v) => (
+  const menuItem = menuList.map((v) =>
+    (
       <CustomMenuItem key={v.id} onClick={() => setSelectGroup(v.id)}>
         <MenuItem
           data={v}
@@ -118,19 +119,16 @@ const Side = (props) => {
   const Temp = SortableContainer(() => {
     return (
     <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
-      {
-        SortableElement(() => 
-          menuItem
-        )
-      }
+      {menuItem}
     </CustomMenu>
     )
   })
   
   return (
     <CustomSider>
-      <Temp />
-      
+      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
+        {menuItem}
+      </CustomMenu>
       {
         add
           ? (
@@ -163,11 +161,15 @@ const Side = (props) => {
           }
         </CustomPlusIconWrap>
       </CustomRow>
+      <CustomFixedRow>
+        <CustomSettingOutlined />
+      </CustomFixedRow>
     </CustomSider>
   );
 }
 
 const CustomSider = styled.div`
+  position: relative;
   background: #19171d;
   color: rgba(255, 255, 255, 0.65);
   height: 100%;
@@ -226,6 +228,20 @@ const CustomInput = styled(Input)`
   :focus, :hover {
     border-color: #fff;
     color: #fff;
+  }
+`;
+
+const CustomFixedRow = styled(Row)`
+  position: fixed;
+  bottom: 0;  
+  padding: 15px 16px 15px 24px;
+`;
+
+const CustomSettingOutlined = styled(SettingOutlined)`
+  cursor: pointer;
+
+  :hover {
+    opacity: 0.7;
   }
 `;
 
