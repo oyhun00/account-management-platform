@@ -13,7 +13,7 @@ const { ipcRenderer } = window;
 const { confirm } = Modal;
 
 const Side = (props) => {
-  const { setSelectGroup, selectGroup } = props;
+  const { setSelectGroup, selectGroup, setSettingVisible } = props;
 
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
@@ -162,7 +162,7 @@ const Side = (props) => {
         </CustomPlusIconWrap>
       </CustomRow>
       <CustomFixedRow>
-        <CustomSettingOutlined />
+        <CustomSettingOutlined onClick={() => setSettingVisible(true)} />
       </CustomFixedRow>
     </CustomSider>
   );

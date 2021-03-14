@@ -1,9 +1,10 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 import { Layout, Row, Col, Empty, Button, message } from 'antd';
-import AccountCard from './AccountCard';
 import CreateAccountCard from './CreateAccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
+
+const AccountCard = lazy(() => import('./AccountCard'));
 
 const { ipcRenderer } = window;
 const { Content } = Layout;

@@ -13,6 +13,7 @@ const MainComponent = () => {
     visible: false,
     update: false
   });
+  const [SettingVisible, setSettingVisible] = useState(false)
 
   return (
     <>
@@ -20,6 +21,7 @@ const MainComponent = () => {
         <Side
           selectGroup={selectGroup}
           setSelectGroup={setSelectGroup}
+          setSettingVisible={setSettingVisible}
         />
       </CustomSider>
       <CustomMainLayout>
@@ -32,6 +34,8 @@ const MainComponent = () => {
         selectGroup={selectGroup}
         accountFormVisible={accountFormVisible}
         setAccountFormVisible={setAccountFormVisible}
+        SettingVisible={SettingVisible}
+        setSettingVisible={setSettingVisible}
       />
     </>
   );
