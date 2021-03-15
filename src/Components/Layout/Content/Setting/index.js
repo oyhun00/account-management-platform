@@ -1,42 +1,35 @@
 import React from 'react';
-import { Modal, Menu, Layout } from 'antd';
-
-const { Content, Sider } = Layout;
+import styled from 'styled-components';
+import { Modal, Layout } from 'antd';
+import SettingSide from './SettingSide';
+import SettingContent from './SettingContent';
 
 const Setting = (props) => {
   const { SettingVisible, setSettingVisible } = props;
 
   return (
-    <Modal
+    <CustomModal
         title="환경 설정"
         centered
         visible={SettingVisible}
         onOk={() => setSettingVisible(false)}
         onCancel={() => setSettingVisible(false)}
         width={1000}
+        bodyStyle={{ padding: 0 }}
       >
-      <Sider>
-        <Menu
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            mode="inline"
-          >
-            <Menu.Item key="1">
-              Option 1
-            </Menu.Item>
-            <Menu.Item key="2">
-              Option 2
-            </Menu.Item>
-            <Menu.Item key="3">
-              Option 3
-            </Menu.Item>
-        </Menu>
-      </Sider>
       <Layout>
-        <Content>sd</Content>
+        <SettingSide />
+        <SettingContent />
       </Layout>
-    </Modal>
+    </CustomModal>
   )
 };
+
+const CustomModal = styled(Modal)`
+  * {
+    background-color: #1a1d21;
+    color: #fff;
+  }
+`;
 
 export default Setting;
