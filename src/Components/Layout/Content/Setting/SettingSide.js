@@ -13,7 +13,7 @@ const SettingSide = () => {
           mode="inline"
         >
           <CustomMenuItem key="1">
-            Option 1
+            연동 계정 설정
           </CustomMenuItem>
           <CustomMenuItem key="2">
             Option 2
@@ -27,24 +27,30 @@ const SettingSide = () => {
 };
 
 const CustomMenu = styled(Menu)`
-  border-right: 0 !important;
+  border-right: 1px solid #30353c;
 `;
 
 const CustomMenuItem = styled(Menu.Item)`
+  width: 100% !important;
   height: 30px !important;
   line-height: 30px !important;
 
   & :hover, :focus, :active {
-    color: #fff;
-    background-color: #1264a3 !important;
+    color: #4694df !important;
+    background-color: transparent !important;
+  }
+
+  &::after {
+    display: none;
   }
 
   &.ant-menu-item-selected {
-    background-color: #1264a3 !important;
+    color: #4694df !important;
+    background-color: transparent !important;
   }
 
   &.ant-menu-item-selected:hover {
-    color: #fff;
+    color: #4694df !important;
   }
 `;
 

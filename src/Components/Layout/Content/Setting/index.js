@@ -17,19 +17,35 @@ const Setting = (props) => {
         width={1000}
         bodyStyle={{ padding: 0 }}
       >
-      <Layout>
+      <CustomLayout>
         <SettingSide />
         <SettingContent />
-      </Layout>
+      </CustomLayout>
     </CustomModal>
   )
 };
 
 const CustomModal = styled(Modal)`
+  .ant-modal-close-x {
+    height: 54px;
+    line-height: 54px;
+  }
+
   * {
     background-color: #1a1d21;
     color: #fff;
   }
+
+  .ant-modal-header {
+    border-bottom: 1px solid #30353c;
+  }
+
+  .ant-modal-footer {
+    border: 0;
+  }
+`;
+
+const CustomLayout = styled(Layout)`
 `;
 
 export default Setting;
