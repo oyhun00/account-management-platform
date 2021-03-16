@@ -1,0 +1,4 @@
+[
+  { "id": 0, "siteName": "demoSite", "siteUrl": "http://demo.testfire.net/", "accountId": "admin", "accountPassword": "admin" },
+  { "id": 1, "siteName": "demoSite", "siteUrl": "http://demo.testfire.net/", "accountId": "admin", "accountPassword": "admin" }
+]

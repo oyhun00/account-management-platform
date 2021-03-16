@@ -1,0 +1,63 @@
+{
+  "name": "amp",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.3",
+    "@testing-library/user-event": "^12.6.2",
+    "antd": "^4.11.2",
+    "axios": "^0.21.1",
+    "cheerio-httpcli": "^0.8.1",
+    "electron-log": "^4.3.2",
+    "electron-router": "^0.5.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.1",
+    "react-sortable-hoc": "^1.11.0",
+    "styled-components": "^5.2.1",
+    "web-vitals": "^0.2.4",
+    "write-json-file": "^4.3.0"
+  },
+  "homepage": "./",
+  "main": "src/electron-starter.js",
+  "scripts": {
+    "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "start": "nf start",
+    "dist": "npm run react-build && electron-builder"
+  },
+  "build": {
+    "extends": null,
+    "directories": {
+      "buildResources": "public"
+    },
+    "target": "zip"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1",
+    "foreman": "^3.0.1"
+  }
+}
