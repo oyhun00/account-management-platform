@@ -29,7 +29,6 @@ const AccountForm = (props) => {
   
   const formChangeHandle = (e) => {
     const { value, name } = e.target;
-    console.log(accountFormat)
 
     setAccountFormat({
       ...accountFormat,
@@ -39,6 +38,14 @@ const AccountForm = (props) => {
   };
 
   const formSubmit = () => {
+    const { siteNameKr, siteUrl, accountId, accountPwd } = accountFormat;
+
+    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+      message.error("필수 입력 값을 확인해 주세요.");
+
+      return;
+    }
+
     ipcRenderer.send('main/createAccount', accountFormat);
 
     setAccountFormVisible(false);
@@ -47,6 +54,14 @@ const AccountForm = (props) => {
   };
 
   const formUpdateSubmit = () => {
+    const { siteNameKr, siteUrl, accountId, accountPwd } = accountFormat;
+
+    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+      message.error("필수 입력 값을 확인해 주세요.");
+
+      return;
+    }
+
     ipcRenderer.send('main/updateAccount', accountFormat);
 
     setAccountFormVisible(false);
@@ -73,6 +88,7 @@ const AccountForm = (props) => {
   }, [selectGroup, accountFormat, visible]);
 
   const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
+  
   return (
     <CustomModal
         title={update ? '계정 정보 수정' : '계정 정보 등록'}

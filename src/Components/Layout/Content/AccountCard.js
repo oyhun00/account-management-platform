@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import styled from 'styled-components';
 import { Card, Avatar, Row, Divider, Popover, List, Button } from 'antd';
 import {
@@ -6,6 +6,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
+import Loading from './Util/Loading';
 import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 
@@ -22,37 +23,39 @@ const AccountCard = (props) => {
   );
 
   return (
-    <CustomCard>
-      <CustomRow>
-        <CustomAvatar src={siteIcon} />
-        <PropWrap>
-          <SiteName>
-            <span>{siteNameKr}</span>
-            <span>{siteNameEng}</span>
-          </SiteName>
-          <SiteUrl>{siteUrl}</SiteUrl>
-        </PropWrap>
-      </CustomRow>
-      <CustomDivider />
-      <CustomRow>
-        { LinkedFavicon ? <CustomAvatar src={LinkedFavicon[0].favicon} /> : <CustomAvatar src={siteIcon} /> }
-        <PropWrap>
-          <AccountRow>
-            <Title>ID</Title>
-            <span>{accountId}</span>
-          </AccountRow>
-          <AccountRow>
-            <Title>PW</Title>
-            <span>{accountPwd}</span>
-          </AccountRow>
-        </PropWrap>
-      </CustomRow>
-      <Popover content={popMenu} trigger="focus">
-        <ActionButton>
-          <MoreOutlined />
-        </ActionButton>
-      </Popover>
-    </CustomCard>
+    <Suspense fallback={<Loading/>}>
+      <CustomCard>
+        <CustomRow>
+          <CustomAvatar src={siteIcon} />
+          <PropWrap>
+            <SiteName>
+              <span>{siteNameKr}</span>
+              <span>{siteNameEng}</span>
+            </SiteName>
+            <SiteUrl>{siteUrl}</SiteUrl>
+          </PropWrap>
+        </CustomRow>
+        <CustomDivider />
+        <CustomRow>
+          { LinkedFavicon ? <CustomAvatar src={LinkedFavicon[0].favicon} /> : <CustomAvatar src={siteIcon} /> }
+          <PropWrap>
+            <AccountRow>
+              <Title>ID</Title>
+              <span>{accountId}</span>
+            </AccountRow>
+            <AccountRow>
+              <Title>PW</Title>
+              <span>{accountPwd}</span>
+            </AccountRow>
+          </PropWrap>
+        </CustomRow>
+        <Popover content={popMenu} trigger="focus">
+          <ActionButton>
+            <MoreOutlined />
+          </ActionButton>
+        </Popover>
+      </CustomCard>
+    </Suspense>
   );
 }
 
