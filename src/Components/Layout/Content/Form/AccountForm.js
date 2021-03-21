@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, message, Select } from 'antd';
+
 const { ipcRenderer } = window;
+const { Option } = Select;
 
 const AccountForm = (props) => {
   const { selectGroup, accountFormVisible, setAccountFormVisible } = props;
@@ -107,7 +109,11 @@ const AccountForm = (props) => {
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="사이트 URL">
-          <CustomInput name="siteUrl" value={siteUrl} onChange={(e) => formChangeHandle(e)} />
+          <CustomSelect style={{ width: '25%' }}>
+            <Option value="http">http</Option>
+            <Option value="https">https</Option>
+          </CustomSelect>
+          <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="계정 ID">
           <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
@@ -177,6 +183,16 @@ const CustomForm = styled(Form)`
 
 const CustomInput = styled(Input)`
   border: 1px solid #454b52;
+`;
+
+const CustomSelect = styled(Select)`
+  margin-right: 5%;
+
+  .ant-select-selector {
+    background-color: transparent !important;
+    border: 1px solid #454b52 !important;
+    padding: 0.5px 11px !important;
+  }
 `;
 
 export default AccountForm;
