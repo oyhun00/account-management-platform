@@ -40,7 +40,6 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
 });
 
 ipcMain.on('side/getMenuList', (event, arg) => {
-  log.info('test');
   fs.readFile(MenuListPath, 'utf8', (error, data) => {
     if (error) {
       event.sender.send('side/getMenuList', {
@@ -251,7 +250,6 @@ ipcMain.on('main/getAccountDetail', (event, id) => {
 ipcMain.on('main/createAccount', (event, newAccountData) => {
   cheerio.fetch(newAccountData.siteUrl)
     .then((result) => {
-      log.info(result);
       const { $ } = result;
       const { href } = $('link[rel="shortcut icon"]')[0].attribs
         || $('link[rel="icon"]')[0].attribs
@@ -259,6 +257,15 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
         || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
 
       return href;
+    })
+    .catch(error => {
+      event.sender.send('main/getAccount', {
+        success: false,
+        code: 3,
+        log: 'URL이 유효하지 않아 파비콘을 파싱하지 못했습니다.',
+      });
+
+      log.info('err : ' + error);
     })
     .then((href) => {
       if (href) {

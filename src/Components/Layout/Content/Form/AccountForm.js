@@ -77,6 +77,7 @@ const AccountForm = (props) => {
   useEffect(() => {
     ipcRenderer.on('main/getAccountDetail', (e, result) => {
       const { success } = result;
+      console.log(result);
 
       if (success) {
         const { data } = result;

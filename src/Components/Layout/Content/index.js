@@ -29,6 +29,7 @@ const ContentBox = (props) => {
   useEffect(() => {
     ipcRenderer.send('main/getAccount');
     ipcRenderer.on('main/getAccount', (e, result) => {
+      console.log(result);
       const { success } = result;
 
       if (success) {
@@ -42,7 +43,7 @@ const ContentBox = (props) => {
         message.error(result.log);
       }
     });
-  }, [accountList]);
+  }, []);
 
   const accountData = accountList.reduce((acc, cur) => {
     if(cur.group === selectGroup) acc.push(
