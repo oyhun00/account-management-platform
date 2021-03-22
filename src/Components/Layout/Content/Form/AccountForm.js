@@ -12,6 +12,7 @@ const AccountForm = (props) => {
   const [accountFormat, setAccountFormat] = useState({
     siteNameKr: '',
     siteNameEng: '',
+    protocol: 'http://',
     siteUrl: '',
     accountId: '',
     accountPwd: '',
@@ -22,10 +23,18 @@ const AccountForm = (props) => {
     setAccountFormat({
       siteNameKr: '',
       siteNameEng: '',
+      protocol: 'http',
       siteUrl: '',
       accountId: '',
       accountPwd: '',
       group: selectGroup,
+    })
+  };
+
+  const protocolChangeHandle = (e) => {
+    setAccountFormat({
+      ...accountFormat,
+      protocol: e
     })
   };
   
@@ -90,7 +99,7 @@ const AccountForm = (props) => {
     });
   }, [selectGroup, accountFormat, visible]);
 
-  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
+  const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
   
   return (
     <CustomModal
@@ -109,9 +118,9 @@ const AccountForm = (props) => {
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="사이트 URL">
-          <CustomSelect style={{ width: '25%' }}>
-            <Option value="http">http</Option>
-            <Option value="https">https</Option>
+          <CustomSelect value={protocol} onChange={(e) => protocolChangeHandle(e)} style={{ width: '25%' }}>
+            <Option value="http://">http</Option>
+            <Option value="https://">https</Option>
           </CustomSelect>
           <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>

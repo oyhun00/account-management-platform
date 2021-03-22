@@ -248,7 +248,10 @@ ipcMain.on('main/getAccountDetail', (event, id) => {
 });
 
 ipcMain.on('main/createAccount', (event, newAccountData) => {
-  cheerio.fetch(newAccountData.siteUrl)
+  const { siteUrl, protocol } = newAccountData;
+  const url = protocol + siteUrl;
+
+  cheerio.fetch(url)
     .then((result) => {
       const { $ } = result;
       const { href } = $('link[rel="shortcut icon"]')[0].attribs
@@ -269,7 +272,7 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
     })
     .then((href) => {
       if (href) {
-        return href.match('http') || href.match('com') ? href : newAccountData.siteUrl + href;
+        return href.match('http') || href.match('com') ? href : url + href;
       } else {
         return false;
       }
@@ -292,6 +295,7 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
           list: list.concat(
             {
               ...newAccountData,
+              siteUrl: url,
               siteIcon: faviconLocation,
               id: _sequence
             }
@@ -352,12 +356,13 @@ ipcMain.on('main/updateAccount', (event, accountData) => {
       });
       return;
     } 
-    const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, id } = accountData;
+    const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd, id } = accountData;
+    const url = protocol + siteUrl;
     const { sequence, list } = JSON.parse(prevAccountData);
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng, siteUrl, accountId, accountPwd }
+            ? { ...v, siteNameKr, siteNameEng, url, accountId, accountPwd }
             : { ...v })
       }
 
