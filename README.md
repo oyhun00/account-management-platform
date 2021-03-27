@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # account-management-platform
 # test
 =======
