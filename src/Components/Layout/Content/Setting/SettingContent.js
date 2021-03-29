@@ -6,7 +6,7 @@ const { Content } = Layout;
 
 const Setting = () => {
   return (
-    <CustomContent>sd</CustomContent>
+    <CustomContent>test</CustomContent>
   )
 };
 
