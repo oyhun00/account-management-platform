@@ -23,7 +23,7 @@ const AccountForm = (props) => {
     setAccountFormat({
       siteNameKr: '',
       siteNameEng: '',
-      protocol: 'http',
+      protocol: 'http://',
       siteUrl: '',
       accountId: '',
       accountPwd: '',
@@ -37,13 +37,13 @@ const AccountForm = (props) => {
       protocol: e
     })
   };
-  
+
   const formChangeHandle = (e) => {
     const { value, name } = e.target;
 
     setAccountFormat({
       ...accountFormat,
-      [name]: value, 
+      [name]: value,
       group: selectGroup,
     });
   };
@@ -60,7 +60,7 @@ const AccountForm = (props) => {
     ipcRenderer.send('main/createAccount', accountFormat);
 
     setAccountFormVisible(false);
-    
+
     formClear();
   };
 
@@ -100,7 +100,7 @@ const AccountForm = (props) => {
   }, [selectGroup, accountFormat, visible]);
 
   const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-  
+
   return (
     <CustomModal
         title={update ? '계정 정보 수정' : '계정 정보 등록'}
