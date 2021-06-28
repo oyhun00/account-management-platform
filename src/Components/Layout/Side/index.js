@@ -6,6 +6,7 @@ import {
   CloseOutlined,
   ExclamationCircleOutlined,
   SettingOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import MenuItem from './Menu';
@@ -13,7 +14,7 @@ const { ipcRenderer } = window;
 const { confirm } = Modal;
 
 const Side = (props) => {
-  const { setSelectGroup, selectGroup, setSettingVisible } = props;
+  const { setSelectGroup, selectGroup, setSettingVisible, setSelectView } = props;
 
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
@@ -163,6 +164,7 @@ const Side = (props) => {
       </CustomRow>
       <CustomFixedRow>
         <CustomSettingOutlined onClick={() => setSettingVisible(true)} />
+        <CustomLinkOutlined onClick={() => setSelectView('linkage')} />
       </CustomFixedRow>
     </CustomSider>
   );
@@ -178,7 +180,7 @@ const CustomSider = styled.div`
 const CustomMenu = styled(Menu)`
   background: #19171d !important;
   overflow: auto;
-  // height: calc(100% - 75px);
+  max-height: calc(100% - 80px);
 
   & .ant-menu-item-selected {
     background-color: #242229 !important;

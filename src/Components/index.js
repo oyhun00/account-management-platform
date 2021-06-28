@@ -14,6 +14,7 @@ const MainComponent = () => {
     update: false
   });
   const [SettingVisible, setSettingVisible] = useState(false)
+  const [selectView, setSelectView] = useState(null);
 
   return (
     <>
@@ -22,11 +23,13 @@ const MainComponent = () => {
           selectGroup={selectGroup}
           setSelectGroup={setSelectGroup}
           setSettingVisible={setSettingVisible}
+          setSelectView={setSelectView}
         />
       </CustomSider>
       <CustomMainLayout>
         <ContentBox
           selectGroup={selectGroup}
+          selectView={selectView}
           setAccountFormVisible={setAccountFormVisible}
         />
       </CustomMainLayout>

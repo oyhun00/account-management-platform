@@ -10,7 +10,7 @@ const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = (props) => {
-  const { selectGroup, setAccountFormVisible } = props;
+  const { selectGroup, selectView, setAccountFormVisible } = props;
   const [accountList, setAccountList] = useState([]);
   
   const formUpdateToggle = (id) => {
@@ -22,7 +22,7 @@ const ContentBox = (props) => {
     })
   };
 
-  const removeAccount = (id) => {
+  const removeAccount = (id) => {                                                       
     ipcRenderer.send('main/removeAccount', id);
   };
 
@@ -45,6 +45,8 @@ const ContentBox = (props) => {
     });
   }, []);
 
+  const linkageAccount = selectView ? true : false;
+
   const accountData = accountList.reduce((acc, cur) => {
     if(cur.group === selectGroup) acc.push(
       <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
@@ -62,39 +64,43 @@ const ContentBox = (props) => {
     <Suspense fallback={<Loading/>}>
       <CustomContent>
         {
-          accountData.length !== 0
-            ? (
-              <Row>
-                {accountData}
-                <Col
-                  xl={{ span: 6 }}
-                  lg={{ span: 8 }}
-                  md={{ span: 12 }}
-                  sm={{ span: 24 }}
-                  xs={{ span: 24 }}
-                  onClick={() => setAccountFormVisible({
-                    update: false,
-                    visible: true
-                  })}>
-                    <CreateAccountCard/>
-                </Col>
-              </Row> 
-            )
-            : (
-              <EmptyWrap>
-                <CustomEmpty>
-                  <Button
-                    type="primary"
+          selectView
+           ? linkageAccount
+           : (
+             accountData.length !== 0
+              ? (
+                <Row>
+                  {accountData}
+                  <Col
+                    xl={{ span: 6 }}
+                    lg={{ span: 8 }}
+                    md={{ span: 12 }}
+                    sm={{ span: 24 }}
+                    xs={{ span: 24 }}
                     onClick={() => setAccountFormVisible({
                       update: false,
                       visible: true
-                    })}
-                  >
-                    계정 정보 등록
-                  </Button>
-                </CustomEmpty>
-              </EmptyWrap>
-            )
+                    })}>
+                      <CreateAccountCard/>
+                  </Col>
+                </Row> 
+              )
+              : (
+                <EmptyWrap>
+                  <CustomEmpty>
+                    <Button
+                      type="primary"
+                      onClick={() => setAccountFormVisible({
+                        update: false,
+                        visible: true
+                      })}
+                    >
+                      계정 정보 등록
+                    </Button>
+                  </CustomEmpty>
+                </EmptyWrap>
+              )
+          )
         }
       </CustomContent>
     </Suspense>
