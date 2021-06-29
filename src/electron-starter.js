@@ -6,6 +6,7 @@ const fs = require('fs');
 const cheerio = require('cheerio-httpcli');
 const MenuListPath = './src/TempData/MenuList.json';
 const AccountListPath = './src/TempData/AccountList.json';
+const LinkageListPath = './src/TempData/AccountLinkage.json';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -203,6 +204,8 @@ ipcMain.on('side/removeMenu', (event, id) => {
 
 
 ipcMain.on('main/getAccount', (event, id) => {
+  const AccountLinkage = fs.readFileSync(LinkageListPath);
+
   fs.readFile(AccountListPath, 'utf8', (error, data) => {
     if (error) {
       event.sender.send('main/getAccount', {
@@ -220,6 +223,7 @@ ipcMain.on('main/getAccount', (event, id) => {
       success: true,
       code: 1,
       data: list,
+      link : JSON.parse(AccountLinkage),
     });
   });
 });
