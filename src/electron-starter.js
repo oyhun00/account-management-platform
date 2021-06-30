@@ -3,10 +3,11 @@ const log = require('electron-log');
 const url = require('url');
 const path = require('path'); 
 const fs = require('fs');
+const afs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
 const MenuListPath = './src/TempData/MenuList.json';
 const AccountListPath = './src/TempData/AccountList.json';
-const LinkageListPath = './src/TempData/AccountLinkage.json';
+const LinkageListPath = './src/TempData/AcasdascountLinkage.json';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -203,44 +204,54 @@ ipcMain.on('side/removeMenu', (event, id) => {
 });
 
 
-ipcMain.on('main/getAccount', (event, id) => {
-  const AccountLinkage = fs.readFileSync(LinkageListPath);
+ipcMain.on('main/getAccount', async (event, id) => {
+  const AccountLinkage = await afs.readFile(LinkageListPath);
+  const AccountList = await afs.readFile(AccountListPath);
 
-  fs.readFile(AccountListPath, 'utf8', (error, data) => {
-    if (error) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-
-      return;
-    }
-    
-    const { list } = JSON.parse(data);
+  try {
+    const { list } = JSON.parse(AccountList);
 
     event.sender.send('main/getAccount', {
       success: true,
       code: 1,
-      data: list,
-      link : JSON.parse(AccountLinkage),
+      accountData: list,
+      linkData: JSON.parse(AccountLinkage),
     });
-  });
-});
-
-ipcMain.on('main/getAccountDetail', (event, id) => {
-  fs.readFile(AccountListPath, 'utf8', (error, data) => {
-    if (error) {
-      event.sender.send('main/getAccountDetail', {
+    
+  } catch (error) {
+    if(!AccountLinkage) {
+      event.sender.send('main/getAccount', {
         success: false,
         code: 2,
-        log: error,
+        log: '연동 계정 파일을 찾을 수 없습니다.',
+      });
+
+      return;
+    } else if(!AccountList) {
+      event.sender.send('main/getAccount', {
+        success: false,
+        code: 2,
+        log: '계정 파일을 찾을 수 없습니다.',
       });
 
       return;
     }
+
+    event.sender.send('main/getAccount', {
+      success: false,
+      code: 2,
+      log: error.message,
+    });
+
+    return;
+  }
+});
+
+ipcMain.on('main/getAccountDetail', async (event, id) => {
+  try {
+    const AccountList = await afs.readFile(AccountListPath);
+    const { list } = JSON.parse(AccountList);
     
-    const { list } = JSON.parse(data);
     const detailData = list.filter((v) => v.id === id)[0];
 
     event.sender.send('main/getAccountDetail', {
@@ -248,7 +259,15 @@ ipcMain.on('main/getAccountDetail', (event, id) => {
       code: 1,
       data: detailData,
     });
-  });
+  } catch (error) {
+    event.sender.send('main/getAccountDetail', {
+      success: false,
+      code: 2,
+      log: error,
+    });
+
+    return;
+  }
 });
 
 ipcMain.on('main/createAccount', (event, newAccountData) => {

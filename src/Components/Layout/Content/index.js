@@ -30,27 +30,27 @@ const ContentBox = (props) => {
   useEffect(() => {
     ipcRenderer.send('main/getAccount');
     ipcRenderer.on('main/getAccount', (e, result) => {
-      console.log(result);
-      const { success } = result;
+      console.log(result)
+      const { success, log } = result;
 
       if (success) {
-        const { data, log, link } = result;
+        const { accountData, linkData } = result;
         
-        setAccountList(data);
-        setLinkedAccountList(link);
+        setAccountList(accountData);
+        setLinkedAccountList(linkData);
 
         if (log) {
           message.success(log);
         }
       } else {
-        message.error(result.log);
+        message.error(log);
       }
     });
   }, []);
 
   const linkageAccount = '';
 
-  const accountData = accountList.reduce((acc, cur) => {
+  const accountFilteredData = accountList.reduce((acc, cur) => {
     if(cur.group === selectGroup) acc.push(
       <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
         <AccountCard
@@ -69,10 +69,10 @@ const ContentBox = (props) => {
           selectView
            ? linkageAccount
            : (
-             accountData.length !== 0
+             accountFilteredData.length !== 0
               ? (
                 <Row>
-                  {accountData}
+                  {accountFilteredData}
                   <Col
                     xl={{ span: 6 }}
                     lg={{ span: 8 }}
