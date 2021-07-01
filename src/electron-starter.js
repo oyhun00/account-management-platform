@@ -7,7 +7,7 @@ const afs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
 const MenuListPath = './src/TempData/MenuList.json';
 const AccountListPath = './src/TempData/AccountList.json';
-const LinkageListPath = './src/TempData/AcasdascountLinkage.json';
+const LinkageListPath = './src/TempData/AccountLinkage.json';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -205,10 +205,9 @@ ipcMain.on('side/removeMenu', (event, id) => {
 
 
 ipcMain.on('main/getAccount', async (event, id) => {
-  const AccountLinkage = await afs.readFile(LinkageListPath);
-  const AccountList = await afs.readFile(AccountListPath);
-
   try {
+    const AccountLinkage = await afs.readFile(LinkageListPath);
+    const AccountList = await afs.readFile(AccountListPath);
     const { list } = JSON.parse(AccountList);
 
     event.sender.send('main/getAccount', {
@@ -219,24 +218,6 @@ ipcMain.on('main/getAccount', async (event, id) => {
     });
     
   } catch (error) {
-    if(!AccountLinkage) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: '연동 계정 파일을 찾을 수 없습니다.',
-      });
-
-      return;
-    } else if(!AccountList) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: '계정 파일을 찾을 수 없습니다.',
-      });
-
-      return;
-    }
-
     event.sender.send('main/getAccount', {
       success: false,
       code: 2,
@@ -263,7 +244,7 @@ ipcMain.on('main/getAccountDetail', async (event, id) => {
     event.sender.send('main/getAccountDetail', {
       success: false,
       code: 2,
-      log: error,
+      log: error.message,
     });
 
     return;
@@ -339,33 +320,45 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
     })
 });
 
-ipcMain.on('main/removeAccount', (event, id) => {
-  fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
-    if (error) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-      return;
-    } 
-    const { sequence, list } = JSON.parse(prevAccountData);
+ipcMain.on('main/removeAccount', async (event, id) => {
+  try {
+    const AccountList = await afs.readFile(AccountListPath);
+
+    const { sequence, list } = JSON.parse(AccountList);
     const newAccountList = {
       sequence,
       list: list.filter((v) => v.id !== id),
     }
-    
-    fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8', (error) => {
-      const { list } = newAccountList;
 
-      event.sender.send('main/getAccount', {
-        success: true,
-        code: 1,
-        data: list,
-        log: '성공적으로 삭제했어요.',
-      });
+    afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
+      .then(() => {
+        const { list } = newAccountList;
+
+        event.sender.send('main/getAccount', {
+          success: true,
+          code: 1,
+          accountData: list,
+          log: '성공적으로 삭제했어요.',
+        });
+      })
+      .catch((error) => {
+        event.sender.send('main/getAccount', {
+          success: false,
+          code: 2,
+          log: error,
+        });
+
+        return;
+      })
+  } catch(error) {
+    event.sender.send('main/getAccount', {
+      success: false,
+      code: 2,
+      log: error.message,
     });
-  });
+
+    return;
+  }
 });
 
 ipcMain.on('main/updateAccount', (event, accountData) => {

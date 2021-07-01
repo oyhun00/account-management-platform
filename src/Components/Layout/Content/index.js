@@ -28,9 +28,10 @@ const ContentBox = (props) => {
   };
 
   useEffect(() => {
+    console.log(111);
     ipcRenderer.send('main/getAccount');
     ipcRenderer.on('main/getAccount', (e, result) => {
-      console.log(result)
+      console.log(result.log);
       const { success, log } = result;
 
       if (success) {
