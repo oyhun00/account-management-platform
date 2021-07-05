@@ -31,11 +31,11 @@ const ContentBox = (props) => {
     console.log(111);
     ipcRenderer.send('main/getAccount');
     ipcRenderer.on('main/getAccount', (e, result) => {
-      console.log(result.log);
       const { success, log } = result;
 
       if (success) {
         const { accountData, linkData } = result;
+        console.log(result);
         
         setAccountList(accountData);
         setLinkedAccountList(linkData);

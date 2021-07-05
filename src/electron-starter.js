@@ -41,43 +41,32 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
     })
 });
 
-ipcMain.on('side/getMenuList', (event, arg) => {
-  fs.readFile(MenuListPath, 'utf8', (error, data) => {
-    if (error) {
-      event.sender.send('side/getMenuList', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-
-      return;
-    }
-
-    const { list } = JSON.parse(data);
+ipcMain.on('side/getMenuList', async (event, arg) => {
+  try { 
+    const MenuList = await afs.readFile(MenuListPath);
+    const { list } = JSON.parse(MenuList);
 
     event.sender.send('side/getMenuList', {
       success: true,
       code: 1,
       data: list,
     });
-  })
+  } catch(error) {
+    event.sender.send('side/getMenuList', {
+      success: false,
+      code: 2,
+      log: error.message,
+    });
+
+    return;
+  }
 });
 
-ipcMain.on('side/createMenu', (event, newMenuName) => {
-  fs.readFile(MenuListPath, 'utf8', (error, data) => {
-    if (error) {
-      event.sender.send('side/getMenuList', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-
-      return;
-    }
-    
-    const { list, sequence } = JSON.parse(data);
+ipcMain.on('side/createMenu', async (event, newMenuName) => {
+  try {
+    const MenuList = await afs.readFile(MenuListPath);
+    const { list, sequence } = JSON.parse(MenuList);
     const _sequence = sequence + 1;
-    
     const newMenuList = {
       sequence: _sequence,
       list: list.concat({
@@ -88,8 +77,18 @@ ipcMain.on('side/createMenu', (event, newMenuName) => {
       })
     };
 
-    fs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8', (error) => {
-      if (error) {
+    afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8')
+      .then(() => {
+        const { list } = newMenuList;
+
+        event.sender.send('side/getMenuList', {
+          success: true,
+          code: 1,
+          data: list,
+          log: '성공적으로 등록했어요!',
+        });
+      })
+      .catch((error) => {
         event.sender.send('side/getMenuList', {
           success: false,
           code: 2,
@@ -97,41 +96,36 @@ ipcMain.on('side/createMenu', (event, newMenuName) => {
         });
   
         return;
-      }
-
-      const { list } = newMenuList;
-
-      event.sender.send('side/getMenuList', {
-        success: true,
-        code: 1,
-        data: list,
-        log: '성공적으로 등록했어요!',
-      });
+      })
+  } catch (error) {
+    event.sender.send('side/getMenuList', {
+      success: false,
+      code: 2,
+      log: error.message,
     });
-  });
+
+    return;
+  }
 });
 
-ipcMain.on('side/updateMenu', (event, updateMenuData) => {
-  fs.readFile(MenuListPath, 'utf8', (error, prevMenuData) => {
-    if (error) {
-      event.sender.send('side/getMenuList', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-
-      return;
-    }
-    
-    const { sequence } = JSON.parse(prevMenuData);
-
+ipcMain.on('side/updateMenu', async (event, updateMenuData) => {
+  try {
+    const MenuList = await afs.readFile(MenuListPath);
+    const { sequence } = JSON.parse(MenuList);
     const updateMenuList = {
       sequence,
       list: updateMenuData,
     };
 
-    fs.writeFile(MenuListPath, JSON.stringify(updateMenuList), 'utf8', (error) => {
-      if (error) {
+    afs.writeFile(MenuListPath, JSON.stringify(updateMenuList), 'utf8')
+      .then(() => {
+        event.sender.send('side/getMenuList', {
+          success: true,
+          code: 1,
+          data: updateMenuList.list,
+          log: '성공적으로 수정했어요.',
+        });
+      }).catch((error) => {
         event.sender.send('side/getMenuList', {
           success: false,
           code: 2,
@@ -139,31 +133,45 @@ ipcMain.on('side/updateMenu', (event, updateMenuData) => {
         });
 
         return;
-      }
+      });
+  } catch (error) {
+    event.sender.send('side/getMenuList', {
+      success: false,
+      code: 2,
+      log: error.message,
     });
-  });
+
+    return;
+  }
 })
 
-ipcMain.on('side/removeMenu', (event, id) => {
-  fs.readFile(MenuListPath, 'utf8', (error, data) => {
-    if (error) {
-      event.sender.send('side/getMenuList', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-
-      return;
-    }
-    
-    const { sequence, list } = JSON.parse(data);
+ipcMain.on('side/removeMenu', async (event, id) => {
+  try {
+    const MenuList = await afs.readFile(MenuListPath);
+    const parseMenuList = JSON.parse(MenuList);
     const newMenuList = {
-      sequence,
-      list: list.filter((v) => v.id !== id),
-    }
+      sequence : parseMenuList.sequence,
+      list: parseMenuList.list.filter((v) => v.id !== id),
+    };
 
-    fs.readFile(AccountListPath, 'utf8', (error, data) => {
-      if (error) {
+    const AccountList = await afs.readFile(AccountListPath);
+    const parseAccountList = JSON.parse(AccountList);
+    const filteredAccount = {
+      sequence : parseAccountList.sequence,
+      list: parseAccountList.list.filter((v) => v.group !== id)
+    };
+
+    afs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8')
+      .then(() => {
+        const { list } = filteredAccount;
+  
+        event.sender.send('main/getAccount', {
+          success: true,
+          code: 1,
+          accountData: list,
+        });
+      })
+      .catch((error) => {
         event.sender.send('main/getAccount', {
           success: false,
           code: 2,
@@ -171,36 +179,37 @@ ipcMain.on('side/removeMenu', (event, id) => {
         });
   
         return;
-      }
-      
-      const { sequence, list } = JSON.parse(data);
-      const filteredAccount = {
-        sequence,
-        list: list.filter((v) => v.group !== id)
-      }
-
-      fs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8', (error) => {
-        const { list } = filteredAccount;
+      })
+      .then(() => {
+        afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8')
+      })
+      .then(() => {
+        const { list } = newMenuList;
   
-        event.sender.send('main/getAccount', {
+        event.sender.send('side/getMenuList', {
           success: true,
           code: 1,
           data: list,
+          log: '성공적으로 삭제했어요.',
         });
+      }).catch((error) => {
+        event.sender.send('side/getMenuList', {
+          success: false,
+          code: 2,
+          log: error,
+        });
+  
+        return;
       });
+  } catch(error) {
+    event.sender.send('side/getMenuList', {
+      success: false,
+      code: 2,
+      log: error.message,
     });
-    
-    fs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8', (error) => {
-      const { list } = newMenuList;
 
-      event.sender.send('side/getMenuList', {
-        success: true,
-        code: 1,
-        data: list,
-        log: '성공적으로 삭제했어요.',
-      });
-    });
-  });
+    return;
+  }
 });
 
 
@@ -312,7 +321,7 @@ ipcMain.on('main/createAccount', (event, newAccountData) => {
           event.sender.send('main/getAccount', {
             success: true,
             code: 1,
-            data: list,
+            accountData: list,
             log: '성공적으로 등록했어요.',
           });
         });
@@ -361,38 +370,39 @@ ipcMain.on('main/removeAccount', async (event, id) => {
   }
 });
 
-ipcMain.on('main/updateAccount', (event, accountData) => {
-
-  fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
-    if (error) {
-      event.sender.send('main/getAccount', {
-        success: false,
-        code: 2,
-        log: error,
-      });
-      return;
-    } 
+ipcMain.on('main/updateAccount', async (event, accountData) => {
+  try {
     const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd, id } = accountData;
     const url = protocol + siteUrl;
-    const { sequence, list } = JSON.parse(prevAccountData);
+    const AccountList = await afs.readFile(AccountListPath);
+    const { sequence, list } = JSON.parse(AccountList);
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
             ? { ...v, siteNameKr, siteNameEng, url, accountId, accountPwd }
             : { ...v })
-      }
+    };
 
-    fs.writeFile(AccountListPath, JSON.stringify(newAccountDataList), 'utf8', (error) => {
-      const { list } = newAccountDataList;
+    afs.writeFile(AccountListPath, JSON.stringify(newAccountDataList), 'utf8')
+      .then(() => {
+        const { list } = newAccountDataList;
 
-      event.sender.send('main/getAccount', {
-        success: true,
-        code: 1,
-        data: list,
-        log: '성공적으로 수정했어요.',
+        event.sender.send('main/getAccount', {
+          success: true,
+          code: 1,
+          accountData: list,
+          log: '성공적으로 수정했어요.',
+        });
       });
+  } catch (error) {
+    event.sender.send('main/getAccount', {
+      success: false,
+      code: 2,
+      log: error.message,
     });
-  });
+
+    return;
+  } 
 });
 
 app.on('window-all-closed', () => {
