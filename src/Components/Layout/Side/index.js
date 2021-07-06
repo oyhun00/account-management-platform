@@ -14,12 +14,11 @@ const { ipcRenderer } = window;
 const { confirm } = Modal;
 
 const Side = (props) => {
-  const { setSelectGroup, selectGroup, setSettingVisible, setSelectView } = props;
+  const { setSelectGroup, selectGroup, menuList, setMenuList } = props;
 
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
   const [menuName, setMenuName] = useState('');
-  const [menuList, setMenuList] = useState([]);
 
   const addMenu = () => {
     if(!menuName) {
@@ -164,7 +163,7 @@ const Side = (props) => {
       </CustomRow>
       <CustomFixedRow>
         {/* <CustomSettingOutlined onClick={() => setSettingVisible(true)} /> */}
-        <CustomLinkOutlined onClick={() => setSelectView('linkage')} />
+        <CustomLinkOutlined onClick={() => setSelectGroup(0)} />
       </CustomFixedRow>
     </CustomSider>
   );
