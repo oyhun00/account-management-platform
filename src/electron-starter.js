@@ -218,12 +218,13 @@ ipcMain.on('main/getAccount', async (event, id) => {
     const AccountLinkage = await afs.readFile(LinkageListPath);
     const AccountList = await afs.readFile(AccountListPath);
     const { list } = JSON.parse(AccountList);
+    const { linkList } = JSON.parse(AccountLinkage);
 
     event.sender.send('main/getAccount', {
       success: true,
       code: 1,
       accountData: list,
-      linkData: JSON.parse(AccountLinkage),
+      linkData: linkList,
     });
     
   } catch (error) {

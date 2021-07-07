@@ -7,7 +7,7 @@ const { Option } = Select;
 
 const AccountForm = (props) => {
   const { selectGroup, accountFormVisible, setAccountFormVisible } = props;
-  const { visible, update } = accountFormVisible;
+  const { visible, linkedForm, update } = accountFormVisible;
 
   const [accountFormat, setAccountFormat] = useState({
     siteNameKr: '',
@@ -86,9 +86,9 @@ const AccountForm = (props) => {
   };
 
   useEffect(() => {
+    console.log(linkedForm);
     ipcRenderer.on('main/getAccountDetail', (e, result) => {
       const { success } = result;
-      console.log(result);
 
       if (success) {
         const { data } = result;

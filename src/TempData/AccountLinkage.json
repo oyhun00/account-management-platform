@@ -1,6 +1,6 @@
-[
-  { "id": 1, "name": "kakao", "favicon": "https://blog.kakaocdn.net/dn/Sq4OD/btqzlkr13eD/dYwFnscXEA6YIOHckdPDDk/img.jpg" },
-  { "id": 2, "name": "facebook", "favicon": "https://t1.daumcdn.net/cfile/tistory/99F2C1505D0E45FF24" },
-  { "id": 3, "name": "naver", "favicon": "https://www.naver.com/favicon.ico?1 " },
-  { "id": 4, "name": "google", "favicon": "https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" }
-]
+{"sequence":5,"linkList":
+  [{ "id": 1, "siteNameKr": "kakao", "siteNameEng": "kakao", "siteIcon": "https://blog.kakaocdn.net/dn/Sq4OD/btqzlkr13eD/dYwFnscXEA6YIOHckdPDDk/img.jpg", "group":0 },
+  { "id": 2, "siteNameKr": "facebook", "siteNameEng": "facebook", "siteIcon": "https://t1.daumcdn.net/cfile/tistory/99F2C1505D0E45FF24", "group":0 },
+  { "id": 3, "siteNameKr": "naver", "siteNameEng": "naver", "siteIcon": "https://www.naver.com/favicon.ico?1", "group":0 },
+  { "id": 4, "siteNameKr": "google", "siteNameEng": "google", "siteIcon": "https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png", "group":0 }]
+}

@@ -8,14 +8,14 @@ const ContentBox = lazy(() => import('./Layout/Content'));
 const { Sider } = Layout;
 
 const MainComponent = () => {
-  const [selectGroup, setSelectGroup] = useState(1);
+  const [menuList, setMenuList] = useState([]);
+  const [selectGroup, setSelectGroup] = useState(0);
   const [accountFormVisible, setAccountFormVisible] = useState({
     visible: false,
     update: false
   });
   const [SettingVisible, setSettingVisible] = useState(false)
   const [selectView, setSelectView] = useState(null);
-  const [menuList, setMenuList] = useState([]);
 
   return (
     <>
@@ -32,6 +32,7 @@ const MainComponent = () => {
       <CustomMainLayout>
         <ContentBox
           selectGroup={selectGroup}
+          setSelectGroup={setSelectGroup}
           selectView={selectView}
           setAccountFormVisible={setAccountFormVisible}
           menuList={menuList}

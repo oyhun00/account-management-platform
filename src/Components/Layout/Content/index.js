@@ -5,13 +5,12 @@ import CreateAccountCard from './CreateAccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
 
 const AccountCard = lazy(() => import('./AccountCard'));
-const LinkedAccountCard = lazy(() => import('./LinkedAccountCard'));
 
 const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = (props) => {
-  const { selectGroup, menuList, setAccountFormVisible } = props;
+  const { selectGroup, setSelectGroup, menuList, setAccountFormVisible } = props;
   const [accountList, setAccountList] = useState([]);
   const [linkedAccountList, setLinkedAccountList] = useState([]);
   
@@ -29,15 +28,14 @@ const ContentBox = (props) => {
   };
 
   useEffect(() => {
-    console.log('12321', menuList.length);
     ipcRenderer.send('main/getAccount');
     ipcRenderer.on('main/getAccount', (e, result) => {
       const { success, log } = result;
 
       if (success) {
         const { accountData, linkData } = result;
-        console.log(result);
-        
+        console.log(123);
+
         setAccountList(accountData);
         setLinkedAccountList(linkData);
 
@@ -48,9 +46,8 @@ const ContentBox = (props) => {
         message.error(log);
       }
     });
+    console.log(menuList);
   }, []);
-
-  const linkageAccount = '';
 
   const accountFilteredData = selectGroup !== 0
     ? accountList.reduce((acc, cur) => {
@@ -62,14 +59,17 @@ const ContentBox = (props) => {
             formUpdateToggle={formUpdateToggle} />
         </Col>
       );
+
       return acc;
     }, [])
     : linkedAccountList.reduce((acc, cur) => {
-      <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
-        <LinkedAccountCard
-          data={cur}
-        />
-      </Col>
+      acc.push(
+        <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
+          <AccountCard
+            data={cur}
+          />
+        </Col>
+      )
       return acc;
     }, []);
 
@@ -77,52 +77,50 @@ const ContentBox = (props) => {
     <Suspense fallback={<Loading/>}>
       <CustomContent>
         {
-          // selectView
-          //  ? linkageAccount
-          //  : (
-             accountFilteredData.length !== 0
-              ? (
-                <Row>
-                  {accountFilteredData}
-                  <Col
-                    xl={{ span: 6 }}
-                    lg={{ span: 8 }}
-                    md={{ span: 12 }}
-                    sm={{ span: 24 }}
-                    xs={{ span: 24 }}
-                    onClick={() => setAccountFormVisible({
-                      update: false,
-                      visible: true
-                    })}>
-                      <CreateAccountCard/>
-                  </Col>
-                </Row> 
-              )
-              : (
-                <EmptyWrap>
-                  <CustomEmpty>
-                    {
-                      menuList.length !== 0
-                        ? (
-                          <Button
-                            type="primary"
-                            onClick={() => setAccountFormVisible({
-                              update: false,
-                              visible: true
-                            })}
-                          >
-                            계정 정보 등록
-                          </Button>
-                        ) : (
-                          <Button disabled>
-                            그룹을 등록하세요.
-                          </Button>
-                        )
-                    }
-                  </CustomEmpty>
-                </EmptyWrap>
-              )
-          // )
+          accountFilteredData.length !== 0
+          ? (
+            <Row>
+              {accountFilteredData}
+              <Col
+                xl={{ span: 6 }}
+                lg={{ span: 8 }}
+                md={{ span: 12 }}
+                sm={{ span: 24 }}
+                xs={{ span: 24 }}
+                onClick={() => setAccountFormVisible({
+                  update: false,
+                  linkedForm: !selectGroup || false,
+                  visible: true
+                })}>
+                  <CreateAccountCard/>
+              </Col>
+            </Row> 
+          )
+          : (
+            <EmptyWrap>
+              <CustomEmpty>
+                {
+                  menuList.length !== 0
+                    ? (
+                      <Button
+                        type="primary"
+                        onClick={() => setAccountFormVisible({
+                          update: false,
+                          linkedForm: !selectGroup || false,
+                          visible: true
+                        })}
+                      >
+                        계정 정보 등록
+                      </Button>
+                    ) : (
+                      <Button disabled>
+                        그룹을 등록하세요.
+                      </Button>
+                    )
+                }
+              </CustomEmpty>
+            </EmptyWrap>
+          )
         }
       </CustomContent>
     </Suspense>
