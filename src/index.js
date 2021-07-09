@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
-import Loading from './Components/Layout/Content/Util/Loading';
+import Stores from './Stores';
 
 ReactDOM.render(
-  <Suspense fallback={<Loading/>}>
+  <Provider
+    AccountStore={Stores.AccountStore}
+  >
     <App />
-  </Suspense>,
+  </Provider>,
   document.getElementById('root')
 );
 

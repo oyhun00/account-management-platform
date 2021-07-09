@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import styled from 'styled-components';
+import useStores from '../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button, message } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
@@ -10,9 +11,10 @@ const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = (props) => {
+  const { AccountStore } = useStores();
+  const { getAccountList, accountList, linkedAccountList } = AccountStore;
+
   const { selectGroup, setSelectGroup, menuList, setAccountFormVisible } = props;
-  const [accountList, setAccountList] = useState([]);
-  const [linkedAccountList, setLinkedAccountList] = useState([]);
   
   const formUpdateToggle = (id) => {
     ipcRenderer.send('main/getAccountDetail', id);
@@ -23,31 +25,13 @@ const ContentBox = (props) => {
     })
   };
 
-  const removeAccount = (id) => {                                                       
+  const removeAccount = (id) => {
     ipcRenderer.send('main/removeAccount', id);
   };
 
   useEffect(() => {
-    ipcRenderer.send('main/getAccount');
-    ipcRenderer.on('main/getAccount', (e, result) => {
-      const { success, log } = result;
-
-      if (success) {
-        const { accountData, linkData } = result;
-        console.log(123);
-
-        setAccountList(accountData);
-        setLinkedAccountList(linkData);
-
-        if (log) {
-          message.success(log);
-        }
-      } else {
-        message.error(log);
-      }
-    });
-    console.log(menuList);
-  }, []);
+    getAccountList();
+  }, [accountList, linkedAccountList]);
 
   const accountFilteredData = selectGroup !== 0
     ? accountList.reduce((acc, cur) => {
