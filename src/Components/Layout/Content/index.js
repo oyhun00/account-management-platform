@@ -1,7 +1,7 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import styled from 'styled-components';
-import useStores from '../Stores/UseStore';
-import { Layout, Row, Col, Empty, Button, message } from 'antd';
+import useStores from '../../../Stores/UseStore';
+import { Layout, Row, Col, Empty, Button } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
 
@@ -14,7 +14,7 @@ const ContentBox = (props) => {
   const { AccountStore } = useStores();
   const { getAccountList, accountList, linkedAccountList } = AccountStore;
 
-  const { selectGroup, setSelectGroup, menuList, setAccountFormVisible } = props;
+  const { selectGroup, menuList, setAccountFormVisible } = props;
   
   const formUpdateToggle = (id) => {
     ipcRenderer.send('main/getAccountDetail', id);

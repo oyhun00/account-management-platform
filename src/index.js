@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import reportWebVitals from './reportWebVitals';
@@ -9,7 +10,9 @@ ReactDOM.render(
   <Provider
     AccountStore={Stores.AccountStore}
   >
-    <App />
+    <Suspense fallback={<div>Loading... </div>}>
+      <App />
+    </Suspense>
   </Provider>,
   document.getElementById('root')
 );

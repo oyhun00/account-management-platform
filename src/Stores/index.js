@@ -6,4 +6,4 @@ class RootStore {
   }
 }
 
-export default RootStore;
+export default new RootStore();

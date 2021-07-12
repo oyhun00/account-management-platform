@@ -8,13 +8,15 @@ import {
   SettingOutlined,
   LinkOutlined,
 } from '@ant-design/icons';
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import useStores from '../../../Stores/UseStore';
 import MenuItem from './Menu';
 const { ipcRenderer } = window;
 const { confirm } = Modal;
 
 const Side = (props) => {
   const { setSelectGroup, selectGroup, menuList, setMenuList } = props;
+  const { MenuStore } = useStores();
+  const { menuList, getMenuList } = MenuStore;
 
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
@@ -84,22 +86,8 @@ const Side = (props) => {
   };
 
   useEffect(() => {
-    ipcRenderer.send('side/getMenuList');
-    ipcRenderer.on('side/getMenuList', (e, result) => {
-      const { success } = result;
-
-      if (success) {
-        const { data, log } = result;
-        setMenuList(data);
-
-        if (log) {
-          message.success(log);
-        }
-      } else {
-        message.error(result.log);
-      }
-    });
-  }, []);
+    getMenuList();
+  }, [ menuList, getMenuList ]);
   
   const menuItem = menuList.map((v) =>
     (
