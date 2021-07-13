@@ -15,8 +15,8 @@ const { confirm } = Modal;
 
 const Side = (props) => {
   const { setSelectGroup, selectGroup, menuList, setMenuList } = props;
-  const { MenuStore } = useStores();
-  const { menuList, getMenuList } = MenuStore;
+  const { GroupStore } = useStores();
+  const { groupList, getGroupList } = GroupStore;
 
   const [add, setAdd] = useState(false);
   const [updateValue, setUpdateValue] = useState('');
@@ -103,14 +103,6 @@ const Side = (props) => {
       </CustomMenuItem>
     )
   );
-
-  const Temp = SortableContainer(() => {
-    return (
-    <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
-      {menuItem}
-    </CustomMenu>
-    )
-  })
   
   return (
     <CustomSider>
