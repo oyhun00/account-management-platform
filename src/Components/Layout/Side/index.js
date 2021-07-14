@@ -1,104 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Menu, Input, Row, Col, message, Modal } from 'antd';
+import { Menu, Input, Row, Col } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
-  ExclamationCircleOutlined,
-  SettingOutlined,
   LinkOutlined,
 } from '@ant-design/icons';
 import useStores from '../../../Stores/UseStore';
 import MenuItem from './Menu';
-const { ipcRenderer } = window;
-const { confirm } = Modal;
 
-const Side = (props) => {
-  const { setSelectGroup, selectGroup, menuList, setMenuList } = props;
+const Side = () => {
   const { GroupStore } = useStores();
-  const { groupList, getGroupList } = GroupStore;
-
-  const [add, setAdd] = useState(false);
-  const [updateValue, setUpdateValue] = useState('');
-  const [menuName, setMenuName] = useState('');
-
-  const addMenu = () => {
-    if(!menuName) {
-      message.warning('최소 1글자 이상 입력하세요.');
-      return;
-    }
-
-    ipcRenderer.send('side/createMenu', menuName);
-    setAdd(!add);
-  };
-
-  const removeMenu = (id) => {
-    confirm({
-      title: '정말로 삭제하시겠어요?',
-      icon: <ExclamationCircleOutlined />,
-      content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
-      onOk() {
-        ipcRenderer.send('side/removeMenu', id);
-        setSelectGroup(menuList[0].id)
-      },
-      onCancel() {
-      },
-    });
-  };
-
-  const updateMenuToggle = (e, id) => {
-    e.stopPropagation();
-
-    const { menuName } = menuList.find((v) => v.id === id);
-    
-    setUpdateValue(menuName);
-    setMenuList(
-      menuList.map(
-        (v) => v.id === id
-          ? { ...v, updateStatus: !v.updateStatus } 
-          : { ...v, updateStatus: v.updateStatus }
-      )
-    );
-  };
-
-  const updateMenuSubmit = (id) => {
-    if(!updateValue) {
-      message.warning('최소 1글자 이상 입력하세요.');
-      return;
-    }
-    
-    const updateMenuList = menuList.map(
-      (v) => v.id === id
-        ? { ...v, menuName: updateValue, updateStatus: false } 
-        : { ...v }
-    );
-    setMenuList(updateMenuList);
-
-    ipcRenderer.send('side/updateMenu', updateMenuList);
-  };
-
-  const changeHandle = (e) => {
-    setMenuName(e.target.value);
-  };
-
-  const updateChangeHandle = (e) => {
-    setUpdateValue(e.target.value);
-  };
+  const { 
+    groupList, selectedGroup, isAdd, groupUpdateValue,
+    setSelectedGroup, setAddStatus, getGroupList, addGroup, removeGroup,
+    toggleUpdateGroup, updateGroup, onChangeValue
+  } = GroupStore;
 
   useEffect(() => {
-    getMenuList();
-  }, [ menuList, getMenuList ]);
+    getGroupList();
+    console.log(1);
+  }, [ groupList, getGroupList ]);
   
-  const menuItem = menuList.map((v) =>
+  const menuItem = groupList.map((v) =>
     (
-      <CustomMenuItem key={v.id} onClick={() => setSelectGroup(v.id)}>
+      <CustomMenuItem key={v.id} onClick={() => setSelectedGroup(v.id)}>
         <MenuItem
           data={v}
-          updateValue={updateValue}
-          updateChangeHandle={updateChangeHandle}
-          updateMenuSubmit={updateMenuSubmit}
-          updateMenuToggle={updateMenuToggle}
-          removeMenu={removeMenu}
+          groupUpdateValue={groupUpdateValue}
+          onChangeValue={onChangeValue}
+          updateGroup={updateGroup}
+          toggleUpdateGroup={toggleUpdateGroup}
+          removeGroup={removeGroup}
         />
       </CustomMenuItem>
     )
@@ -106,17 +40,17 @@ const Side = (props) => {
   
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={[selectGroup.toString()]} defaultOpenKeys={[`sub${selectGroup.toString()}`]} selectedKeys={[selectGroup.toString()]} mode="inline" theme="dark">
+      <CustomMenu defaultSelectedKeys={[selectedGroup.toString()]} defaultOpenKeys={[`sub${selectedGroup.toString()}`]} selectedKeys={[selectedGroup.toString()]} mode="inline" theme="dark">
         {menuItem}
       </CustomMenu>
       {
-        add
+        isAdd
           ? (
             <CustomRow>
               <Col span={20}>
-                <CustomInput onChange={changeHandle} />
+                <CustomInput onChange={onChangeValue}/>
               </Col>
-              <CustomPlusIconWrap span={4} onClick={addMenu} >
+              <CustomPlusIconWrap span={4} onClick={addGroup} >
                 <PlusOutlined/>
               </CustomPlusIconWrap>
             </CustomRow>
@@ -124,9 +58,9 @@ const Side = (props) => {
           : ''
       }
       <CustomRow>
-        <CustomPlusIconWrap onClick={() => setAdd(!add)}>
+        <CustomPlusIconWrap onClick={() => setAddStatus(!isAdd)}>
           {
-            add
+            isAdd
               ? (
                 <>
                   <CloseOutlined/>
@@ -142,8 +76,7 @@ const Side = (props) => {
         </CustomPlusIconWrap>
       </CustomRow>
       <CustomFixedRow>
-        {/* <CustomSettingOutlined onClick={() => setSettingVisible(true)} /> */}
-        <CustomLinkOutlined onClick={() => setSelectGroup(0)} />
+        <CustomLinkOutlined onClick={() => setSelectedGroup(0)} />
       </CustomFixedRow>
     </CustomSider>
   );
@@ -218,14 +151,6 @@ const CustomFixedRow = styled(Row)`
   padding: 15px 16px 15px 24px;
 `;
 
-const CustomSettingOutlined = styled(SettingOutlined)`
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.7;
-  }
-`;
-
 const CustomLinkOutlined = styled(LinkOutlined)`
   cursor: pointer;
 
@@ -234,4 +159,4 @@ const CustomLinkOutlined = styled(LinkOutlined)`
   }
 `;
 
-export default Side;
+export default observer(Side);

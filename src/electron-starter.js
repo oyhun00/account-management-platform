@@ -41,7 +41,7 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
     })
 });
 
-ipcMain.on('side/getMenuList', async (event, arg) => {
+ipcMain.handle('side/getGroupList', async (event, arg) => {
   try { 
     const MenuList = await afs.readFile(MenuListPath);
     const { list } = JSON.parse(MenuList);
@@ -52,7 +52,7 @@ ipcMain.on('side/getMenuList', async (event, arg) => {
       data: list,
     });
   } catch(error) {
-    event.sender.send('side/getMenuList', {
+    event.sender.send('side/getGroupList', {
       success: false,
       code: 2,
       log: error.message,
@@ -62,7 +62,7 @@ ipcMain.on('side/getMenuList', async (event, arg) => {
   }
 });
 
-ipcMain.on('side/createMenu', async (event, newMenuName) => {
+ipcMain.on('side/createGroup', async (event, newMenuName) => {
   try {
     const MenuList = await afs.readFile(MenuListPath);
     const { list, sequence } = JSON.parse(MenuList);
@@ -81,7 +81,7 @@ ipcMain.on('side/createMenu', async (event, newMenuName) => {
       .then(() => {
         const { list } = newMenuList;
 
-        event.sender.send('side/getMenuList', {
+        event.sender.send('side/getGroupList', {
           success: true,
           code: 1,
           data: list,
@@ -89,7 +89,7 @@ ipcMain.on('side/createMenu', async (event, newMenuName) => {
         });
       })
       .catch((error) => {
-        event.sender.send('side/getMenuList', {
+        event.sender.send('side/getGroupList', {
           success: false,
           code: 2,
           log: error,

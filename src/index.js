@@ -9,6 +9,7 @@ import Stores from './Stores';
 ReactDOM.render(
   <Provider
     AccountStore={Stores.AccountStore}
+    GroupStore={Stores.GroupStore}
   >
     <Suspense fallback={<div>Loading... </div>}>
       <App />

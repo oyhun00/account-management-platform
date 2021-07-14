@@ -1,11 +1,11 @@
 import { observable, action } from "mobx";
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { ipcRenderer } = window;
 
 class GroupStore {
-  @observable groupCreationStatus = false;
+  @observable isAdd = false;
 
   @observable groupList = [];
 
@@ -20,48 +20,57 @@ class GroupStore {
   }
 
   @action onChangeValue = (e) => {
-
+    this[e.target.name] = e.target.value;
   };
 
-  @action getGroupList = () => {
+  @action setSelectedGroup = (value) => {
+    this.selectedGroup = value;
+  };
+
+  @action setAddStatus = () => {
+    this.isAdd = !this.isAdd;
+  };
+
+  @action getGroupList = async () => {
+    console.log(2);
     ipcRenderer.send('side/getGroupList');
-    ipcRenderer.on('side/getGroupList', (e, result) => {
-      const { success } = result;
+    const temp = await ipcRenderer.invoke('side/getGroupList');
+    console.log(temp);
+    // ipcRenderer.invoke('side/getGroupList', (e, result) => {
+    //   const { success } = result;
 
-      if (success) {
-        const { data, log } = result;
-        this.groupList = data;
+    //   if (success) {
+    //     const { data, log } = result;
+    //     this.groupList = data;
 
-        if (log) {
-          message.success(log);
-        }
-      } else {
-        message.error(result.log);
-      }
-    });
+    //     if (log) {
+    //       message.success(log);
+    //     }
+    //   } else {
+    //     message.error(result.log);
+    //   }
+    // });
   };
 
   @action addGroup = () => {
-    const { groupName, groupCreationStatus } = this;
-    if(!groupName) {
+    if(!this.groupName) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
 
-    ipcRenderer.send('side/createGroup', groupName);
-    groupCreationStatus = !groupCreationStatus;
+    ipcRenderer.send('side/createGroup', this.groupName);
+    this.groupCreationStatus = !this.groupCreationStatus;
   };
 
   @action removeGroup = (id) => {
-    const { groupList, selectedGroup } = this;
 
-    confirm({
+    Modal.confirm({
       title: '정말로 삭제하시겠어요?',
       icon: <ExclamationCircleOutlined />,
       content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
       onOk() {
         ipcRenderer.send('side/removeGroup', id);
-        selectedGroup = groupList[0].id;
+        this.selectedGroup = this.groupList[0].id;
       },
       onCancel() {
       },
@@ -71,33 +80,30 @@ class GroupStore {
   @action toggleUpdateGroup = (e, id) => {
     e.stopPropagation();
     
-    const { groupList, groupUpdateValue } = this;
-    const { menuName } = groupList.find((v) => v.id === id);
+    const { menuName } = this.groupList.find((v) => v.id === id);
 
-    groupUpdateValue = menuName;
+    this.groupUpdateValue = menuName;
 
-    const addedGroupList = groupList.map(
+    const addedGroupList = this.groupList.map(
       (v) => v.id === id
         ? { ...v, updateStatus: !v.updateStatus } 
         : { ...v, updateStatus: v.updateStatus }
     )
-    groupList = addedGroupList;
+    this.groupList = addedGroupList;
   };
 
   @action updateGroup = (id) => {
-    const { groupList, groupUpdateValue } = this;
-
-    if(!groupUpdateValue) {
+    if(!this.groupUpdateValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
     
-    const updateMenuList = groupList.map(
+    const updateMenuList = this.groupList.map(
       (v) => v.id === id
-        ? { ...v, menuName: groupUpdateValue, updateStatus: false } 
+        ? { ...v, menuName: this.groupUpdateValue, updateStatus: false } 
         : { ...v }
     );
-    groupList = updateMenuList;
+    this.groupList = updateMenuList;
 
     ipcRenderer.send('side/updateMenu', updateMenuList);
   };

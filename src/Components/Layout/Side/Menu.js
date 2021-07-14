@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Input, Row, Col, Popover, Button, List } from 'antd';
+import { Input, Popover, Button, List } from 'antd';
 import {
   CloseOutlined,
   EditOutlined,
@@ -10,13 +10,13 @@ import {
 } from '@ant-design/icons';
 
 const MenuItem = (props) => {
-  const { data, updateValue, updateChangeHandle, updateMenuSubmit, updateMenuToggle, removeMenu } = props;
+  const { data, groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = props;
   const { id, menuName, updateStatus } = data;
 
   const popMenu = (
     <>
-      <CustomList onClick={(e) => updateMenuToggle(e, id)}> 수정<EditOutlined /></CustomList>
-      <CustomList onClick={() => removeMenu(id)}>삭제<DeleteOutlined /></CustomList>
+      <CustomList onClick={(e) => toggleUpdateGroup(e, id)}> 수정<EditOutlined /></CustomList>
+      <CustomList onClick={() => removeGroup(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
 
@@ -26,11 +26,11 @@ const MenuItem = (props) => {
         ? (
           <FlexBox>
             <div>
-              <CustomInput value={updateValue} onChange={updateChangeHandle} />
+              <CustomInput value={groupUpdateValue} onChange={onChangeValue} />
             </div>
             <IconWrap>
-              <CheckOutlined onClick={() => updateMenuSubmit(id)}/>
-              <CloseOutlined onClick={(e) => updateMenuToggle(e, id)} />
+              <CheckOutlined onClick={() => updateGroup(id)}/>
+              <CloseOutlined onClick={(e) => toggleUpdateGroup(e, id)} />
             </IconWrap>
           </FlexBox>
         )
@@ -42,8 +42,6 @@ const MenuItem = (props) => {
                 <MoreOutlined />
               </ActionButton>
             </Popover>
-            {/* <CloseOutlined onClick={() => removeMenu(id)} />
-            <EditOutlined  onClick={(e) => updateMenuToggle(e, id)} /> */}
           </FlexBox>
         )}
     </>
