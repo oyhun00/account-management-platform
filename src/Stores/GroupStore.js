@@ -31,25 +31,23 @@ class GroupStore {
     this.isAdd = !this.isAdd;
   };
 
-  @action getGroupList = async () => {
-    console.log(2);
-    ipcRenderer.send('side/getGroupList');
-    const temp = await ipcRenderer.invoke('side/getGroupList');
-    console.log(temp);
-    // ipcRenderer.invoke('side/getGroupList', (e, result) => {
-    //   const { success } = result;
+  @action getGroupList = () => {
+    ipcRenderer.invoke('side/getGroupList')
+      .then((result) => {
+        const { success } = result;
 
-    //   if (success) {
-    //     const { data, log } = result;
-    //     this.groupList = data;
+        if (success) {
+          const { data, log } = result;
+          this.groupList = data;
+          console.log(this.groupList)
 
-    //     if (log) {
-    //       message.success(log);
-    //     }
-    //   } else {
-    //     message.error(result.log);
-    //   }
-    // });
+          if (log) {
+            message.success(log);
+          }
+        } else {
+          message.error(result.log);
+        }
+      });
   };
 
   @action addGroup = () => {

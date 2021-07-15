@@ -43,15 +43,17 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
 
 ipcMain.handle('side/getGroupList', async (event, arg) => {
   try { 
+    log.info('true')
     const MenuList = await afs.readFile(MenuListPath);
     const { list } = JSON.parse(MenuList);
-
-    event.sender.send('side/getMenuList', {
+    const result = {
       success: true,
       code: 1,
       data: list,
-    });
+    };
+    return result;
   } catch(error) {
+    log.info(error)
     event.sender.send('side/getGroupList', {
       success: false,
       code: 2,
@@ -65,7 +67,7 @@ ipcMain.handle('side/getGroupList', async (event, arg) => {
 ipcMain.on('side/createGroup', async (event, newMenuName) => {
   try {
     const MenuList = await afs.readFile(MenuListPath);
-    const { list, sequence } = JSON.parse(MenuList);
+    const { list, sequence }  = JSON.parse(MenuList);
     const _sequence = sequence + 1;
     const newMenuList = {
       sequence: _sequence,

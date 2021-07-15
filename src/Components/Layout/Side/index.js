@@ -19,9 +19,9 @@ const Side = () => {
   } = GroupStore;
 
   useEffect(() => {
+    console.log(groupList);
     getGroupList();
-    console.log(1);
-  }, [ groupList, getGroupList ]);
+  }, []);
   
   const menuItem = groupList.map((v) =>
     (
