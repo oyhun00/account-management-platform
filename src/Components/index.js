@@ -1,50 +1,27 @@
 import React, { useState, lazy } from 'react';
+import useStores from '../Stores/UseStore';
 import styled from 'styled-components';
 import { Layout } from 'antd';
-import Util from './Layout/Content/Util';
-const Side = lazy(() => import('./Layout/Side'));
-const ContentBox = lazy(() => import('./Layout/Content'));
+import Side from './Layout/Side';
+import ContentBox from './Layout/Content';
 
 const { Sider } = Layout;
 
 const MainComponent = () => {
-  const [menuList, setMenuList] = useState([]);
-  const [selectGroup, setSelectGroup] = useState(0);
-  const [accountFormVisible, setAccountFormVisible] = useState({
-    visible: false,
-    update: false
-  });
-  const [SettingVisible, setSettingVisible] = useState(false)
-  const [selectView, setSelectView] = useState(null);
+  const { AccountStore, GroupStore } = useStores();
+  const { selectedGroup, groupList } = GroupStore;
 
   return (
     <>
       <CustomSider>
-        <Side
-          selectGroup={selectGroup}
-          setSelectGroup={setSelectGroup}
-          setSettingVisible={setSettingVisible}
-          setSelectView={setSelectView}
-          menuList={menuList}
-          setMenuList={setMenuList}
-        />
+        <Side/>
       </CustomSider>
       <CustomMainLayout>
         <ContentBox
-          selectGroup={selectGroup}
-          setSelectGroup={setSelectGroup}
-          selectView={selectView}
-          setAccountFormVisible={setAccountFormVisible}
-          menuList={menuList}
+          groupList={groupList}
+          selectedGroup={selectedGroup}
         />
       </CustomMainLayout>
-      <Util
-        selectGroup={selectGroup}
-        accountFormVisible={accountFormVisible}
-        setAccountFormVisible={setAccountFormVisible}
-        SettingVisible={SettingVisible}
-        setSettingVisible={setSettingVisible}
-      />
     </>
   );
 };

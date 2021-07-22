@@ -6,30 +6,105 @@ const { ipcRenderer } = window;
 class AccountStore {
   @observable accountList = [];
 
+  @observable accountFormOption = {
+    isUpdate: false,
+    isVisible: false
+  };
+  
+  @observable accountFormat = {
+    siteNameKr: '',
+    siteNameEng: '',
+    protocol: 'http://',
+    siteUrl: '',
+    accountId: '',
+    accountPwd: '',
+    group: '',
+  }
+
   @observable linkedAccountList = [];
 
   constructor(root) {
     this.root = root;
   }
 
-  @action getAccountList = () => {
-    ipcRenderer.send('main/getAccount');
-    ipcRenderer.on('main/getAccount', (e, result) => {
-      const { success, log } = result;
+  @action formChangeHandle = (e) => {
+    const { value, name } = e.target;
 
-      if (success) {
-        const { accountData, linkData } = result;
-        
-        this.accountList = accountData;
-        this.linkedAccountList = linkData;
+    this.accountFormat = {
+      ...this.accountFormat,
+      [name]: value,
+    }
+  };
 
-        if (log) {
-          message.success(log);
+  @action clearAccountFormat = () => {
+    this.accountFormat = {
+      ...this.accountFormat,
+      siteNameKr: '',
+      siteNameEng: '',
+      protocol: 'http://',
+      siteUrl: '',
+      accountId: '',
+      accountPwd: '',
+    };
+  };
+
+  @action toggleCreateAccount = () => {
+    this.accountFormOption = {
+      ...this.accountFormOption,
+      isUpdate: false,
+      isVisible: true
+    };
+  };
+
+  @action getAccountDetail = (id) => {
+    ipcRenderer.invoke('main/getAccountDetail', id)
+      .then((result) => {
+        const { success, log } = result;
+
+        if (success) {
+          const { data } = result;
+          
+          this.accountForm = {
+            ...data
+          };
+
+          this.accountForm = {
+            ...this.accountForm,
+            isUpdate: true,
+            isVisible: true
+          };
+
+          if(log) {
+            message.success(log);
+          }
+        } else {
+          message.error(log);
         }
-      } else {
-        message.error(log);
-      }
-    });
+      });
+  };
+
+  @action getAccountList = () => {
+    ipcRenderer.invoke('main/getAccount')
+      .then((result) => {
+        const { success, log } = result;
+
+        if (success) {
+          const { accountData, linkData } = result;
+          
+          this.accountList = accountData;
+          this.linkedAccountList = linkData;
+  
+          if (log) {
+            message.success(log);
+          }
+        } else {
+          message.error(log);
+        }
+      });
+  };
+
+  @action removeAccount = (id) => {
+    ipcRenderer.send('main/removeAccount', id);
   };
 }
 

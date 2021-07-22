@@ -11,13 +11,13 @@ import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 
 const AccountCard = (props) => {
-  const { data, removeAccount, formUpdateToggle } = props;
+  const { data, removeAccount, getAccountDetail } = props;
   const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
   const popMenu = (
     <>
-      <CustomList onClick={() => formUpdateToggle(id)}> 수정<EditOutlined /></CustomList>
+      <CustomList onClick={() => getAccountDetail(id)}> 수정<EditOutlined /></CustomList>
       <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );

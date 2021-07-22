@@ -1,35 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Form, Input, Modal, message, Select } from 'antd';
+import useStores from '../../../../Stores/UseStore';
 
 const { ipcRenderer } = window;
 const { Option } = Select;
 
 const AccountForm = (props) => {
-  const { selectGroup, accountFormVisible, setAccountFormVisible } = props;
-  const { visible, linkedForm, update } = accountFormVisible;
-
-  const [accountFormat, setAccountFormat] = useState({
-    siteNameKr: '',
-    siteNameEng: '',
-    protocol: 'http://',
-    siteUrl: '',
-    accountId: '',
-    accountPwd: '',
-    group: selectGroup,
-  });
-
-  const formClear = () => {
-    setAccountFormat({
-      siteNameKr: '',
-      siteNameEng: '',
-      protocol: 'http://',
-      siteUrl: '',
-      accountId: '',
-      accountPwd: '',
-      group: selectGroup,
-    })
-  };
+  const { accountFormOption, selectGroup, setAccountFormVisible } = props;
+  const { isVisible, isUpdate } = accountFormOption;
+  const { accountStore } = useStores();
+  const { accountFormat, clearAccountFormat } = accountStore;
+  const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
 
   const protocolChangeHandle = (e) => {
     setAccountFormat({
@@ -86,7 +68,6 @@ const AccountForm = (props) => {
   };
 
   useEffect(() => {
-    console.log(linkedForm);
     ipcRenderer.on('main/getAccountDetail', (e, result) => {
       const { success } = result;
 
@@ -97,16 +78,14 @@ const AccountForm = (props) => {
         message.error(result.log);
       }
     });
-  }, [selectGroup, accountFormat, visible]);
-
-  const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
+  }, [selectGroup, accountFormat]);
 
   return (
     <CustomModal
-        title={update ? '계정 정보 수정' : '계정 정보 등록'}
+        title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
         centered
-        visible={visible}
-        onOk={() => update ? formUpdateSubmit() : formSubmit()}
+        visible={isVisible}
+        onOk={() => isUpdate ? formUpdateSubmit() : formSubmit()}
         onCancel={modalClosed}
         width={500}
       >

@@ -3,44 +3,33 @@ import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
+import AccountFrom from './Form/AccountForm';
+import AccountCard from './AccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
-
-const AccountCard = lazy(() => import('./AccountCard'));
 
 const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = (props) => {
+  const { selectedGroup, groupList } = props;
   const { AccountStore } = useStores();
-  const { getAccountList, accountList, linkedAccountList } = AccountStore;
-
-  const { selectGroup, menuList, setAccountFormVisible } = props;
-  
-  const formUpdateToggle = (id) => {
-    ipcRenderer.send('main/getAccountDetail', id);
-
-    setAccountFormVisible({
-      update: true,
-      visible: true
-    })
-  };
-
-  const removeAccount = (id) => {
-    ipcRenderer.send('main/removeAccount', id);
-  };
+  const { 
+    getAccountList, accountList, linkedAccountList, removeAccount,
+    getAccountDetail, accountFormOption, toggleCreateAccount
+   } = AccountStore;
 
   useEffect(() => {
     getAccountList();
   }, [accountList, linkedAccountList]);
 
-  const accountFilteredData = selectGroup !== 0
+  const accountFilteredData = selectedGroup !== 0
     ? accountList.reduce((acc, cur) => {
-      if(cur.group === selectGroup) acc.push(
+      if(cur.group === selectedGroup) acc.push(
         <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
           <AccountCard
             data={cur}
             removeAccount={removeAccount}
-            formUpdateToggle={formUpdateToggle} />
+            formUpdateToggle={getAccountDetail} />
         </Col>
       );
 
@@ -71,11 +60,7 @@ const ContentBox = (props) => {
                 md={{ span: 12 }}
                 sm={{ span: 24 }}
                 xs={{ span: 24 }}
-                onClick={() => setAccountFormVisible({
-                  update: false,
-                  linkedForm: !selectGroup || false,
-                  visible: true
-                })}>
+                onClick={toggleCreateAccount}>
                   <CreateAccountCard/>
               </Col>
             </Row> 
@@ -84,15 +69,11 @@ const ContentBox = (props) => {
             <EmptyWrap>
               <CustomEmpty>
                 {
-                  menuList.length !== 0
+                  groupList.length !== 0
                     ? (
                       <Button
                         type="primary"
-                        onClick={() => setAccountFormVisible({
-                          update: false,
-                          linkedForm: !selectGroup || false,
-                          visible: true
-                        })}
+                        onClick={toggleCreateAccount}
                       >
                         계정 정보 등록
                       </Button>
@@ -107,6 +88,7 @@ const ContentBox = (props) => {
           )
         }
       </CustomContent>
+      <AccountFrom accountFormOption={accountFormOption}></AccountFrom>
     </Suspense>
   );
 }

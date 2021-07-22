@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const log = require('electron-log');
+const os = require('os');
 const url = require('url');
 const path = require('path'); 
 const fs = require('fs');
@@ -16,7 +17,7 @@ function createWindow () {
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
-      preload: __dirname + '\\preload.js'
+      preload: __dirname + '//preload.js'
     },
   })
 
@@ -43,7 +44,6 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
 
 ipcMain.handle('side/getGroupList', async (event, arg) => {
   try { 
-    log.info('true')
     const MenuList = await afs.readFile(MenuListPath);
     const { list } = JSON.parse(MenuList);
     const result = {
@@ -53,14 +53,13 @@ ipcMain.handle('side/getGroupList', async (event, arg) => {
     };
     return result;
   } catch(error) {
-    log.info(error)
-    event.sender.send('side/getGroupList', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    }
 
-    return;
+    return result;
   }
 });
 
@@ -215,51 +214,51 @@ ipcMain.on('side/removeMenu', async (event, id) => {
 });
 
 
-ipcMain.on('main/getAccount', async (event, id) => {
+ipcMain.handle('main/getAccount', async (event, id) => {
   try {
     const AccountLinkage = await afs.readFile(LinkageListPath);
     const AccountList = await afs.readFile(AccountListPath);
     const { list } = JSON.parse(AccountList);
     const { linkList } = JSON.parse(AccountLinkage);
-
-    event.sender.send('main/getAccount', {
+    const result = {
       success: true,
       code: 1,
       accountData: list,
       linkData: linkList,
-    });
-    
+    };
+
+    return result;
   } catch (error) {
-    event.sender.send('main/getAccount', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   }
 });
 
-ipcMain.on('main/getAccountDetail', async (event, id) => {
+ipcMain.handle('main/getAccountDetail', async (event, id) => {
   try {
     const AccountList = await afs.readFile(AccountListPath);
     const { list } = JSON.parse(AccountList);
-    
     const detailData = list.filter((v) => v.id === id)[0];
-
-    event.sender.send('main/getAccountDetail', {
+    const result = {
       success: true,
       code: 1,
       data: detailData,
-    });
+    };
+
+    return result;
   } catch (error) {
-    event.sender.send('main/getAccountDetail', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   }
 });
 
