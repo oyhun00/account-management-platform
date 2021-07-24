@@ -1,4 +1,4 @@
-import React, { useState, lazy } from 'react';
+import React, { useEffect } from 'react';
 import useStores from '../Stores/UseStore';
 import styled from 'styled-components';
 import { Layout } from 'antd';
@@ -9,7 +9,12 @@ const { Sider } = Layout;
 
 const MainComponent = () => {
   const { AccountStore, GroupStore } = useStores();
-  const { selectedGroup, groupList } = GroupStore;
+  const { selectedGroup, groupList, getGroupList } = GroupStore;
+  const { testData, test } = AccountStore;
+
+  useEffect(() => {
+    console.log(testData);
+  });
 
   return (
     <>
@@ -17,7 +22,10 @@ const MainComponent = () => {
         <Side/>
       </CustomSider>
       <CustomMainLayout>
+        <Test onClick={test}>test</Test>
         <ContentBox
+          testData={testData}
+          test={test}
           groupList={groupList}
           selectedGroup={selectedGroup}
         />
@@ -35,6 +43,9 @@ const CustomSider = styled(Sider)`
 
 const CustomMainLayout = styled(Layout)`
   overflow: auto;
+`;
+const Test = styled.div`
+  color: #fff;
 `;
 
 export default MainComponent;

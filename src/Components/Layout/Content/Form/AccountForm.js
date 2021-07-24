@@ -1,92 +1,24 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Form, Input, Modal, message, Select } from 'antd';
+import { Form, Input, Modal, Select } from 'antd';
 import useStores from '../../../../Stores/UseStore';
 
-const { ipcRenderer } = window;
 const { Option } = Select;
 
 const AccountForm = (props) => {
-  const { accountFormOption, selectGroup, setAccountFormVisible } = props;
+  const { accountFormOption } = props;
   const { isVisible, isUpdate } = accountFormOption;
-  const { accountStore } = useStores();
-  const { accountFormat, clearAccountFormat } = accountStore;
+  const { AccountStore } = useStores();
+  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose } = AccountStore;
   const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-
-  const protocolChangeHandle = (e) => {
-    setAccountFormat({
-      ...accountFormat,
-      protocol: e
-    })
-  };
-
-  const formChangeHandle = (e) => {
-    const { value, name } = e.target;
-
-    setAccountFormat({
-      ...accountFormat,
-      [name]: value,
-      group: selectGroup,
-    });
-  };
-
-  const formSubmit = () => {
-    const { siteNameKr, siteUrl, accountId, accountPwd } = accountFormat;
-
-    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
-      message.error("필수 입력 값을 확인해 주세요.");
-
-      return;
-    }
-
-    ipcRenderer.send('main/createAccount', accountFormat);
-
-    setAccountFormVisible(false);
-
-    formClear();
-  };
-
-  const formUpdateSubmit = () => {
-    const { siteNameKr, siteUrl, accountId, accountPwd } = accountFormat;
-
-    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
-      message.error("필수 입력 값을 확인해 주세요.");
-
-      return;
-    }
-
-    ipcRenderer.send('main/updateAccount', accountFormat);
-
-    setAccountFormVisible(false);
-
-    formClear();
-  };
-
-  const modalClosed = () => {
-    formClear();
-    setAccountFormVisible(false);
-  };
-
-  useEffect(() => {
-    ipcRenderer.on('main/getAccountDetail', (e, result) => {
-      const { success } = result;
-
-      if (success) {
-        const { data } = result;
-        setAccountFormat(data);
-      } else {
-        message.error(result.log);
-      }
-    });
-  }, [selectGroup, accountFormat]);
-
+  
   return (
     <CustomModal
         title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
         centered
         visible={isVisible}
-        onOk={() => isUpdate ? formUpdateSubmit() : formSubmit()}
-        onCancel={modalClosed}
+        onOk={() => isUpdate ? formSubmit('update') : formSubmit('create')}
+        onCancel={modalClose}
         width={500}
       >
       <CustomForm layout="vertical" size="large">

@@ -1,37 +1,38 @@
-import { observable, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { ipcRenderer } = window;
 
 class GroupStore {
-  @observable isAdd = false;
+  isAdd = false;
 
-  @observable groupList = [];
+  groupList = [];
 
-  @observable groupAddValue = '';
+  groupAddValue = '';
 
-  @observable groupUpdateValue = '';
+  groupUpdateValue = '';
 
-  @observable selectedGroup = '';
+  selectedGroup = '';
 
   constructor(root) {
     this.root = root;
+    makeAutoObservable(this);
   }
 
-  @action onChangeValue = (e) => {
+  onChangeValue = (e) => {
     this[e.target.name] = e.target.value;
   };
 
-  @action setSelectedGroup = (value) => {
+  setSelectedGroup = (value) => {
     this.selectedGroup = value;
   };
 
-  @action setAddStatus = () => {
+  setAddStatus = () => {
     this.isAdd = !this.isAdd;
   };
 
-  @action getGroupList = () => {
+  getGroupList = () => {
     ipcRenderer.invoke('side/getGroupList')
       .then((result) => {
         const { success } = result;
@@ -50,7 +51,7 @@ class GroupStore {
       });
   };
 
-  @action addGroup = () => {
+  addGroup = () => {
     if(!this.groupName) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
@@ -60,7 +61,7 @@ class GroupStore {
     this.groupCreationStatus = !this.groupCreationStatus;
   };
 
-  @action removeGroup = (id) => {
+  removeGroup = (id) => {
 
     Modal.confirm({
       title: '정말로 삭제하시겠어요?',
@@ -75,7 +76,7 @@ class GroupStore {
     });
   };
 
-  @action toggleUpdateGroup = (e, id) => {
+  toggleUpdateGroup = (e, id) => {
     e.stopPropagation();
     
     const { menuName } = this.groupList.find((v) => v.id === id);
@@ -90,7 +91,7 @@ class GroupStore {
     this.groupList = addedGroupList;
   };
 
-  @action updateGroup = (id) => {
+  updateGroup = (id) => {
     if(!this.groupUpdateValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;

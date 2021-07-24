@@ -19,6 +19,6 @@ const CustomLayout = styled(Layout)`
   .ant-layout {
     background: #222529;
   }
-`;
+`; 
 
 export default App;

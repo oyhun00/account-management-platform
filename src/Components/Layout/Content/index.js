@@ -7,11 +7,10 @@ import AccountFrom from './Form/AccountForm';
 import AccountCard from './AccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
 
-const { ipcRenderer } = window;
 const { Content } = Layout;
 
 const ContentBox = (props) => {
-  const { selectedGroup, groupList } = props;
+  const { selectedGroup, groupList, testData, test } = props;
   const { AccountStore } = useStores();
   const { 
     getAccountList, accountList, linkedAccountList, removeAccount,
@@ -20,7 +19,7 @@ const ContentBox = (props) => {
 
   useEffect(() => {
     getAccountList();
-  }, [accountList, linkedAccountList]);
+  }, [accountList, linkedAccountList, testData, test]);
 
   const accountFilteredData = selectedGroup !== 0
     ? accountList.reduce((acc, cur) => {

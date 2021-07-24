@@ -13,15 +13,14 @@ import MenuItem from './Menu';
 const Side = () => {
   const { GroupStore } = useStores();
   const { 
-    groupList, selectedGroup, isAdd, groupUpdateValue,
+    selectedGroup, isAdd, groupUpdateValue, groupList,
     setSelectedGroup, setAddStatus, getGroupList, addGroup, removeGroup,
     toggleUpdateGroup, updateGroup, onChangeValue
   } = GroupStore;
 
   useEffect(() => {
-    console.log(groupList);
     getGroupList();
-  }, []);
+  }, [groupList, getGroupList]);
   
   const menuItem = groupList.map((v) =>
     (

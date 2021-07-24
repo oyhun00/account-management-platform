@@ -1,17 +1,17 @@
-import { observable, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { message } from 'antd';
 
 const { ipcRenderer } = window;
 
 class AccountStore {
-  @observable accountList = [];
+  accountList = [];
 
-  @observable accountFormOption = {
+  accountFormOption = {
     isUpdate: false,
     isVisible: false
   };
   
-  @observable accountFormat = {
+  accountFormat = {
     siteNameKr: '',
     siteNameEng: '',
     protocol: 'http://',
@@ -21,42 +21,21 @@ class AccountStore {
     group: '',
   }
 
-  @observable linkedAccountList = [];
+  linkedAccountList = [];
+
+  testData = 1;
 
   constructor(root) {
     this.root = root;
+    makeAutoObservable(this);
   }
 
-  @action formChangeHandle = (e) => {
-    const { value, name } = e.target;
-
-    this.accountFormat = {
-      ...this.accountFormat,
-      [name]: value,
-    }
+  test = () => {
+    this.testData = this.testData + 1;
+    console.log(this.testData);
   };
 
-  @action clearAccountFormat = () => {
-    this.accountFormat = {
-      ...this.accountFormat,
-      siteNameKr: '',
-      siteNameEng: '',
-      protocol: 'http://',
-      siteUrl: '',
-      accountId: '',
-      accountPwd: '',
-    };
-  };
-
-  @action toggleCreateAccount = () => {
-    this.accountFormOption = {
-      ...this.accountFormOption,
-      isUpdate: false,
-      isVisible: true
-    };
-  };
-
-  @action getAccountDetail = (id) => {
+  getAccountDetail = (id) => {
     ipcRenderer.invoke('main/getAccountDetail', id)
       .then((result) => {
         const { success, log } = result;
@@ -83,7 +62,7 @@ class AccountStore {
       });
   };
 
-  @action getAccountList = () => {
+  getAccountList = () => {
     ipcRenderer.invoke('main/getAccount')
       .then((result) => {
         const { success, log } = result;
@@ -103,8 +82,68 @@ class AccountStore {
       });
   };
 
-  @action removeAccount = (id) => {
+  removeAccount = (id) => {
     ipcRenderer.send('main/removeAccount', id);
+  };
+
+  toggleCreateAccount = () => {
+    this.accountFormOption = {
+      ...this.accountFormOption,
+      isUpdate: false,
+      isVisible: true
+    };
+  };
+
+  formValidation = () => {
+    const { siteNameKr, siteUrl, accountId, accountPwd } = this.accountFormat;
+
+    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+      return false;
+    }
+  };
+
+  protocolHandleChange = (value) => {
+    this.accountFormat.protocol = value;
+  };
+
+  formChangeHandle = (e) => {
+    const { value, name } = e.target;
+
+    this.accountFormat = {
+      ...this.accountFormat,
+      [name]: value,
+    }
+  };
+
+  clearAccountFormat = () => {
+    this.accountFormat = {
+      ...this.accountFormat,
+      siteNameKr: '',
+      siteNameEng: '',
+      protocol: 'http://',
+      siteUrl: '',
+      accountId: '',
+      accountPwd: '',
+    };
+  };
+
+  modalClose = () => {
+    this.accountFormOption.isVisible = false;
+    this.clearAccountFormat();
+  };
+
+  formSubmit = (action) => {
+    if(!this.formValidation()) {
+      message.error("필수 입력 값을 확인해 주세요.");
+
+      return false;
+    }
+
+    const channel = action === 'create' ? 'main/createAccount' : 'main/uddateAccount';
+
+    ipcRenderer.send(channel, this.accountFormat);
+
+    this.modalClose();
   };
 }
 
