@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, action } from "mobx";
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -13,7 +13,7 @@ class GroupStore {
 
   groupUpdateValue = '';
 
-  selectedGroup = '';
+  selectedGroup = 2;
 
   constructor(root) {
     this.root = root;
@@ -28,48 +28,87 @@ class GroupStore {
     this.selectedGroup = value;
   };
 
+  // setSelectFirstGroup = () => {
+    
+  // };
+
   setAddStatus = () => {
     this.isAdd = !this.isAdd;
   };
 
   getGroupList = () => {
     ipcRenderer.invoke('side/getGroupList')
-      .then((result) => {
-        const { success } = result;
+      .then(
+        action((result) => {
+          const { success } = result;
 
-        if (success) {
-          const { data, log } = result;
-          this.groupList = data;
-          console.log(this.groupList)
+          if (success) {
+            const { data, log } = result;
+            this.groupList = data;
 
-          if (log) {
-            message.success(log);
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(result.log);
           }
-        } else {
-          message.error(result.log);
-        }
-      });
-  };
+        })
+      );
+    };
 
-  addGroup = () => {
-    if(!this.groupName) {
+  addGroup = async () => {
+    if(!this.groupAddValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
 
-    ipcRenderer.send('side/createGroup', this.groupName);
-    this.groupCreationStatus = !this.groupCreationStatus;
+    const temp = await ipcRenderer.invoke('side/createGroup', this.groupAddValue);
+
+    console.log(temp);
+      // .then(
+      //   action((result) => {
+      //     const { success } = result;
+          
+      //     if (success) {
+      //       const { data, log } = result;
+      //       this.groupList = data;
+      //       this.selectedGroup = data[data.length - 1];
+      //       this.isAdd = !this.isAdd;
+
+      //       if (log) {
+      //         message.success(log);
+      //       }
+      //     } else {
+      //       message.error(result.log);
+      //     }
+      //   })
+      // );
   };
 
   removeGroup = (id) => {
-
     Modal.confirm({
       title: '정말로 삭제하시겠어요?',
       icon: <ExclamationCircleOutlined />,
       content: '해당 그룹에 저장된 계정 정보도 모두 사라집니다.',
       onOk() {
-        ipcRenderer.send('side/removeGroup', id);
-        this.selectedGroup = this.groupList[0].id;
+        ipcRenderer.invoke('side/removeGroup', id)
+          .then(
+            action((result) => {
+              const { success } = result;
+          
+              if (success) {
+                const { data, log } = result;
+                this.groupList = data;
+                this.selectedGroup = data[data.length - 1];
+    
+                if (log) {
+                  message.success(log);
+                }
+              } else {
+                message.error(result.log);
+              }
+            })
+          );
       },
       onCancel() {
       },

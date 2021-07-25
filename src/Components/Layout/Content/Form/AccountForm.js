@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Form, Input, Modal, Select } from 'antd';
 import useStores from '../../../../Stores/UseStore';

@@ -1,4 +1,5 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense } from 'react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
@@ -9,17 +10,17 @@ import Loading from '../../Layout/Content/Util/Loading';
 
 const { Content } = Layout;
 
-const ContentBox = (props) => {
-  const { selectedGroup, groupList, testData, test } = props;
-  const { AccountStore } = useStores();
+const ContentBox = observer(() => {
+  const { AccountStore, GroupStore } = useStores();
   const { 
     getAccountList, accountList, linkedAccountList, removeAccount,
     getAccountDetail, accountFormOption, toggleCreateAccount
    } = AccountStore;
+  const { selectedGroup, groupList } = GroupStore;
 
   useEffect(() => {
     getAccountList();
-  }, [accountList, linkedAccountList, testData, test]);
+  }, [getAccountList, selectedGroup]);
 
   const accountFilteredData = selectedGroup !== 0
     ? accountList.reduce((acc, cur) => {
@@ -31,7 +32,6 @@ const ContentBox = (props) => {
             formUpdateToggle={getAccountDetail} />
         </Col>
       );
-
       return acc;
     }, [])
     : linkedAccountList.reduce((acc, cur) => {
@@ -90,7 +90,7 @@ const ContentBox = (props) => {
       <AccountFrom accountFormOption={accountFormOption}></AccountFrom>
     </Suspense>
   );
-}
+});
 
 const CustomContent = styled(Content)`
   padding: 12px;

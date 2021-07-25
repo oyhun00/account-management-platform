@@ -42,7 +42,7 @@ ipcMain.on('main/getFavicon', (event, crawlUrl) => {
     })
 });
 
-ipcMain.handle('side/getGroupList', async (event, arg) => {
+ipcMain.handle('side/getGroupList', async (event) => {
   try { 
     const MenuList = await afs.readFile(MenuListPath);
     const { list } = JSON.parse(MenuList);
@@ -51,6 +51,7 @@ ipcMain.handle('side/getGroupList', async (event, arg) => {
       code: 1,
       data: list,
     };
+
     return result;
   } catch(error) {
     const result = {
@@ -63,7 +64,7 @@ ipcMain.handle('side/getGroupList', async (event, arg) => {
   }
 });
 
-ipcMain.on('side/createGroup', async (event, newMenuName) => {
+ipcMain.handle('side/createGroup', async (event, newMenuName) => {
   try {
     const MenuList = await afs.readFile(MenuListPath);
     const { list, sequence }  = JSON.parse(MenuList);
@@ -81,35 +82,37 @@ ipcMain.on('side/createGroup', async (event, newMenuName) => {
     afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8')
       .then(() => {
         const { list } = newMenuList;
-
-        event.sender.send('side/getGroupList', {
+        const result = {
           success: true,
           code: 1,
           data: list,
           log: '성공적으로 등록했어요!',
-        });
+        };
+        log.info('hi : ' + JSON.stringify(result));
+
+        return result;
       })
       .catch((error) => {
-        event.sender.send('side/getGroupList', {
+        const result = {
           success: false,
           code: 2,
           log: error,
-        });
+        };
   
-        return;
+        return result;
       })
   } catch (error) {
-    event.sender.send('side/getMenuList', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   }
 });
 
-ipcMain.on('side/updateMenu', async (event, updateMenuData) => {
+ipcMain.handle('side/updateGroup', async (event, updateMenuData) => {
   try {
     const MenuList = await afs.readFile(MenuListPath);
     const { sequence } = JSON.parse(MenuList);
@@ -120,33 +123,35 @@ ipcMain.on('side/updateMenu', async (event, updateMenuData) => {
 
     afs.writeFile(MenuListPath, JSON.stringify(updateMenuList), 'utf8')
       .then(() => {
-        event.sender.send('side/getMenuList', {
+        const result = {
           success: true,
           code: 1,
           data: updateMenuList.list,
           log: '성공적으로 수정했어요.',
-        });
+        };
+        
+        return result;
       }).catch((error) => {
-        event.sender.send('side/getMenuList', {
+        const result = {
           success: false,
           code: 2,
           log: error,
-        });
+        };
 
-        return;
+        return result;
       });
   } catch (error) {
-    event.sender.send('side/getMenuList', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   }
 })
 
-ipcMain.on('side/removeMenu', async (event, id) => {
+ipcMain.handle('side/removeGroup', async (event, id) => {
   try {
     const MenuList = await afs.readFile(MenuListPath);
     const parseMenuList = JSON.parse(MenuList);
@@ -164,57 +169,40 @@ ipcMain.on('side/removeMenu', async (event, id) => {
 
     afs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8')
       .then(() => {
-        const { list } = filteredAccount;
-  
-        event.sender.send('main/getAccount', {
-          success: true,
-          code: 1,
-          accountData: list,
-        });
-      })
-      .catch((error) => {
-        event.sender.send('main/getAccount', {
-          success: false,
-          code: 2,
-          log: error,
-        });
-  
-        return;
-      })
-      .then(() => {
         afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8')
       })
       .then(() => {
         const { list } = newMenuList;
-  
-        event.sender.send('side/getMenuList', {
+        const result = {
           success: true,
           code: 1,
           data: list,
           log: '성공적으로 삭제했어요.',
-        });
+        };
+  
+        return result;
       }).catch((error) => {
-        event.sender.send('side/getMenuList', {
+        const result = {
           success: false,
           code: 2,
           log: error,
-        });
+        };
   
-        return;
+        return result;
       });
   } catch(error) {
-    event.sender.send('side/getMenuList', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
-
-    return;
+    };
+    
+    return result;
   }
 });
 
 
-ipcMain.handle('main/getAccount', async (event, id) => {
+ipcMain.handle('main/getAccount', async () => {
   try {
     const AccountLinkage = await afs.readFile(LinkageListPath);
     const AccountList = await afs.readFile(AccountListPath);

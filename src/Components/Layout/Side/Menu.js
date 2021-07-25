@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import useStores from '../../../Stores/UseStore';
 import { Input, Popover, Button, List } from 'antd';
 import {
   CloseOutlined,
@@ -9,8 +10,9 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 
-const MenuItem = (props) => {
-  const { data, groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = props;
+const MenuItem = ({ data }) => {
+  const { GroupStore } = useStores();
+  const { groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = GroupStore;
   const { id, menuName, updateStatus } = data;
 
   const popMenu = (

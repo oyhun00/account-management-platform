@@ -10,29 +10,21 @@ import {
 import useStores from '../../../Stores/UseStore';
 import MenuItem from './Menu';
 
-const Side = () => {
+const Side = observer(() => {
   const { GroupStore } = useStores();
   const { 
-    selectedGroup, isAdd, groupUpdateValue, groupList,
-    setSelectedGroup, setAddStatus, getGroupList, addGroup, removeGroup,
-    toggleUpdateGroup, updateGroup, onChangeValue
+    setSelectedGroup, selectedGroup, setAddStatus, isAdd,
+    getGroupList, groupList, addGroup, onChangeValue
   } = GroupStore;
 
   useEffect(() => {
     getGroupList();
-  }, [groupList, getGroupList]);
+  }, [getGroupList]);
   
   const menuItem = groupList.map((v) =>
     (
       <CustomMenuItem key={v.id} onClick={() => setSelectedGroup(v.id)}>
-        <MenuItem
-          data={v}
-          groupUpdateValue={groupUpdateValue}
-          onChangeValue={onChangeValue}
-          updateGroup={updateGroup}
-          toggleUpdateGroup={toggleUpdateGroup}
-          removeGroup={removeGroup}
-        />
+        <MenuItem data={v} />
       </CustomMenuItem>
     )
   );
@@ -47,7 +39,7 @@ const Side = () => {
           ? (
             <CustomRow>
               <Col span={20}>
-                <CustomInput onChange={onChangeValue}/>
+                <CustomInput name="groupAddValue" onChange={onChangeValue} />
               </Col>
               <CustomPlusIconWrap span={4} onClick={addGroup} >
                 <PlusOutlined/>
@@ -79,7 +71,7 @@ const Side = () => {
       </CustomFixedRow>
     </CustomSider>
   );
-}
+});
 
 const CustomSider = styled.div`
   position: relative;
@@ -158,4 +150,4 @@ const CustomLinkOutlined = styled(LinkOutlined)`
   }
 `;
 
-export default observer(Side);
+export default Side;

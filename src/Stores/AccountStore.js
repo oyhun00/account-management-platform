@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, action } from "mobx";
 import { message } from 'antd';
 
 const { ipcRenderer } = window;
@@ -23,17 +23,10 @@ class AccountStore {
 
   linkedAccountList = [];
 
-  testData = 1;
-
   constructor(root) {
     this.root = root;
     makeAutoObservable(this);
   }
-
-  test = () => {
-    this.testData = this.testData + 1;
-    console.log(this.testData);
-  };
 
   getAccountDetail = (id) => {
     ipcRenderer.invoke('main/getAccountDetail', id)
@@ -64,7 +57,7 @@ class AccountStore {
 
   getAccountList = () => {
     ipcRenderer.invoke('main/getAccount')
-      .then((result) => {
+      .then(action((result) => {
         const { success, log } = result;
 
         if (success) {
@@ -79,7 +72,7 @@ class AccountStore {
         } else {
           message.error(log);
         }
-      });
+      }));
   };
 
   removeAccount = (id) => {
