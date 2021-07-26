@@ -28,10 +28,6 @@ class GroupStore {
     this.selectedGroup = value;
   };
 
-  // setSelectFirstGroup = () => {
-    
-  // };
-
   setAddStatus = () => {
     this.isAdd = !this.isAdd;
   };
@@ -56,36 +52,36 @@ class GroupStore {
       );
     };
 
-  addGroup = async () => {
+  addGroup = () => {
     if(!this.groupAddValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
 
-    const temp = await ipcRenderer.invoke('side/createGroup', this.groupAddValue);
-
-    console.log(temp);
-      // .then(
-      //   action((result) => {
-      //     const { success } = result;
+    ipcRenderer.invoke('side/createGroup', this.groupAddValue)
+      .then(
+        action((result) => {
+          const { success } = result;
           
-      //     if (success) {
-      //       const { data, log } = result;
-      //       this.groupList = data;
-      //       this.selectedGroup = data[data.length - 1];
-      //       this.isAdd = !this.isAdd;
+          if (success) {
+            const { data, log } = result;
+            this.groupList = data;
+            this.selectedGroup = data[data.length - 1].id;
+            this.isAdd = !this.isAdd;
 
-      //       if (log) {
-      //         message.success(log);
-      //       }
-      //     } else {
-      //       message.error(result.log);
-      //     }
-      //   })
-      // );
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(result.log);
+          }
+        })
+      );
   };
 
   removeGroup = (id) => {
+    const _this = this;
+
     Modal.confirm({
       title: '정말로 삭제하시겠어요?',
       icon: <ExclamationCircleOutlined />,
@@ -98,8 +94,8 @@ class GroupStore {
           
               if (success) {
                 const { data, log } = result;
-                this.groupList = data;
-                this.selectedGroup = data[data.length - 1];
+                _this.groupList = data;
+                _this.selectedGroup = data[data.length - 1].id;
     
                 if (log) {
                   message.success(log);
@@ -136,14 +132,31 @@ class GroupStore {
       return;
     }
     
-    const updateMenuList = this.groupList.map(
+    const updateGroupList = this.groupList.map(
       (v) => v.id === id
         ? { ...v, menuName: this.groupUpdateValue, updateStatus: false } 
         : { ...v }
     );
-    this.groupList = updateMenuList;
 
-    ipcRenderer.send('side/updateMenu', updateMenuList);
+    ipcRenderer.invoke('side/updateGroup', updateGroupList)
+      .then(
+        action((result) => {
+          const { success } = result;
+
+          if (success) {
+            const { log } = result;
+
+            if (log) {
+              message.success(log);
+            }
+
+            this.groupList = updateGroupList;
+          }
+          else {
+            message.error(result.log);
+          }
+        })
+      );
   };
 }
 

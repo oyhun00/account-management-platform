@@ -1,4 +1,5 @@
 import React from 'react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Input, Popover, Button, List } from 'antd';
@@ -10,7 +11,7 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 
-const MenuItem = ({ data }) => {
+const MenuItem = observer(({ data }) => {
   const { GroupStore } = useStores();
   const { groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = GroupStore;
   const { id, menuName, updateStatus } = data;
@@ -28,7 +29,7 @@ const MenuItem = ({ data }) => {
         ? (
           <FlexBox>
             <div>
-              <CustomInput value={groupUpdateValue} onChange={onChangeValue} />
+              <CustomInput name="groupUpdateValue" value={groupUpdateValue} onChange={onChangeValue} />
             </div>
             <IconWrap>
               <CheckOutlined onClick={() => updateGroup(id)}/>
@@ -48,7 +49,7 @@ const MenuItem = ({ data }) => {
         )}
     </>
   )
-};
+});
 
 const CustomInput = styled(Input)`
   background: rgb(40 39 44);

@@ -1,11 +1,12 @@
 import React from 'react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import { Form, Input, Modal, Select } from 'antd';
 import useStores from '../../../../Stores/UseStore';
 
 const { Option } = Select;
 
-const AccountForm = (props) => {
+const AccountForm = observer((props) => {
   const { accountFormOption } = props;
   const { isVisible, isUpdate } = accountFormOption;
   const { AccountStore } = useStores();
@@ -44,7 +45,7 @@ const AccountForm = (props) => {
       </CustomForm>
     </CustomModal>
   );
-}
+});
 
 const CustomModal = styled(Modal)`
   .ant-modal-close-x {

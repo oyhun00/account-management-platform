@@ -30,18 +30,19 @@ class AccountStore {
 
   getAccountDetail = (id) => {
     ipcRenderer.invoke('main/getAccountDetail', id)
-      .then((result) => {
+      .then(
+        action((result) => {
         const { success, log } = result;
 
         if (success) {
           const { data } = result;
           
-          this.accountForm = {
+          this.accountFormat = {
             ...data
           };
 
-          this.accountForm = {
-            ...this.accountForm,
+          this.accountFormOption = {
+            ...this.accountFormOption,
             isUpdate: true,
             isVisible: true
           };
@@ -52,7 +53,8 @@ class AccountStore {
         } else {
           message.error(log);
         }
-      });
+      })
+    );
   };
 
   getAccountList = () => {
@@ -76,7 +78,24 @@ class AccountStore {
   };
 
   removeAccount = (id) => {
-    ipcRenderer.send('main/removeAccount', id);
+    ipcRenderer.invoke('main/removeAccount', id)
+      .then(
+        action((result) => {
+          const { success, log } = result;
+
+          if (success) {
+            const { accountData } = result;
+
+            this.accountList = accountData;
+
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(log);
+          }
+        })
+      );
   };
 
   toggleCreateAccount = () => {
@@ -92,6 +111,8 @@ class AccountStore {
 
     if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
       return false;
+    } else {
+      return true;
     }
   };
 
@@ -125,16 +146,20 @@ class AccountStore {
     this.clearAccountFormat();
   };
 
-  formSubmit = (action) => {
+  formSubmit = (_action) => {
     if(!this.formValidation()) {
       message.error("필수 입력 값을 확인해 주세요.");
 
       return false;
     }
+    const channel = _action === 'create' ? 'main/createAccount' : 'main/updateAccount';
 
-    const channel = action === 'create' ? 'main/createAccount' : 'main/uddateAccount';
-
-    ipcRenderer.send(channel, this.accountFormat);
+    ipcRenderer.invoke(channel, this.accountFormat)
+      .then(
+        action((result) => {
+          console.log(result);
+        })
+      );
 
     this.modalClose();
   };

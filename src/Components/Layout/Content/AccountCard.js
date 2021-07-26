@@ -1,4 +1,6 @@
 import React, { Suspense } from 'react';
+import { observer } from 'mobx-react';
+import useStores from '../../../Stores/UseStore';
 import styled from 'styled-components';
 import { Card, Avatar, Row, Divider, Popover, List, Button } from 'antd';
 import {
@@ -10,9 +12,10 @@ import Loading from './Util/Loading';
 import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 
-const AccountCard = (props) => {
-  const { data, removeAccount, getAccountDetail } = props;
+const AccountCard = observer(({ data }) => {
   const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
+  const { AccountStore } = useStores();
+  const { removeAccount, getAccountDetail } = AccountStore;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
   const popMenu = (
@@ -57,7 +60,7 @@ const AccountCard = (props) => {
       </CustomCard>
     </Suspense>
   );
-}
+});
 
 const CustomCard = styled(Card)`
   margin: 12px;
