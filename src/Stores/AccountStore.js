@@ -147,13 +147,18 @@ class AccountStore {
   };
 
   formSubmit = (_action) => {
-    if(!this.formValidation()) {
-      message.error("필수 입력 값을 확인해 주세요.");
+    // if(!this.formValidation()) {
+    //   message.error("필수 입력 값을 확인해 주세요.");
 
-      return false;
-    }
+    //   return false;
+    // }
+    this.accountFormat.group = this.root.GroupStore.selectedGroup;
+
     const channel = _action === 'create' ? 'main/createAccount' : 'main/updateAccount';
+    // console.log(JSON.parse(this.accountFormat))
 
+    const data = this.accountFormat.accountId
+    console.log(data)
     ipcRenderer.invoke(channel, this.accountFormat)
       .then(
         action((result) => {

@@ -285,7 +285,7 @@ ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   //     });
   //   });
 
-    return true;
+    return newAccountData;
 });
 
 ipcMain.handle('main/removeAccount', async (event, id) => {
