@@ -218,7 +218,49 @@ ipcMain.handle('main/getAccountDetail', async (event, id) => {
 ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   const { siteUrl, protocol } = newAccountData;
   const url = protocol + siteUrl;
-  log.info('hi' + newAccountData);
+  
+  const _cheerio = await cheerio.fetch(url);
+  const { $ } = _cheerio;
+  const { href } = $('link[rel="shortcut icon"]')[0].attribs
+    || $('link[rel="icon"]')[0].attribs
+    || $('link[rel="apple-touch-icon"]')[0].attribs
+    || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
+  const faviconLocation = href.match('http') || href.match('com') ? href : url + href;
+
+  try {
+    const accountList = await afs.readFile(AccountListPath);
+    const { sequence, list } = JSON.parse(accountList);
+    const newAccountList = {
+      sequence: sequence + 1,
+      list: list.concat(
+        {
+          ...newAccountData,
+          siteUrl: url,
+          siteIcon: faviconLocation,
+          id: sequence + 1
+        }
+      )
+    };
+      
+    afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
+    const result = {
+      success: true,
+      code: 1,
+      accountData: newAccountList.list,
+      log: '성공적으로 등록했어요.',
+    };
+      
+    return result;
+  } catch (error) {
+    const result = {
+      success: false,
+      code: 2,
+      log: error.message,
+    };
+    
+    return result;
+  } 
+  
 
   // cheerio.fetch(url)
   //   .then((result) => {
@@ -231,13 +273,13 @@ ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   //     return href;
   //   })
   //   .catch(error => {
-  //     event.sender.send('main/getAccount', {
+  //     const result = {
   //       success: false,
-  //       code: 3,
-  //       log: 'URL이 유효하지 않아 파비콘을 파싱하지 못했습니다.',
-  //     });
-
-  //     log.info('err : ' + error);
+  //       code: 2,
+  //       log: error,
+  //     };
+      
+  //     return result;
   //   })
   //   .then((href) => {
   //     if (href) {
@@ -284,8 +326,6 @@ ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   //       });
   //     });
   //   });
-
-    return newAccountData;
 });
 
 ipcMain.handle('main/removeAccount', async (event, id) => {
