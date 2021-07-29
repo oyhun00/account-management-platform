@@ -218,7 +218,7 @@ ipcMain.handle('main/getAccountDetail', async (event, id) => {
 ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   const { siteUrl, protocol } = newAccountData;
   const url = protocol + siteUrl;
-  
+
   const _cheerio = await cheerio.fetch(url);
   const { $ } = _cheerio;
   const { href } = $('link[rel="shortcut icon"]')[0].attribs
@@ -227,39 +227,30 @@ ipcMain.handle('main/createAccount', async (event, newAccountData) => {
     || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
   const faviconLocation = href.match('http') || href.match('com') ? href : url + href;
 
-  try {
-    const accountList = await afs.readFile(AccountListPath);
-    const { sequence, list } = JSON.parse(accountList);
-    const newAccountList = {
-      sequence: sequence + 1,
-      list: list.concat(
-        {
-          ...newAccountData,
-          siteUrl: url,
-          siteIcon: faviconLocation,
-          id: sequence + 1
-        }
-      )
-    };
-      
-    afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
-    const result = {
-      success: true,
-      code: 1,
-      accountData: newAccountList.list,
-      log: '성공적으로 등록했어요.',
-    };
-      
-    return result;
-  } catch (error) {
-    const result = {
-      success: false,
-      code: 2,
-      log: error.message,
-    };
+  const accountList = await afs.readFile(AccountListPath);
+  const { sequence, list } = JSON.parse(accountList);
+  const newAccountList = {
+    sequence: sequence + 1,
+    list: list.concat(
+      {
+        ...newAccountData,
+        siteUrl: url,
+        siteIcon: faviconLocation,
+        id: sequence + 1
+      }
+    )
+  };
     
-    return result;
-  } 
+  afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
+  const result = {
+    success: true,
+    code: 1,
+    accountData: newAccountList.list,
+    log: '성공적으로 등록했어요.',
+  };
+    
+  return result;
+  
   
 
   // cheerio.fetch(url)
@@ -349,17 +340,17 @@ ipcMain.handle('main/removeAccount', async (event, id) => {
 
     return result;
   } catch(error) {
-    event.sender.send('main/getAccount', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   }
 });
 
-ipcMain.on('main/updateAccount', async (event, accountData) => {
+ipcMain.handle('main/updateAccount', async (event, accountData) => {
   try {
     const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd, id } = accountData;
     const url = protocol + siteUrl;
@@ -372,25 +363,24 @@ ipcMain.on('main/updateAccount', async (event, accountData) => {
             : { ...v })
     };
 
-    afs.writeFile(AccountListPath, JSON.stringify(newAccountDataList), 'utf8')
-      .then(() => {
-        const { list } = newAccountDataList;
+    afs.writeFile(AccountListPath, JSON.stringify(newAccountDataList), 'utf8');
 
-        event.sender.send('main/getAccount', {
-          success: true,
-          code: 1,
-          accountData: list,
-          log: '성공적으로 수정했어요.',
-        });
-      });
+    const result = {
+      success: true,
+      code: 1,
+      accountData: newAccountDataList.list,
+      log: '성공적으로 수정했어요.',
+    };
+
+    return result;
   } catch (error) {
-    event.sender.send('main/getAccount', {
+    const result = {
       success: false,
       code: 2,
       log: error.message,
-    });
+    };
 
-    return;
+    return result;
   } 
 });
 

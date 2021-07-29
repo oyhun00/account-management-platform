@@ -116,7 +116,7 @@ class AccountStore {
     }
   };
 
-  protocolHandleChange = (value) => {
+  protocolChangeHandle = (value) => {
     this.accountFormat.protocol = value;
   };
 
