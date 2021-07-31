@@ -11,10 +11,10 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 
-const MenuItem = observer(({ data }) => {
+const GroupItem = observer(({ data }) => {
   const { GroupStore } = useStores();
   const { groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = GroupStore;
-  const { id, menuName, updateStatus } = data;
+  const { id, groupName, updateStatus } = data;
 
   const popMenu = (
     <>
@@ -39,7 +39,7 @@ const MenuItem = observer(({ data }) => {
         )
         : (
           <FlexBox>
-            {menuName}
+            {groupName}
             <Popover content={popMenu} trigger="focus" placement="rightTop">
               <ActionButton>
                 <MoreOutlined />
@@ -117,4 +117,4 @@ const CustomList = styled(List)`
   }
 `;
 
-export default MenuItem;
+export default GroupItem;

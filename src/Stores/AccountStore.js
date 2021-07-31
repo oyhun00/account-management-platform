@@ -159,7 +159,6 @@ class AccountStore {
     ipcRenderer.invoke(channel, toJS(this.accountFormat))
       .then(
         action((result) => {
-          console.log(result);
           const { success, log } = result;
 
           if (success) {

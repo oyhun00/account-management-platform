@@ -8,7 +8,7 @@ import {
   LinkOutlined,
 } from '@ant-design/icons';
 import useStores from '../../../Stores/UseStore';
-import MenuItem from './Menu';
+import GroupItem from './GroupItem';
 
 const Side = observer(() => {
   const { GroupStore } = useStores();
@@ -21,10 +21,10 @@ const Side = observer(() => {
     getGroupList();
   }, [getGroupList]);
   
-  const menuItem = groupList.map((v) =>
+  const groupItem = groupList.map((v) =>
     (
       <CustomMenuItem key={v.id} onClick={() => setSelectedGroup(v.id)}>
-        <MenuItem data={v} />
+        <GroupItem data={v} />
       </CustomMenuItem>
     )
   );
@@ -32,7 +32,7 @@ const Side = observer(() => {
   return (
     <CustomSider>
       <CustomMenu defaultSelectedKeys={[selectedGroup.toString()]} defaultOpenKeys={[`sub${selectedGroup.toString()}`]} selectedKeys={[selectedGroup.toString()]} mode="inline" theme="dark">
-        {menuItem}
+        {groupItem}
       </CustomMenu>
       {
         isAdd

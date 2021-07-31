@@ -114,9 +114,9 @@ class GroupStore {
   toggleUpdateGroup = (e, id) => {
     e.stopPropagation();
     
-    const { menuName } = this.groupList.find((v) => v.id === id);
+    const { groupName } = this.groupList.find((v) => v.id === id);
 
-    this.groupUpdateValue = menuName;
+    this.groupUpdateValue = groupName;
 
     const addedGroupList = this.groupList.map(
       (v) => v.id === id
@@ -134,7 +134,7 @@ class GroupStore {
     
     const updateGroupList = this.groupList.map(
       (v) => v.id === id
-        ? { ...v, menuName: this.groupUpdateValue, updateStatus: false } 
+        ? { ...v, groupName: this.groupUpdateValue, updateStatus: false } 
         : { ...v }
     );
 

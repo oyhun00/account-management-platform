@@ -1,12 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const log = require('electron-log');
-const os = require('os');
 const url = require('url');
 const path = require('path'); 
-const fs = require('fs');
 const afs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
-const MenuListPath = './src/TempData/MenuList.json';
+const GroupListPath = './src/TempData/GroupList.json';
 const AccountListPath = './src/TempData/AccountList.json';
 const LinkageListPath = './src/TempData/AccountLinkage.json';
 
@@ -14,7 +12,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
     height: 600,
-    autoHideMenuBar: true,
+    autoHideGroupBar: true,
     webPreferences: {
       nodeIntegration: true,
       preload: __dirname + '//preload.js'
@@ -31,21 +29,10 @@ function createWindow () {
 
 app.whenReady().then(createWindow);
 
-ipcMain.on('main/getFavicon', (event, crawlUrl) => {
-  cheerio.fetch(crawlUrl)
-    .then((res) => {
-      const { $ } = res;
-      const { href } = $('link[rel="shortcut icon"]')[0].attribs || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
-      const faviconLocation = href.match('http') || href.match('https') ? href : crawlUrl + href;
-
-      event.sender.send('main/getFavicon', faviconLocation);
-    })
-});
-
 ipcMain.handle('side/getGroupList', async (event) => {
   try { 
-    const MenuList = await afs.readFile(MenuListPath);
-    const { list } = JSON.parse(MenuList);
+    const groupList = await afs.readFile(GroupListPath);
+    const { list } = JSON.parse(groupList);
     const result = {
       success: true,
       code: 1,
@@ -64,26 +51,26 @@ ipcMain.handle('side/getGroupList', async (event) => {
   }
 });
 
-ipcMain.handle('side/createGroup', async (event, newMenuName) => {
+ipcMain.handle('side/createGroup', async (event, newGroupName) => {
   try {
-    const MenuList = await afs.readFile(MenuListPath);
-    const { list, sequence }  = JSON.parse(MenuList);
+    const groupList = await afs.readFile(GroupListPath);
+    const { list, sequence }  = JSON.parse(groupList);
     const _sequence = sequence + 1;
-    const newMenuList = {
+    const newGroupList = {
       sequence: _sequence,
       list: list.concat({
         id: _sequence,
-        menuName: newMenuName,
-        menuIndex: _sequence,
+        groupName: newGroupName,
+        groupIndex: _sequence,
         updateStatus: false
       })
     };
 
-    afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8');
+    afs.writeFile(GroupListPath, JSON.stringify(newGroupList), 'utf8');
     const result = {
       success: true,
       code: 1,
-      data: newMenuList.list,
+      data: newGroupList.list,
       log: '성공적으로 등록했어요!',
     };
 
@@ -99,16 +86,16 @@ ipcMain.handle('side/createGroup', async (event, newMenuName) => {
   }
 });
 
-ipcMain.handle('side/updateGroup', async (event, updateMenuData) => {
+ipcMain.handle('side/updateGroup', async (event, updateGroupData) => {
   try {
-    const MenuList = await afs.readFile(MenuListPath);
-    const { sequence } = JSON.parse(MenuList);
-    const updateMenuList = {
+    const GroupList = await afs.readFile(GroupListPath);
+    const { sequence } = JSON.parse(GroupList);
+    const updateGroupList = {
       sequence,
-      list: updateMenuData,
+      list: updateGroupData,
     };
 
-    afs.writeFile(MenuListPath, JSON.stringify(updateMenuList), 'utf8');
+    afs.writeFile(GroupListPath, JSON.stringify(updateGroupList), 'utf8');
 
     const result = {
       success: true,
@@ -130,11 +117,11 @@ ipcMain.handle('side/updateGroup', async (event, updateMenuData) => {
 
 ipcMain.handle('side/removeGroup', async (event, id) => {
   try {
-    const MenuList = await afs.readFile(MenuListPath);
-    const parseMenuList = JSON.parse(MenuList);
-    const newMenuList = {
-      sequence : parseMenuList.sequence,
-      list: parseMenuList.list.filter((v) => v.id !== id),
+    const GroupList = await afs.readFile(GroupListPath);
+    const parseGroupList = JSON.parse(GroupList);
+    const newGroupList = {
+      sequence : parseGroupList.sequence,
+      list: parseGroupList.list.filter((v) => v.id !== id),
     };
 
     const AccountList = await afs.readFile(AccountListPath);
@@ -145,12 +132,12 @@ ipcMain.handle('side/removeGroup', async (event, id) => {
     };
 
     afs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8');
-    afs.writeFile(MenuListPath, JSON.stringify(newMenuList), 'utf8');
+    afs.writeFile(GroupListPath, JSON.stringify(newGroupList), 'utf8');
 
     const result = {
       success: true,
       code: 1,
-      data: newMenuList.list,
+      data: newGroupList.list,
       log: '성공적으로 삭제했어요.',
     };
 
@@ -219,104 +206,53 @@ ipcMain.handle('main/createAccount', async (event, newAccountData) => {
   const { siteUrl, protocol } = newAccountData;
   const url = protocol + siteUrl;
 
-  const _cheerio = await cheerio.fetch(url);
-  const { $ } = _cheerio;
-  const { href } = $('link[rel="shortcut icon"]')[0].attribs
-    || $('link[rel="icon"]')[0].attribs
-    || $('link[rel="apple-touch-icon"]')[0].attribs
-    || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
-  const faviconLocation = href.match('http') || href.match('com') ? href : url + href;
+  const faviconLocation = await cheerio.fetch(url)
+    .then((result) => {
+      const { $ } = result;
+      const { href } = $('link[rel="shortcut icon"]')[0].attribs
+        || $('link[rel="icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
 
-  const accountList = await afs.readFile(AccountListPath);
-  const { sequence, list } = JSON.parse(accountList);
-  const newAccountList = {
-    sequence: sequence + 1,
-    list: list.concat(
-      {
-        ...newAccountData,
-        siteUrl: url,
-        siteIcon: faviconLocation,
-        id: sequence + 1
-      }
-    )
-  };
-    
-  afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
-  const result = {
-    success: true,
-    code: 1,
-    accountData: newAccountList.list,
-    log: '성공적으로 등록했어요.',
-  };
-    
-  return result;
+      return href.match('http') || href.match('com') ? href : url + href;
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
   
-  
-
-  // cheerio.fetch(url)
-  //   .then((result) => {
-  //     const { $ } = result;
-  //     const { href } = $('link[rel="shortcut icon"]')[0].attribs
-  //       || $('link[rel="icon"]')[0].attribs
-  //       || $('link[rel="apple-touch-icon"]')[0].attribs
-  //       || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
-
-  //     return href;
-  //   })
-  //   .catch(error => {
-  //     const result = {
-  //       success: false,
-  //       code: 2,
-  //       log: error,
-  //     };
+  try {
+    const accountList = await afs.readFile(AccountListPath);
+    const { sequence, list }  = JSON.parse(accountList);
+    const newAccountList = {
+      sequence: sequence + 1,
+      list: list.concat(
+        {
+          ...newAccountData,
+          siteUrl: url,
+          siteIcon: faviconLocation,
+          id: sequence + 1
+        }
+      )
+    };
       
-  //     return result;
-  //   })
-  //   .then((href) => {
-  //     if (href) {
-  //       return href.match('http') || href.match('com') ? href : url + href;
-  //     } else {
-  //       return false;
-  //     }
-  //   })
-  //   .then((faviconLocation) => {
-  //     fs.readFile(AccountListPath, 'utf8', (error, prevAccountData) => {
-  //       if (error) {
-  //         const result = {
-  //           success: false,
-  //           code: 2,
-  //           log: error,
-  //         };
-          
-  //         return result;
-  //       } 
-        
-  //       const { sequence, list } = JSON.parse(prevAccountData);
-  //       const _sequence = sequence + 1;
-  //       const newAccountList = {
-  //         sequence: _sequence,
-  //         list: list.concat(
-  //           {
-  //             ...newAccountData,
-  //             siteUrl: url,
-  //             siteIcon: faviconLocation,
-  //             id: _sequence
-  //           }
-  //         )
-  //       };
-      
-  //       fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8', (error) => {
-  //         const result = {
-  //           success: true,
-  //           code: 1,
-  //           accountData: newAccountList.list,
-  //           log: '성공적으로 등록했어요.',
-  //         };
-          
-  //         return result;
-  //       });
-  //     });
-  //   });
+    afs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8')
+    const result = {
+      success: true,
+      code: 1,
+      accountData: newAccountList.list,
+      log: '성공적으로 등록했어요.',
+    };
+
+    return result;
+  } catch (error) {
+    const result = {
+      success: true,
+      code: 2,
+      log: error.message
+    };
+
+    return result;
+  }
 });
 
 ipcMain.handle('main/removeAccount', async (event, id) => {
