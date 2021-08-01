@@ -4,7 +4,6 @@ const url = require('url');
 const path = require('path'); 
 const afs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
-const GroupListPath = './src/TempData/GroupList.json';
 const AccountListPath = './src/TempData/AccountList.json';
 const LinkageListPath = './src/TempData/AccountLinkage.json';
 
@@ -29,130 +28,12 @@ function createWindow () {
 
 app.whenReady().then(createWindow);
 
-ipcMain.handle('side/getGroupList', async (event) => {
-  try { 
-    const groupList = await afs.readFile(GroupListPath);
-    const { list } = JSON.parse(groupList);
-    const result = {
-      success: true,
-      code: 1,
-      data: list,
-    };
+const groupMain = require('../server/GroupMain');
 
-    return result;
-  } catch(error) {
-    const result = {
-      success: false,
-      code: 2,
-      log: error.message,
-    }
-
-    return result;
-  }
-});
-
-ipcMain.handle('side/createGroup', async (event, newGroupName) => {
-  try {
-    const groupList = await afs.readFile(GroupListPath);
-    const { list, sequence }  = JSON.parse(groupList);
-    const _sequence = sequence + 1;
-    const newGroupList = {
-      sequence: _sequence,
-      list: list.concat({
-        id: _sequence,
-        groupName: newGroupName,
-        groupIndex: _sequence,
-        updateStatus: false
-      })
-    };
-
-    afs.writeFile(GroupListPath, JSON.stringify(newGroupList), 'utf8');
-    const result = {
-      success: true,
-      code: 1,
-      data: newGroupList.list,
-      log: '성공적으로 등록했어요!',
-    };
-
-    return result;
-  } catch (error) {
-    const result = {
-      success: false,
-      code: 2,
-      log: error.message,
-    };
-
-    return result;
-  }
-});
-
-ipcMain.handle('side/updateGroup', async (event, updateGroupData) => {
-  try {
-    const GroupList = await afs.readFile(GroupListPath);
-    const { sequence } = JSON.parse(GroupList);
-    const updateGroupList = {
-      sequence,
-      list: updateGroupData,
-    };
-
-    afs.writeFile(GroupListPath, JSON.stringify(updateGroupList), 'utf8');
-
-    const result = {
-      success: true,
-      code: 1,
-      log: '성공적으로 수정했어요.',
-    };
-    
-    return result;
-  } catch (error) {
-    const result = {
-      success: false,
-      code: 2,
-      log: error.message,
-    };
-
-    return result;
-  }
-})
-
-ipcMain.handle('side/removeGroup', async (event, id) => {
-  try {
-    const GroupList = await afs.readFile(GroupListPath);
-    const parseGroupList = JSON.parse(GroupList);
-    const newGroupList = {
-      sequence : parseGroupList.sequence,
-      list: parseGroupList.list.filter((v) => v.id !== id),
-    };
-
-    const AccountList = await afs.readFile(AccountListPath);
-    const parseAccountList = JSON.parse(AccountList);
-    const filteredAccount = {
-      sequence : parseAccountList.sequence,
-      list: parseAccountList.list.filter((v) => v.group !== id)
-    };
-
-    afs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8');
-    afs.writeFile(GroupListPath, JSON.stringify(newGroupList), 'utf8');
-
-    const result = {
-      success: true,
-      code: 1,
-      data: newGroupList.list,
-      log: '성공적으로 삭제했어요.',
-    };
-
-    return result;
-  } catch(error) {
-    const result = {
-      success: false,
-      code: 2,
-      log: error.message,
-    };
-    
-    return result;
-  }
-});
-
+ipcMain.handle('side/getGroupList', groupMain.getGroupList);
+ipcMain.handle('side/createGroup', (event, newGroupName) => groupMain.createGroup(event, newGroupName));
+ipcMain.handle('side/updateGroup', (event, updateGroupData) => groupMain.updateGroup(event, updateGroupData));
+ipcMain.handle('side/removeGroup', (event, id) => groupMain.removeGroup(event, id));
 
 ipcMain.handle('main/getAccount', async () => {
   try {
