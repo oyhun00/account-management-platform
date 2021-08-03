@@ -11,6 +11,7 @@ function createWindow () {
       nodeIntegration: true,
       preload: __dirname + '//preload.js'
     },
+    center: true,
   })
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
@@ -27,6 +28,7 @@ const groupMain = require('../server/GroupMain');
 const accountMain = require('../server/AccountMain');
 
 ipcMain.handle('side/getGroupList', groupMain.getGroupList);
+ipcMain.handle('side/getFirstGroup', groupMain.getFirstGroup);
 ipcMain.handle('side/createGroup', (event, newGroupName) => groupMain.createGroup(event, newGroupName));
 ipcMain.handle('side/updateGroup', (event, updateGroupData) => groupMain.updateGroup(event, updateGroupData));
 ipcMain.handle('side/removeGroup', (event, id) => groupMain.removeGroup(event, id));

@@ -13,7 +13,7 @@ class GroupStore {
 
   groupUpdateValue = '';
 
-  selectedGroup = 2;
+  selectedGroup = '';
 
   constructor(root) {
     this.root = root;
@@ -50,7 +50,28 @@ class GroupStore {
           }
         })
       );
-    };
+  };
+
+  getFirstGroup = () => {
+    ipcRenderer.invoke('side/getFirstGroup')
+      .then(
+        action((result) => {
+          const { success } = result;
+
+          if (success) {
+            const { data, log } = result;
+            this.selectedGroup = data;
+            console.log(data);
+
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(result.log);
+          }
+        })
+      );
+  };
 
   addGroup = () => {
     if(!this.groupAddValue) {

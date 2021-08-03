@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import Side from './Layout/Side';
 import ContentBox from './Layout/Content';
+import useStores from '../Stores/UseStore';
 
 const { Sider } = Layout;
 
-const MainComponent = () => {
+const MainComponent = observer(() => {
+  const { GroupStore } = useStores();
+  const { getFirstGroup } = GroupStore;
+
+  useEffect(() => {
+    getFirstGroup();
+  }, [getFirstGroup]);
+
   return (
     <>
       <CustomSider>
@@ -17,7 +26,7 @@ const MainComponent = () => {
       </CustomMainLayout>
     </>
   );
-};
+});
 
 const CustomSider = styled(Sider)`
   background: #19171d;

@@ -24,6 +24,28 @@ exports.getGroupList = async () => {
 	}
 };
 
+exports.getFirstGroup = async () => {
+	try { 
+		const groupList = await fs.readFile(GroupListPath);
+		const { list } = JSON.parse(groupList);
+		const result = {
+				success: true,
+				code: 1,
+				data: list[0].id,
+		};
+
+		return result;
+	} catch(error) {
+		const result = {
+				success: false,
+				code: 2,
+				log: error.message,
+		}
+
+		return result;
+	}
+};
+
 exports.createGroup = async (event, newGroupName) => {
 	try {
     const groupList = await fs.readFile(GroupListPath);

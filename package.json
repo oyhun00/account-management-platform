@@ -1,6 +1,7 @@
 {
   "name": "amp",
   "version": "0.1.0",
+  "author": "yong",
   "private": true,
   "babel": {
     "presets": [
@@ -47,6 +48,9 @@
   "homepage": "./",
   "main": "src/electron-starter.js",
   "scripts": {
+    "build-mac": "electron-builder --mac",
+    "build-win32": "electron-builder --win --ia32",
+    "build-win64": "electron-builder --win --x64",
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "test": "react-scripts test",
