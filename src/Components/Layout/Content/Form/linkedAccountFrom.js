@@ -1,17 +1,15 @@
 import React from 'react';
-import { observer } from 'mobx-react';
+import { observer } from 'mbox-react';
 import styled from 'styled-components';
 import { Form, Input, Modal, Select } from 'antd';
 import useStores from '../../../../Stores/UseStore';
 
-const { Option } = Select;
+const linkedAccountForm = observer(({ formOption }) => {
+  const { isVisible, isUpdate } = formOption;
+  const { LinkedAccountStore } = useStores();
+  const { linkedAccountFormat, formSubmit, formChangeHandle, modalClose } = LinkedAccountStore;
+  const { siteNameKr, siteNameEng } = linkedAccountFormat;
 
-const AccountForm = observer(({ accountFormOption }) => {
-  const { isVisible, isUpdate } = accountFormOption;
-  const { AccountStore } = useStores();
-  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose } = AccountStore;
-  const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-  
   return (
     <CustomModal
         title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
@@ -27,19 +25,6 @@ const AccountForm = observer(({ accountFormOption }) => {
         </Form.Item>
         <Form.Item label="사이트 영문 이름">
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
-        </Form.Item>
-        <Form.Item label="사이트 URL">
-          <CustomSelect value={protocol} onChange={(e) => protocolChangeHandle(e)} style={{ width: '25%' }}>
-            <Option value="http://">http</Option>
-            <Option value="https://">https</Option>
-          </CustomSelect>
-          <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
-        </Form.Item>
-        <Form.Item label="계정 ID">
-          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
-        </Form.Item>
-        <Form.Item label="계정 PW">
-          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -115,4 +100,4 @@ const CustomSelect = styled(Select)`
   }
 `;
 
-export default AccountForm;
+export default linkedAccountForm;

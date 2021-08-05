@@ -13,15 +13,15 @@ import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 
 const AccountCard = observer(({ data }) => {
-  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
+  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId, selectedGroup } = data;
   const { AccountStore } = useStores();
-  const { removeAccount, getAccountDetail } = AccountStore;
+  const { removeAccount, getAccountDetail, getLinkedAccountDetail, removeLinkedAccount } = AccountStore;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
   const popMenu = (
     <>
-      <CustomList onClick={() => getAccountDetail(id)}> 수정<EditOutlined /></CustomList>
-      <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
+      <CustomList onClick={() => selectedGroup ? getAccountDetail(id) : getLinkedAccountDetail(id)}> 수정<EditOutlined /></CustomList>
+      <CustomList onClick={() => selectedGroup ? removeAccount(id) : removeLinkedAccount(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
 

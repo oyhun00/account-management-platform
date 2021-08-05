@@ -99,11 +99,7 @@ class AccountStore {
   };
 
   toggleCreateAccount = () => {
-    this.accountFormOption = {
-      ...this.accountFormOption,
-      isUpdate: false,
-      isVisible: true
-    };
+    this.accountFormOption.isVisible = true;
   };
 
   formValidation = () => {
@@ -142,7 +138,11 @@ class AccountStore {
   };
 
   modalClose = () => {
-    this.accountFormOption.isVisible = false;
+    this.accountFormOption = {
+      isLink: false,
+      isUpdate: false,
+      isVisible: false
+    };
     this.clearAccountFormat();
   };
 

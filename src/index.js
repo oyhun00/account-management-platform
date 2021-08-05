@@ -8,6 +8,7 @@ import Stores from './Stores';
 
 ReactDOM.render(
   <Provider
+    LinkedAccountStore={Stores.LinkedAccountStore}
     AccountStore={Stores.AccountStore}
     GroupStore={Stores.GroupStore}
   >

@@ -4,23 +4,28 @@ import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
-import AccountFrom from './Form/AccountForm';
+import AccountForm from './Form/AccountForm';
 import AccountCard from './AccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
 
 const { Content } = Layout;
 
 const ContentBox = observer(() => {
-  const { AccountStore, GroupStore } = useStores();
+  const { AccountStore, GroupStore, LinkedAccountStore } = useStores();
   const { 
-    getAccountList, accountList, linkedAccountList, removeAccount,
-    getAccountDetail, accountFormOption, toggleCreateAccount
+    getAccountList, accountList, getAccountDetail,
+    removeAccount, accountFormOption, toggleCreateAccount
    } = AccountStore;
   const { selectedGroup, groupList } = GroupStore;
-
+  const {
+    getLinkedAccountList, linkedAccountList, toggleCreateLinkedAccount,
+    formOption,
+  } = LinkedAccountStore;
+  
   useEffect(() => {
     getAccountList();
-  }, [getAccountList, selectedGroup]);
+    getLinkedAccountList();
+  }, [getAccountList, getLinkedAccountList, selectedGroup]);
 
   const accountFilteredData = selectedGroup !== 0
     ? accountList.reduce((acc, cur) => {
@@ -28,6 +33,7 @@ const ContentBox = observer(() => {
         <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
           <AccountCard
             data={cur}
+            selectedGroup={selectedGroup}
             removeAccount={removeAccount}
             formUpdateToggle={getAccountDetail} />
         </Col>
@@ -38,6 +44,7 @@ const ContentBox = observer(() => {
       acc.push(
         <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
           <AccountCard
+            selectedGroup={selectedGroup}
             data={cur}
           />
         </Col>
@@ -59,7 +66,7 @@ const ContentBox = observer(() => {
                 md={{ span: 12 }}
                 sm={{ span: 24 }}
                 xs={{ span: 24 }}
-                onClick={toggleCreateAccount}>
+                onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}>
                   <CreateAccountCard/>
               </Col>
             </Row> 
@@ -72,7 +79,7 @@ const ContentBox = observer(() => {
                     ? (
                       <Button
                         type="primary"
-                        onClick={toggleCreateAccount}
+                        onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
                       >
                         계정 정보 등록
                       </Button>
@@ -87,7 +94,7 @@ const ContentBox = observer(() => {
           )
         }
       </CustomContent>
-      <AccountFrom accountFormOption={accountFormOption}></AccountFrom>
+      <AccountForm accountFormOption={accountFormOption}></AccountForm>
     </Suspense>
   );
 });
