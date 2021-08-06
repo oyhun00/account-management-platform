@@ -5,6 +5,7 @@ import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
 import AccountForm from './Form/AccountForm';
+import LinkedAccountForm from './Form/linkedAccountFrom';
 import AccountCard from './AccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
 
@@ -95,6 +96,7 @@ const ContentBox = observer(() => {
         }
       </CustomContent>
       <AccountForm accountFormOption={accountFormOption}></AccountForm>
+      <LinkedAccountForm formOption={formOption}></LinkedAccountForm>
     </Suspense>
   );
 });

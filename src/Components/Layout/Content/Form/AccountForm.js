@@ -8,10 +8,17 @@ const { Option } = Select;
 
 const AccountForm = observer(({ accountFormOption }) => {
   const { isVisible, isUpdate } = accountFormOption;
-  const { AccountStore } = useStores();
-  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose } = AccountStore;
+  const { AccountStore, LinkedAccountStore } = useStores();
+  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose, isLink, linkedOption } = AccountStore;
+  const { linkedAccountList } = LinkedAccountStore;
   const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-  
+  const linkedData = linkedAccountList.map((v) => {
+    <>
+      <Option value={v.id}>{v.siteNameKr}</Option>
+    </>
+  });
+
+
   return (
     <CustomModal
         title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
@@ -35,11 +42,20 @@ const AccountForm = observer(({ accountFormOption }) => {
           </CustomSelect>
           <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
+        <Form.Item label="연동 계정 적용">
+          <CustomSelect value={isLink} onChange={(e) => linkedOption(e)} style={{ width: '25%' }}>
+            <Option value={false}>직접 입력</Option>
+            <Option value={true}>연동 계정 선택</Option>
+          </CustomSelect>
+          <CustomSelect style={{ width: '70%' }} disabled={!isLink}>
+            {linkedData}
+          </CustomSelect>
+        </Form.Item>
         <Form.Item label="계정 ID">
-          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
+          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} disabled={isLink} />
         </Form.Item>
         <Form.Item label="계정 PW">
-          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
+          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} disabled={isLink} />
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -106,7 +122,9 @@ const CustomInput = styled(Input)`
 `;
 
 const CustomSelect = styled(Select)`
-  margin-right: 5%;
+  :first-child {
+    margin-right: 5%;
+  }
 
   .ant-select-selector {
     background-color: transparent !important;

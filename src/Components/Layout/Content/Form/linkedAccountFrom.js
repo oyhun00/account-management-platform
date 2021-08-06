@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer } from 'mbox-react';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import { Form, Input, Modal, Select } from 'antd';
 import useStores from '../../../../Stores/UseStore';

@@ -14,8 +14,9 @@ import AccountLinkage from '../../../TempData/AccountLinkage.json';
 
 const AccountCard = observer(({ data }) => {
   const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId, selectedGroup } = data;
-  const { AccountStore } = useStores();
-  const { removeAccount, getAccountDetail, getLinkedAccountDetail, removeLinkedAccount } = AccountStore;
+  const { AccountStore, LinkedAccountStore } = useStores();
+  const { removeAccount, getAccountDetail } = AccountStore;
+  const { getLinkedAccountDetail, removeLinkedAccount } = LinkedAccountStore;
   const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
   const popMenu = (

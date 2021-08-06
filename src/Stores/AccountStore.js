@@ -21,7 +21,7 @@ class AccountStore {
     group: '',
   }
 
-  linkedAccountList = [];
+  isLink = false;
 
   constructor(root) {
     this.root = root;
@@ -66,8 +66,7 @@ class AccountStore {
           const { accountData, linkData } = result;
           
           this.accountList = accountData;
-          this.linkedAccountList = linkData;
-  
+          
           if (log) {
             message.success(log);
           }
@@ -125,6 +124,11 @@ class AccountStore {
     }
   };
 
+  linkedOption = (value) => {
+    this.isLink = value;
+    console.log(value);
+  };
+
   clearAccountFormat = () => {
     this.accountFormat = {
       ...this.accountFormat,
@@ -139,7 +143,6 @@ class AccountStore {
 
   modalClose = () => {
     this.accountFormOption = {
-      isLink: false,
       isUpdate: false,
       isVisible: false
     };
