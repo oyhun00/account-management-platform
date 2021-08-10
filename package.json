@@ -33,6 +33,7 @@
     "cheerio-httpcli": "^0.8.1",
     "core-decorators": "^0.20.0",
     "customize-cra": "^1.0.0",
+    "electron-build": "0.0.3",
     "electron-log": "^4.3.2",
     "electron-router": "^0.5.1",
     "mobx": "^6.3.2",
@@ -57,9 +58,18 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "start": "nf start",
-    "dist": "npm run react-build && electron-builder"
+    "dist": "electron-builder"
   },
   "build": {
+    "appId": "com.amp.app",
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false
+    },
     "extends": null,
     "directories": {
       "buildResources": "public"
