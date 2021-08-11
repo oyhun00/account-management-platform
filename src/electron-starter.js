@@ -6,7 +6,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
     height: 600,
-    autoHideGroupBar: true,
+    // autoHideGroupBar: true,
     webPreferences: {
       nodeIntegration: true,
       preload: __dirname + '//preload.js'
@@ -19,7 +19,9 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   });
+
   win.loadURL(startUrl);
+  win.setMenu(null);
 }
 
 app.whenReady().then(createWindow);
