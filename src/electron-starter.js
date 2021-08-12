@@ -1,6 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path'); 
+const log = require('electron-log');
+const fs = require('fs');
+const storage = require('electron-json-storage');
+const GroupListPath = '/TempData/GroupList.json';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -19,7 +23,9 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   });
-
+  const defaultDataPath = storage.getDefaultDataPath();
+  log.info(defaultDataPath);
+  !fs.existsSync(defaultDataPath) && fs.mkdirSync(defaultDataPath);
   win.loadURL(startUrl);
   win.setMenu(null);
 }

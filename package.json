@@ -34,6 +34,7 @@
     "core-decorators": "^0.20.0",
     "customize-cra": "^1.0.0",
     "electron-build": "0.0.3",
+    "electron-json-storage": "^4.5.0",
     "electron-log": "^4.4.1",
     "electron-router": "^0.5.1",
     "mobx": "^6.3.2",
