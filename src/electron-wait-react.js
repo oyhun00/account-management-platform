@@ -6,15 +6,6 @@ process.env.ELECTRON_START_URL = `http://localhost:${port}`;
 
 const client = new net.Socket();
 
-const fs = require('fs');
-
-function mkdirp(dir) {
-  if (fs.existsSync(dir)) { return true }
-  const dirname = path.dirname(dir);
-  mkdirp(dirname);
-  fs.mkdirSync(dir);
-}
-
 let startedElectron = false;
 const tryConnection = () => client.connect({port: port}, () => {
     client.end();
@@ -27,7 +18,6 @@ const tryConnection = () => client.connect({port: port}, () => {
       const exec = require('child_process').exec;
       exec('npm run electron');
     }
-    mkdirp('/test');
   }
 );
 
