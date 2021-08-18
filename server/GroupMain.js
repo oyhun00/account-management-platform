@@ -1,6 +1,8 @@
 const fs = require('fs').promises;
-const GroupListPath = './src/TempData/GroupList.json';
-const AccountListPath = './src/TempData/AccountList.json';
+const storage = require('electron-json-storage');
+const defaultDataPath = storage.getDefaultDataPath();
+const GroupListPath = defaultDataPath + '\\GroupList.json';
+const AccountListPath = defaultDataPath + '\\AccountList.json';
 
 exports.getGroupList = async () => {
 	try { 
@@ -28,13 +30,23 @@ exports.getFirstGroup = async () => {
 	try { 
 		const groupList = await fs.readFile(GroupListPath);
 		const { list } = JSON.parse(groupList);
-		const result = {
-				success: true,
-				code: 1,
-				data: list[0].id,
-		};
 
-		return result;
+    if (!list[0].id) {
+      const result = {
+          success: false,
+          code: 2
+      };
+
+      return result;
+    }
+
+    const result = {
+        success: true,
+        code: 1,
+        data: list[0].id,
+    };
+
+    return result;
 	} catch(error) {
 		const result = {
 				success: false,

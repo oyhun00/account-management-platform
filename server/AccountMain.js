@@ -1,6 +1,9 @@
 const fs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
-const AccountListPath = './src/TempData/AccountList.json';
+const storage = require('electron-json-storage');
+const defaultDataPath = storage.getDefaultDataPath();
+
+const AccountListPath = defaultDataPath + '\\AccountList.json';
 const LinkageListPath = './src/TempData/AccountLinkage.json';
 
 exports.getAccount = async () => {

@@ -25,12 +25,15 @@ function createWindow () {
   });
   
   if(!fs.existsSync(defaultDataPath)) {
-    fs.mkdirSync(defaultDataPath);
     const format = {
       "sequence": 1,
       "list": []
     };
-    fs.promises.writeFile(defaultDataPath + '\\AccountList.json', JSON.parse(format));
+
+    fs.mkdirSync(defaultDataPath);
+    fs.promises.writeFile(defaultDataPath + '\\AccountList.json', JSON.stringify(format));
+    fs.promises.writeFile(defaultDataPath + '\\LinkedAccountList.json', JSON.stringify(format));
+    fs.promises.writeFile(defaultDataPath + '\\GroupList.json', JSON.stringify(format));
   }
 
   win.loadURL(startUrl);

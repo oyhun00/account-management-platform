@@ -12,11 +12,11 @@ const AccountForm = observer(({ accountFormOption }) => {
   const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose, isLink, linkedOption } = AccountStore;
   const { linkedAccountList } = LinkedAccountStore;
   const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-  const linkedData = linkedAccountList.map((v) => {
+  const linkedData = linkedAccountList.map((v) => 
     <>
       <Option value={v.id}>{v.siteNameKr}</Option>
     </>
-  });
+  );
 
 
   return (
