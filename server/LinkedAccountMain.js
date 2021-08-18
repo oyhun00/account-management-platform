@@ -1,5 +1,7 @@
 const fs = require('fs').promises;
-const LinkedAccountPath = './src/TempData/AccountLinkage.json';
+const storage = require('electron-json-storage');
+const defaultDataPath = storage.getDefaultDataPath();
+const LinkedAccountPath = defaultDataPath + '\\LinkedAccountList.json';
 
 exports.getAccount = async () => {
   try {

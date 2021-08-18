@@ -104,11 +104,17 @@ class AccountStore {
   formValidation = () => {
     const { siteNameKr, siteUrl, accountId, accountPwd } = this.accountFormat;
 
-    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
-      return false;
+    if(this.isLink) {
+      if(!siteNameKr || !siteUrl) {
+        return false;
+      }
     } else {
-      return true;
+      if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+        return false;
+      }
     }
+
+    return true;
   };
 
   protocolChangeHandle = (value) => {
