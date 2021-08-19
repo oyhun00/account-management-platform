@@ -8,8 +8,8 @@ const { Option } = Select;
 
 const AccountForm = observer(({ accountFormOption }) => {
   const { isVisible, isUpdate } = accountFormOption;
-  const { AccountStore, LinkedAccountStore } = useStores();
-  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, modalClose, isLink, linkedOption } = AccountStore;
+  const { AccountStore, LinkedAccountStore  } = useStores();
+  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, isLink, linkedOption, modalClose } = AccountStore;
   const { linkedAccountList } = LinkedAccountStore;
   const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
   const linkedData = linkedAccountList.map((v) => 
@@ -17,7 +17,6 @@ const AccountForm = observer(({ accountFormOption }) => {
       <Option value={v.id}>{v.siteNameKr}</Option>
     </>
   );
-
 
   return (
     <CustomModal
@@ -36,26 +35,25 @@ const AccountForm = observer(({ accountFormOption }) => {
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="사이트 URL">
-          <CustomSelect value={protocol} onChange={(e) => protocolChangeHandle(e)} style={{ width: '25%' }}>
-            <Option value="http://">http</Option>
-            <Option value="https://">https</Option>
-          </CustomSelect>
-          <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
-        </Form.Item>
-        <Form.Item label="연동 계정 적용">
           <CustomSelect value={isLink} onChange={(e) => linkedOption(e)} style={{ width: '25%' }}>
             <Option value={false}>직접 입력</Option>
-            <Option value={true}>연동 계정 선택</Option>
+            <Option value={true}>계정 연동</Option>
           </CustomSelect>
-          <CustomSelect style={{ width: '70%' }} disabled={!isLink}>
-            {linkedData}
-          </CustomSelect>
+          { isLink
+            ? (
+              <CustomSelect style={{ width: '70%' }} disabled={!isLink}>
+                {linkedData}
+              </CustomSelect>
+            ) : (
+              <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
+            )
+          }
         </Form.Item>
         <Form.Item label="계정 ID">
-          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} disabled={isLink} />
+          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="계정 PW">
-          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} disabled={isLink} />
+          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
       </CustomForm>
     </CustomModal>

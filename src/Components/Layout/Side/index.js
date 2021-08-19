@@ -120,6 +120,19 @@ const CustomPlusOutlined = styled(PlusOutlined)`
   }
 `;
 
+const CustomFixedRow = styled(Row)`
+  position: fixed;
+  bottom: 0;  
+  padding: 15px 16px 15px 24px;
+`;
+
+const CustomLinkOutlined = styled(LinkOutlined)`
+  cursor: pointer;
+  :hover {
+    opacity: 0.7;
+  }
+`;
+
 const AddComment = styled.span`
   margin-left: 8px;
 `;
@@ -133,20 +146,6 @@ const CustomInput = styled(Input)`
   :focus, :hover {
     border-color: #fff;
     color: #fff;
-  }
-`;
-
-const CustomFixedRow = styled(Row)`
-  position: fixed;
-  bottom: 0;  
-  padding: 15px 16px 15px 24px;
-`;
-
-const CustomLinkOutlined = styled(LinkOutlined)`
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.7;
   }
 `;
 

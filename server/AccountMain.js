@@ -2,21 +2,18 @@ const fs = require('fs').promises;
 const cheerio = require('cheerio-httpcli');
 const storage = require('electron-json-storage');
 const defaultDataPath = storage.getDefaultDataPath();
+const log = require('electron-log');
 
 const AccountListPath = defaultDataPath + '\\AccountList.json';
-const LinkageListPath = './src/TempData/AccountLinkage.json';
 
 exports.getAccount = async () => {
 	try {
-    const AccountLinkage = await fs.readFile(LinkageListPath);
     const AccountList = await fs.readFile(AccountListPath);
     const { list } = JSON.parse(AccountList);
-    const { linkList } = JSON.parse(AccountLinkage);
     const result = {
       success: true,
       code: 1,
       accountData: list,
-      linkData: linkList,
     };
 
     return result;
@@ -55,9 +52,8 @@ exports.getAccountDetail = async (event, id) => {
 };
 
 exports.createAccount = async (event, newAccountData) => {
-  const { siteUrl, protocol } = newAccountData;
-  const url = protocol + siteUrl;
-
+  const { siteUrl } = newAccountData;
+  const url = siteUrl.match('http') ? siteUrl : 'https://' + siteUrl;
   const faviconLocation = await cheerio.fetch(url)
     .then((result) => {
       const { $ } = result;
@@ -69,7 +65,7 @@ exports.createAccount = async (event, newAccountData) => {
       return href.match('http') || href.match('com') ? href : url + href;
     })
     .catch((error) => {
-      console.log(error.message);
+      log.info(error.message);
     });
   
   try {
@@ -80,7 +76,7 @@ exports.createAccount = async (event, newAccountData) => {
       list: list.concat(
         {
           ...newAccountData,
-          siteUrl: url,
+          siteUrl: siteUrl,
           siteIcon: faviconLocation,
           id: sequence + 1
         }
@@ -115,9 +111,13 @@ exports.removeAccount = async (event, id) => {
     const newAccountList = {
       sequence,
       list: list.filter((v) => v.id !== id),
-    }
+    };
 
-    fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8');
+    fs.writeFile(AccountListPath, JSON.stringify(newAccountList), (err) => {
+      if(err) {
+        log.info('error', err);
+      }
+    });
 
     const result = {
       success: true,
@@ -140,14 +140,28 @@ exports.removeAccount = async (event, id) => {
 
 exports.updateAccount = async (event, accountData) => {
 	try {
-    const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd, id } = accountData;
-    const url = protocol + siteUrl;
+    const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, id } = accountData;
+    const url = siteUrl.match('http') ? siteUrl : 'https://' + siteUrl;
+    const faviconLocation = await cheerio.fetch(url)
+    .then((result) => {
+      const { $ } = result;
+      const { href } = $('link[rel="shortcut icon"]')[0].attribs
+        || $('link[rel="icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon"]')[0].attribs
+        || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
+
+      return href.match('http') || href.match('com') ? href : url + href;
+    })
+    .catch((error) => {
+      log.info(error.message);
+    });
+
     const AccountList = await fs.readFile(AccountListPath);
     const { sequence, list } = JSON.parse(AccountList);
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng, url, accountId, accountPwd }
+            ? { ...v, siteNameKr, siteNameEng, siteUrl, siteIcon: faviconLocation, accountId, accountPwd }
             : { ...v })
     };
 

@@ -11,6 +11,7 @@ ReactDOM.render(
     LinkedAccountStore={Stores.LinkedAccountStore}
     AccountStore={Stores.AccountStore}
     GroupStore={Stores.GroupStore}
+    UtilStore={Stores.UtilStore}
   >
     <Suspense fallback={<div>Loading... </div>}>
       <App />

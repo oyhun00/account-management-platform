@@ -9,20 +9,16 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import Loading from './Util/Loading';
-import AccountLinkage from '../../../TempData/AccountLinkage.json';
-
 
 const AccountCard = observer(({ data }) => {
-  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId, selectedGroup } = data;
-  const { AccountStore, LinkedAccountStore } = useStores();
+  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
+  const { AccountStore } = useStores();
   const { removeAccount, getAccountDetail } = AccountStore;
-  const { getLinkedAccountDetail, removeLinkedAccount } = LinkedAccountStore;
-  const LinkedFavicon = linkedId ? AccountLinkage.filter((v) => v.id === linkedId ) : '';
   
   const popMenu = (
     <>
-      <CustomList onClick={() => selectedGroup ? getAccountDetail(id) : getLinkedAccountDetail(id)}> 수정<EditOutlined /></CustomList>
-      <CustomList onClick={() => selectedGroup ? removeAccount(id) : removeLinkedAccount(id)}>삭제<DeleteOutlined /></CustomList>
+      <CustomList onClick={() => getAccountDetail(id)}>수정<EditOutlined /></CustomList>
+      <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
 
@@ -41,7 +37,7 @@ const AccountCard = observer(({ data }) => {
         </CustomRow>
         <CustomDivider />
         <CustomRow>
-          { LinkedFavicon ? <CustomAvatar src={LinkedFavicon[0].favicon} /> : <CustomAvatar src={siteIcon} /> }
+         <CustomAvatar src={siteIcon} />
           <PropWrap>
             <AccountRow>
               <Title>ID</Title>

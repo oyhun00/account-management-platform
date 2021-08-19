@@ -31,10 +31,10 @@ exports.getFirstGroup = async () => {
 		const groupList = await fs.readFile(GroupListPath);
 		const { list } = JSON.parse(groupList);
 
-    if (!list[0].id) {
+    if (!list[0]) {
       const result = {
-          success: false,
-          code: 2
+        success: true,
+        code: 2
       };
 
       return result;

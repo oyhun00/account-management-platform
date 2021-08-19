@@ -5,12 +5,14 @@ import { Layout } from 'antd';
 import Side from './Layout/Side';
 import ContentBox from './Layout/Content';
 import useStores from '../Stores/UseStore';
+import Loading from '../Components/Layout/Content/Util/Loading';
 
 const { Sider } = Layout;
 
 const MainComponent = observer(() => {
-  const { GroupStore } = useStores();
+  const { GroupStore, UtilStore } = useStores();
   const { getFirstGroup } = GroupStore;
+  const { isLoading } = UtilStore;
 
   useEffect(() => {
     getFirstGroup();
@@ -24,6 +26,7 @@ const MainComponent = observer(() => {
       <CustomMainLayout>
         <ContentBox/>
       </CustomMainLayout>
+      { isLoading ? <Loading /> : '' }
     </>
   );
 });

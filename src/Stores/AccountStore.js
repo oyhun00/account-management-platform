@@ -10,17 +10,17 @@ class AccountStore {
     isUpdate: false,
     isVisible: false
   };
-  
+
   accountFormat = {
     siteNameKr: '',
     siteNameEng: '',
-    protocol: 'http://',
     siteUrl: '',
     accountId: '',
     accountPwd: '',
+    linkId: '',
     group: '',
-  }
-
+  };
+  
   isLink = false;
 
   constructor(root) {
@@ -42,7 +42,6 @@ class AccountStore {
           };
 
           this.accountFormOption = {
-            ...this.accountFormOption,
             isUpdate: true,
             isVisible: true
           };
@@ -104,21 +103,15 @@ class AccountStore {
   formValidation = () => {
     const { siteNameKr, siteUrl, accountId, accountPwd } = this.accountFormat;
 
-    if(this.isLink) {
-      if(!siteNameKr || !siteUrl) {
-        return false;
-      }
-    } else {
-      if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
-        return false;
-      }
+    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+      return false;
     }
 
     return true;
   };
 
-  protocolChangeHandle = (value) => {
-    this.accountFormat.protocol = value;
+  linkedOption = (value) => {
+    this.isLink = value;
   };
 
   formChangeHandle = (e) => {
@@ -130,20 +123,15 @@ class AccountStore {
     }
   };
 
-  linkedOption = (value) => {
-    this.isLink = value;
-    console.log(value);
-  };
-
   clearAccountFormat = () => {
     this.accountFormat = {
       ...this.accountFormat,
       siteNameKr: '',
       siteNameEng: '',
-      protocol: 'http://',
       siteUrl: '',
       accountId: '',
       accountPwd: '',
+      linkId: '',
     };
   };
 
@@ -162,6 +150,7 @@ class AccountStore {
       return false;
     }
     this.accountFormat.group = this.root.GroupStore.selectedGroup;
+    this.root.UtilStore.isLoading = true;
 
     const channel = _action === 'create' ? 'main/createAccount' : 'main/updateAccount';
 
@@ -174,6 +163,7 @@ class AccountStore {
             const { accountData } = result;
 
             this.accountList = accountData;
+            this.root.UtilStore.isLoading = false;
             this.modalClose();
 
             if (log) {

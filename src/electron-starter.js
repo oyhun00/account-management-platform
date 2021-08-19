@@ -29,15 +29,16 @@ function createWindow () {
       "sequence": 1,
       "list": []
     };
+    const linkedData = require('./TempData/AccountLinkage');
 
     fs.mkdirSync(defaultDataPath);
     fs.promises.writeFile(defaultDataPath + '\\AccountList.json', JSON.stringify(format));
-    fs.promises.writeFile(defaultDataPath + '\\LinkedAccountList.json', JSON.stringify(format));
+    fs.promises.writeFile(defaultDataPath + '\\LinkedAccountList.json', JSON.stringify(linkedData.data));
     fs.promises.writeFile(defaultDataPath + '\\GroupList.json', JSON.stringify(format));
   }
 
   win.loadURL(startUrl);
-  win.setMenu(null);
+  // win.setMenu(null);
 }
 
 app.whenReady().then(createWindow);

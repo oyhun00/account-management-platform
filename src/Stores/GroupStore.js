@@ -59,9 +59,8 @@ class GroupStore {
           const { success } = result;
 
           if (success) {
-            const { data, log } = result;
-            this.selectedGroup = data;
-            console.log(data);
+            const { data, log, code } = result;
+            this.selectedGroup = code === 1 ? data : 0;
 
             if (log) {
               message.success(log);
