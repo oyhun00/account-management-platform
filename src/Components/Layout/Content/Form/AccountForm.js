@@ -9,14 +9,15 @@ const { Option } = Select;
 const AccountForm = observer(({ accountFormOption }) => {
   const { isVisible, isUpdate } = accountFormOption;
   const { AccountStore, LinkedAccountStore  } = useStores();
-  const { accountFormat, formSubmit, formChangeHandle, protocolChangeHandle, isLink, linkedOption, modalClose } = AccountStore;
+  const {
+    accountFormat, formSubmit, formChangeHandle,
+    linkIdChangeHandle, isLink, linkedOption, modalClose
+  } = AccountStore;
   const { linkedAccountList } = LinkedAccountStore;
-  const { siteNameKr, siteNameEng, protocol, siteUrl, accountId, accountPwd } = accountFormat;
-  const linkedData = linkedAccountList.map((v) => 
-    <>
-      <Option value={v.id}>{v.siteNameKr}</Option>
-    </>
-  );
+  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
+  const linkedData = linkedAccountList.map((v, index) => {
+      return <Option value={v.id} key={index}>{v.siteNameKr}</Option>
+  });
 
   return (
     <CustomModal
@@ -35,22 +36,22 @@ const AccountForm = observer(({ accountFormOption }) => {
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="사이트 URL">
+          <CustomInput name="siteUrl" value={siteUrl} onChange={(e) => formChangeHandle(e)} />
+        </Form.Item>
+        <Form.Item label="계정 ID">
           <CustomSelect value={isLink} onChange={(e) => linkedOption(e)} style={{ width: '25%' }}>
             <Option value={false}>직접 입력</Option>
             <Option value={true}>계정 연동</Option>
           </CustomSelect>
           { isLink
             ? (
-              <CustomSelect style={{ width: '70%' }} disabled={!isLink}>
+              <CustomSelect name="linkId" style={{ width: '70%' }} disabled={!isLink} onChange={(e) => linkIdChangeHandle(e)}>
                 {linkedData}
               </CustomSelect>
             ) : (
-              <CustomInput name="siteUrl" value={siteUrl} style={{ width: '70%' }} onChange={(e) => formChangeHandle(e)} />
+              <CustomInput name="accountId" style={{ width: '70%' }} value={accountId} onChange={(e) => formChangeHandle(e)} />
             )
           }
-        </Form.Item>
-        <Form.Item label="계정 ID">
-          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
         <Form.Item label="계정 PW">
           <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />

@@ -102,16 +102,29 @@ class AccountStore {
 
   formValidation = () => {
     const { siteNameKr, siteUrl, accountId, accountPwd } = this.accountFormat;
+    
+    if(this.isLink) {
+      if(!siteNameKr || !siteUrl) {
+        return false;
+      }
 
-    if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
-      return false;
+      return true;
+    } else {
+      if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+        return false;
+      }
+
+      return true;
     }
-
-    return true;
   };
 
   linkedOption = (value) => {
     this.isLink = value;
+  };
+
+  linkIdChangeHandle = (value) => {
+    console.log(value);
+    this.accountFormat.linkId = value;
   };
 
   formChangeHandle = (e) => {
