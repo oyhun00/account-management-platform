@@ -6,19 +6,18 @@ import useStores from '../../../../Stores/UseStore';
 
 const { Option } = Select;
 
-const AccountForm = observer(({ accountFormOption }) => {
+const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
   const { isVisible, isUpdate } = accountFormOption;
-  const { AccountStore, LinkedAccountStore  } = useStores();
+  const { AccountStore } = useStores();
   const {
     accountFormat, formSubmit, formChangeHandle,
     linkIdChangeHandle, isLink, linkedOption, modalClose
   } = AccountStore;
-  const { linkedAccountList } = LinkedAccountStore;
   const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
   const linkedData = linkedAccountList.map((v, index) => {
-      return <Option value={v.id} key={index}>{v.siteNameKr}</Option>
+      return <Option value={v.id} selected key={index}>{v.siteNameKr}</Option>
   });
-
+  
   return (
     <CustomModal
         title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
@@ -54,7 +53,7 @@ const AccountForm = observer(({ accountFormOption }) => {
           }
         </Form.Item>
         <Form.Item label="계정 PW">
-          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
+          <CustomInput name="accountPwd" value={accountPwd} disabled={isLink} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -99,6 +98,11 @@ const CustomModal = styled(Modal)`
     :hover {
       background: #65b5ff;
     }
+  }
+
+  .ant-input-disabled {
+    background: #181819;
+    border: 1px solid #454b52;
   }
 `;
 

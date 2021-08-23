@@ -1,18 +1,19 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Input, Modal, Upload, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
 const linkedAccountForm = observer(({ formOption }) => {
   const { isVisible, isUpdate } = formOption;
   const { LinkedAccountStore } = useStores();
-  const { linkedAccountFormat, formSubmit, formChangeHandle, modalClose } = LinkedAccountStore;
-  const { siteNameKr, siteNameEng } = linkedAccountFormat;
+  const { linkedAccountFormat, formSubmit, formChangeHandle, fileChangeHandle, modalClose } = LinkedAccountStore;
+  const { siteNameKr, siteNameEng, accountId, accountPwd } = linkedAccountFormat;
 
   return (
     <CustomModal
-        title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
+        title={isUpdate ? '연동계정 정보 수정' : '연동계정 정보 등록'}
         centered
         visible={isVisible}
         onOk={() => isUpdate ? formSubmit('update') : formSubmit('create')}
@@ -20,11 +21,23 @@ const linkedAccountForm = observer(({ formOption }) => {
         width={500}
       >
       <CustomForm layout="vertical" size="large">
-        <Form.Item label="사이트 한글 이름">
+        <Form.Item label="한글 이름">
           <CustomInput name="siteNameKr" value={siteNameKr} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
-        <Form.Item label="사이트 영문 이름">
+        <Form.Item label="영문 이름">
           <CustomInput name="siteNameEng" value={siteNameEng} onChange={(e) => formChangeHandle(e)} />
+        </Form.Item>
+        <Form.Item label="계정 ID">
+          <CustomInput name="accountId" value={accountId} onChange={(e) => formChangeHandle(e)} />
+        </Form.Item>
+        <Form.Item label="계정 PW">
+          <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
+        </Form.Item>
+        <input type="file" />
+        <Form.Item label="">
+          <Upload onChange={(e) => fileChangeHandle(e)}>
+            <Button size="default" icon={<UploadOutlined />}>아이콘 선택</Button>
+          </Upload>
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -88,16 +101,6 @@ const CustomForm = styled(Form)`
 
 const CustomInput = styled(Input)`
   border: 1px solid #454b52;
-`;
-
-const CustomSelect = styled(Select)`
-  margin-right: 5%;
-
-  .ant-select-selector {
-    background-color: transparent !important;
-    border: 1px solid #454b52 !important;
-    padding: 0.5px 11px !important;
-  }
 `;
 
 export default linkedAccountForm;

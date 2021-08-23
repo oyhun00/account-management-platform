@@ -17,7 +17,7 @@ class AccountStore {
     siteUrl: '',
     accountId: '',
     accountPwd: '',
-    linkId: '',
+    linkId: 0,
     group: '',
   };
   
@@ -62,7 +62,7 @@ class AccountStore {
         const { success, log } = result;
 
         if (success) {
-          const { accountData, linkData } = result;
+          const { accountData } = result;
           
           this.accountList = accountData;
           
@@ -101,10 +101,10 @@ class AccountStore {
   };
 
   formValidation = () => {
-    const { siteNameKr, siteUrl, accountId, accountPwd } = this.accountFormat;
+    const { siteNameKr, siteUrl, accountId, accountPwd, linkId } = this.accountFormat;
     
     if(this.isLink) {
-      if(!siteNameKr || !siteUrl) {
+      if(!siteNameKr || !siteUrl || !linkId) {
         return false;
       }
 
@@ -123,7 +123,6 @@ class AccountStore {
   };
 
   linkIdChangeHandle = (value) => {
-    console.log(value);
     this.accountFormat.linkId = value;
   };
 
@@ -146,6 +145,7 @@ class AccountStore {
       accountPwd: '',
       linkId: '',
     };
+    this.isLink = false;
   };
 
   modalClose = () => {

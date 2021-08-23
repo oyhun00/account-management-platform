@@ -9,6 +9,8 @@ class LinkedAccountStore {
   linkedAccountFormat = {
     siteNameKr: '',
     siteNameEng: '',
+    accountId: '',
+    accountPwd: '',
     siteIcon: ''
   };
 
@@ -61,6 +63,10 @@ class LinkedAccountStore {
     }
   };
 
+  fileChangeHandle = (e) => {
+    console.log(e)
+  };
+
   getLinkedAccountList = () => {
     ipcRenderer.invoke('link/getAccount')
       .then(
@@ -70,7 +76,6 @@ class LinkedAccountStore {
           if (success) {
             const { linkedAccountData } = result;
             this.linkedAccountList = linkedAccountData;
-            console.log(this.linkedAccountList);
             if (log) {
               message.success(log);
             }
@@ -89,12 +94,12 @@ class LinkedAccountStore {
 
         if (success) {
           const { data } = result;
-          
+
           this.linkedAccountFormat = {
             ...data
           };
 
-          this.accountFormOption = {
+          this.formOption = {
             isUpdate: true,
             isVisible: true
           };

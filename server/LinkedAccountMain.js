@@ -33,7 +33,7 @@ exports.getAccountDetail = async (event, id) => {
     const result = {
       success: true,
       code: 1,
-      data: detail
+      data: detail[0]
     };
 
     return result;
@@ -113,13 +113,13 @@ exports.removeAccount = async (event, id) => {
 
 exports.updateAccount = async (event, accountData) => {
   try {
-    const { siteNameKr, siteNameEng, id } = accountData;
+    const { siteNameKr, siteNameEng, accountId, accountPwd, id } = accountData;
     const LinkedAccountList = await fs.readFile(LinkedAccountPath);
     const { sequence, list } = JSON.parse(LinkedAccountList);
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng }
+            ? { ...v, siteNameKr, siteNameEng, accountId, accountPwd }
             : { ...v })
     };
     fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountDataList), 'utf8');

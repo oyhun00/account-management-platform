@@ -10,15 +10,18 @@ import {
 } from '@ant-design/icons';
 import Loading from './Util/Loading';
 
-const AccountCard = observer(({ data }) => {
-  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkedId } = data;
-  const { AccountStore } = useStores();
+const AccountCard = observer(({ data, linkedAccountList, selectedGroup }) => {
+  const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkId } = data;
+  const { AccountStore, LinkedAccountStore } = useStores();
   const { removeAccount, getAccountDetail } = AccountStore;
+  const { getLinkedAccountDetail } = LinkedAccountStore;
+  const isLink = selectedGroup === 0 ? true : false;
+  const filteredLink = linkId ? linkedAccountList.filter((v) => v.id === linkId)[0] : '';
   
   const popMenu = (
     <>
-      <CustomList onClick={() => getAccountDetail(id)}>수정<EditOutlined /></CustomList>
-      <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
+      <CustomList onClick={() => isLink ? getLinkedAccountDetail(id) : getAccountDetail(id)}>수정<EditOutlined /></CustomList>
+      { isLink ? '' : <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList> } 
     </>
   );
 
@@ -37,15 +40,15 @@ const AccountCard = observer(({ data }) => {
         </CustomRow>
         <CustomDivider />
         <CustomRow>
-         <CustomAvatar src={siteIcon} />
-          <PropWrap>
+          { isLink ? '' : <CustomAvatar src={!linkId ? siteIcon : filteredLink.siteIcon} /> }
+          <PropWrap isIcon={isLink}>
             <AccountRow>
               <Title>ID</Title>
-              <span>{accountId}</span>
+              <span>{!linkId ? accountId : filteredLink.accountId}</span>
             </AccountRow>
             <AccountRow>
               <Title>PW</Title>
-              <span>{accountPwd}</span>
+              <span>{!linkId ? accountPwd : filteredLink.accountId}</span>
             </AccountRow>
           </PropWrap>
         </CustomRow>
@@ -97,7 +100,7 @@ const CustomAvatar = styled(Avatar)`
 `;
 
 const PropWrap = styled.div`
-  margin-left: 18px;
+  margin-left: ${(props) => (props.isIcon ? '0px' : '18px')};
   overflow: hidden;
 `;
 

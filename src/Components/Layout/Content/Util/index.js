@@ -1,7 +1,7 @@
-import React, { lazy } from 'react';
-
-const AccountForm = lazy(() => import('../Form/AccountForm'));
-const Setting = lazy(() => import('../Setting'));
+import React from 'react';
+import AccountForm from '../Form/AccountForm';
+import LinkedAccountForm from '../Form/LinkedAccountFrom';
+import Setting from '../Setting';
 
 const Util = (props) => {
   const {

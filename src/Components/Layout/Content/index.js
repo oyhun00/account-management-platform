@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
 import CreateAccountCard from './CreateAccountCard';
-import LinkedAccountForm from './Form/linkedAccountFrom';
+import LinkedAccountForm from './Form/LinkedAccountFrom';
 import AccountForm from './Form/AccountForm';
 import AccountCard from './AccountCard';
 import Loading from '../../Layout/Content/Util/Loading';
@@ -14,8 +14,8 @@ const { Content } = Layout;
 const ContentBox = observer(() => {
   const { AccountStore, GroupStore, LinkedAccountStore } = useStores();
   const { 
-    getAccountList, accountList, getAccountDetail,
-    removeAccount, accountFormOption, toggleCreateAccount
+    getAccountList, accountList,
+    accountFormOption, toggleCreateAccount
    } = AccountStore;
   const { selectedGroup, groupList } = GroupStore;
   const {
@@ -34,9 +34,7 @@ const ContentBox = observer(() => {
       <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
         <AccountCard
           data={cur}
-          selectedGroup={selectedGroup}
-          removeAccount={removeAccount}
-          formUpdateToggle={getAccountDetail} />
+          linkedAccountList={linkedAccountList} />
       </Col>
     );
     return acc;
@@ -67,7 +65,7 @@ const ContentBox = observer(() => {
                 md={{ span: 12 }}
                 sm={{ span: 24 }}
                 xs={{ span: 24 }}
-                onClick={toggleCreateAccount}>
+                onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}>
                   <CreateAccountCard/>
               </Col>
             </Row> 
@@ -80,7 +78,7 @@ const ContentBox = observer(() => {
                     ? (
                       <Button
                         type="primary"
-                        onClick={toggleCreateAccount}
+                        onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
                       >
                         계정 정보 등록
                       </Button>
@@ -95,8 +93,13 @@ const ContentBox = observer(() => {
           )
         }
       </CustomContent>
-      <AccountForm accountFormOption={accountFormOption}></AccountForm>
-      <LinkedAccountForm formOption={formOption}></LinkedAccountForm>
+      <AccountForm
+        accountFormOption={accountFormOption}
+        linkedAccountList={linkedAccountList}
+      />
+      <LinkedAccountForm
+        formOption={formOption}
+      />
     </Suspense>
   );
 });
