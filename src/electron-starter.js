@@ -13,7 +13,8 @@ function createWindow () {
     // autoHideGroupBar: true,
     webPreferences: {
       nodeIntegration: true,
-      preload: __dirname + '//preload.js'
+      preload: __dirname + '//preload.js',
+      webSecurity: false
     },
     center: true,
   })
@@ -25,13 +26,15 @@ function createWindow () {
   });
   
   if(!fs.existsSync(defaultDataPath)) {
+    fs.mkdirSync(defaultDataPath);
+
     const format = {
       "sequence": 1,
       "list": []
     };
     const linkedData = require('./TempData/AccountLinkage');
 
-    fs.mkdirSync(defaultDataPath);
+    !fs.existsSync(defaultDataPath + '\\image') && fs.mkdirSync(defaultDataPath + '\\image');
     fs.promises.writeFile(defaultDataPath + '\\AccountList.json', JSON.stringify(format));
     fs.promises.writeFile(defaultDataPath + '\\LinkedAccountList.json', JSON.stringify(linkedData.data));
     fs.promises.writeFile(defaultDataPath + '\\GroupList.json', JSON.stringify(format));
@@ -53,12 +56,14 @@ ipcMain.handle('side/createGroup', (event, newGroupName) => groupMain.createGrou
 ipcMain.handle('side/updateGroup', (event, updateGroupData) => groupMain.updateGroup(event, updateGroupData));
 ipcMain.handle('side/removeGroup', (event, id) => groupMain.removeGroup(event, id));
 
+ipcMain.handle('main/getIconPath', accountMain.getIconPath);
 ipcMain.handle('main/getAccount', accountMain.getAccount);
 ipcMain.handle('main/getAccountDetail', (event, id) => accountMain.getAccountDetail(event, id));
 ipcMain.handle('main/createAccount', (event, newAccountData) => accountMain.createAccount(event, newAccountData));
 ipcMain.handle('main/removeAccount', (event, id) => accountMain.removeAccount(event, id));
 ipcMain.handle('main/updateAccount', (event, accountData) => accountMain.updateAccount(event, accountData));
 
+ipcMain.handle('link/getIconPath', linkedAccountMain.getIconPath);
 ipcMain.handle('link/getAccount', linkedAccountMain.getAccount);
 ipcMain.handle('link/getAccountDetail', (event, id) => linkedAccountMain.getAccountDetail(event, id));
 ipcMain.handle('link/createAccount', (event, newAccountData) => linkedAccountMain.createAccount(event, newAccountData));

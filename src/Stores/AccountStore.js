@@ -17,6 +17,7 @@ class AccountStore {
     siteUrl: '',
     accountId: '',
     accountPwd: '',
+    siteIcon: '',
     linkId: 0,
     group: '',
   };
@@ -45,6 +46,10 @@ class AccountStore {
             isUpdate: true,
             isVisible: true
           };
+
+          if(data.linkId) {
+            this.isLink = true;
+          }
 
           if(log) {
             message.success(log);
@@ -120,10 +125,22 @@ class AccountStore {
 
   linkedOption = (value) => {
     this.isLink = value;
+
+    if(value) {
+      this.accountFormat = {
+        ...this.accountFormat,
+        accountId: '',
+        accountPwd: '',
+      };
+    }
   };
 
   linkIdChangeHandle = (value) => {
     this.accountFormat.linkId = value;
+  };
+
+  fileChangeHandle = () => {
+    ipcRenderer.invoke('main/getIconPath');
   };
 
   formChangeHandle = (e) => {

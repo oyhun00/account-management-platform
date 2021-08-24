@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Upload, Button } from 'antd';
+import { Form, Input, Modal, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
@@ -33,11 +33,8 @@ const linkedAccountForm = observer(({ formOption }) => {
         <Form.Item label="계정 PW">
           <CustomInput name="accountPwd" value={accountPwd} onChange={(e) => formChangeHandle(e)} />
         </Form.Item>
-        <input type="file" />
         <Form.Item label="">
-          <Upload onChange={(e) => fileChangeHandle(e)}>
-            <Button size="default" icon={<UploadOutlined />}>아이콘 선택</Button>
-          </Upload>
+          <Button size="default" icon={<UploadOutlined />} onClick={fileChangeHandle}>아이콘 선택</Button>
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -70,7 +67,7 @@ const CustomModal = styled(Modal)`
       background: transparent;
     }
 
-    :hover {
+    :hover, :active, :focus {
       background: #2a2d31;
     }
   }

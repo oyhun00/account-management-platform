@@ -1,7 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Input, Modal, Select, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
 const { Option } = Select;
@@ -10,10 +11,10 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
   const { isVisible, isUpdate } = accountFormOption;
   const { AccountStore } = useStores();
   const {
-    accountFormat, formSubmit, formChangeHandle,
+    accountFormat, formSubmit, formChangeHandle, fileChangeHandle,
     linkIdChangeHandle, isLink, linkedOption, modalClose
   } = AccountStore;
-  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd } = accountFormat;
+  const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, linkId } = accountFormat;
   const linkedData = linkedAccountList.map((v, index) => {
       return <Option value={v.id} selected key={index}>{v.siteNameKr}</Option>
   });
@@ -44,7 +45,7 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
           </CustomSelect>
           { isLink
             ? (
-              <CustomSelect name="linkId" style={{ width: '70%' }} disabled={!isLink} onChange={(e) => linkIdChangeHandle(e)}>
+              <CustomSelect name="linkId" value={linkId} style={{ width: '70%' }} disabled={!isLink} onChange={(e) => linkIdChangeHandle(e)}>
                 {linkedData}
               </CustomSelect>
             ) : (
@@ -54,6 +55,9 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
         </Form.Item>
         <Form.Item label="계정 PW">
           <CustomInput name="accountPwd" value={accountPwd} disabled={isLink} onChange={(e) => formChangeHandle(e)} />
+        </Form.Item>
+        <Form.Item label="">
+          <Button size="default" icon={<UploadOutlined />} onClick={fileChangeHandle}>아이콘 직접 선택</Button>
         </Form.Item>
       </CustomForm>
     </CustomModal>
@@ -86,7 +90,7 @@ const CustomModal = styled(Modal)`
       background: transparent;
     }
 
-    :hover {
+    :hover, :active, :focus {
       background: #2a2d31;
     }
   }

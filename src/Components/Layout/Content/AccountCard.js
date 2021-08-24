@@ -14,14 +14,14 @@ const AccountCard = observer(({ data, linkedAccountList, selectedGroup }) => {
   const { id, siteNameKr, siteNameEng, siteUrl, siteIcon, accountId, accountPwd, linkId } = data;
   const { AccountStore, LinkedAccountStore } = useStores();
   const { removeAccount, getAccountDetail } = AccountStore;
-  const { getLinkedAccountDetail } = LinkedAccountStore;
+  const { getLinkedAccountDetail, removeLinkedAccount } = LinkedAccountStore;
   const isLink = selectedGroup === 0 ? true : false;
   const filteredLink = linkId ? linkedAccountList.filter((v) => v.id === linkId)[0] : '';
   
   const popMenu = (
     <>
       <CustomList onClick={() => isLink ? getLinkedAccountDetail(id) : getAccountDetail(id)}>수정<EditOutlined /></CustomList>
-      { isLink ? '' : <CustomList onClick={() => removeAccount(id)}>삭제<DeleteOutlined /></CustomList> } 
+      <CustomList onClick={() => isLink ? removeLinkedAccount(id) : removeAccount(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
 

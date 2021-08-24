@@ -25,17 +25,15 @@ class LinkedAccountStore {
   }
 
   formValidation = () => {
-    const { siteNameKr, siteNameEng } = this.linkedAccountFormat;
+    const { siteNameKr, siteNameEng, accountId, accountPwd } = this.linkedAccountFormat;
 
-    if(!siteNameKr || !siteNameEng) {
-      return false;
-    } else {
-      return true;
-    }
+    if(!siteNameKr || !siteNameEng || !accountId || !accountPwd) { return false; }
+
+    return true;
   };
 
   clearFormat = () => {
-    this.accountFormat = {
+    this.linkedAccountFormat = {
       siteNameKr: '',
       siteNameEng: '',
       siteIcon: '',
@@ -63,8 +61,8 @@ class LinkedAccountStore {
     }
   };
 
-  fileChangeHandle = (e) => {
-    console.log(e)
+  fileChangeHandle = () => {
+    ipcRenderer.invoke('link/getIconPath');
   };
 
   getLinkedAccountList = () => {

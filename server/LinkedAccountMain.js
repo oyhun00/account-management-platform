@@ -1,7 +1,24 @@
-const fs = require('fs').promises;
+const { dialog } = require('electron');
+const afs = require('fs');
+const fs = afs.promises;
+const path = require('path'); 
+const log = require('electron-log');
 const storage = require('electron-json-storage');
 const defaultDataPath = storage.getDefaultDataPath();
 const LinkedAccountPath = defaultDataPath + '\\LinkedAccountList.json';
+let iconPath = '';
+
+exports.getIconPath = async () => {
+  dialog.showOpenDialog({
+    filters: [{ name: 'images', extensions: ['jpg', 'png', 'gif', 'ico']}],
+    properties: ['openFile',]
+  })
+    .then((result) => {
+      if(!result.canceled) {
+        iconPath = result.filePaths[0];
+      }
+    }).catch((err) => log.info(err))
+};
 
 exports.getAccount = async () => {
   try {
@@ -52,17 +69,28 @@ exports.createAccount = async (event, newAccountData) => {
   try {
     const LinkedAccountList = await fs.readFile(LinkedAccountPath);
     const { sequence, list } = JSON.parse(LinkedAccountList);
+    const faviconPath = defaultDataPath + '\\image';
+    const outputName = `\\${(sequence + 1) + newAccountData.siteNameEng}l.png`;
+
+    if(iconPath) {
+      const input = afs.createReadStream(iconPath);
+      const output = afs.createWriteStream(faviconPath + outputName);
+
+      input.pipe(output);
+    }
+    
     const newAccountList = {
       sequence: sequence + 1,
       list: list.concat(
         {
           ...newAccountData,
+          siteIcon: iconPath ? path.normalize(faviconPath + outputName) : '',
           id: sequence + 1
         }
       )
     };
     fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountList), 'utf8');
-
+    iconPath = '';
     const result = {
       success: true,
       code: 1,
@@ -113,16 +141,28 @@ exports.removeAccount = async (event, id) => {
 
 exports.updateAccount = async (event, accountData) => {
   try {
-    const { siteNameKr, siteNameEng, accountId, accountPwd, id } = accountData;
+    const { siteNameKr, siteNameEng, accountId, accountPwd, siteIcon, id } = accountData;
     const LinkedAccountList = await fs.readFile(LinkedAccountPath);
     const { sequence, list } = JSON.parse(LinkedAccountList);
+    const faviconPath = defaultDataPath + '\\image';
+    const day = new Date();
+    const outputName = `\\${id + siteNameEng + day.getMilliseconds()}l.png`;
+    
+    if(iconPath) {
+      const input = afs.createReadStream(iconPath);
+      const output = afs.createWriteStream(faviconPath + outputName);
+
+      input.pipe(output);
+    }
+    
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng, accountId, accountPwd }
+            ? { ...v, siteNameKr, siteNameEng, accountId, accountPwd, siteIcon: iconPath ? path.normalize(faviconPath + outputName) : siteIcon, }
             : { ...v })
     };
     fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountDataList), 'utf8');
+    iconPath = '';
 
     const result = {
       success: true,
