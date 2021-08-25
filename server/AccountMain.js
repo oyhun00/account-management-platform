@@ -11,15 +11,38 @@ const AccountListPath = defaultDataPath + '\\AccountList.json';
 let iconPath = '';
 
 exports.getIconPath = async () => {
-  dialog.showOpenDialog({
-    filters: [{ name: 'images', extensions: ['jpg', 'png', 'gif', 'ico']}],
-    properties: ['openFile',]
-  })
-    .then((result) => {
-      if(!result.canceled) {
-        iconPath = result.filePaths[0];
-      }
-    }).catch((err) => log.info(err))
+  try {
+    const _dialog = await dialog.showOpenDialog({
+      filters: [{ name: 'images', extensions: ['jpg', 'png', 'gif', 'ico']}],
+      properties: ['openFile',]
+    });
+
+    if(!_dialog.canceled) {
+      iconPath = _dialog.filePaths[0];
+      const iconName = iconPath.split('\\');
+
+      const result = {
+        success: true,
+        code: 1,
+        iconPath,
+        iconName: iconName[iconName.length - 1]
+      };
+
+      return result;
+    }
+    
+    iconPath = '';
+
+    return { success: false }
+  } catch (error) {
+    const result = {
+      success: false,
+      code: 2,
+      log: error.message
+    };
+
+    return result;
+  }
 };
 
 exports.getAccount = async () => {
@@ -68,7 +91,9 @@ exports.getAccountDetail = async (event, id) => {
 };
 
 exports.createAccount = async (event, newAccountData) => {
-  const { siteUrl } = newAccountData;
+  const { siteUrl, isLocalIcon } = newAccountData;
+  iconPath = isLocalIcon ? iconPath : '';
+
   const url = siteUrl.match('http') ? siteUrl : 'https://' + siteUrl;
   let faviconLocation = !iconPath
     ? await cheerio.fetch(url)
@@ -79,13 +104,19 @@ exports.createAccount = async (event, newAccountData) => {
           || $('link[rel="apple-touch-icon"]')[0].attribs
           || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
 
-        return href.match('http') || href.match('com') ? href : url + href;
+        if(href.match('http') || href.match('com')) { return href; }
+
+        const filterd = url.indexOf('/', 8);
+        if(filterd > 0) {
+          return url.substring(0, filterd) + href;
+        }
+
+        return url + href;
       })
       .catch((error) => {
         log.info(error.message);
       })
     : '';
-  
   try {
     const accountList = await fs.readFile(AccountListPath);
     const { sequence, list }  = JSON.parse(accountList);
@@ -108,6 +139,7 @@ exports.createAccount = async (event, newAccountData) => {
           ...newAccountData,
           siteUrl: siteUrl,
           siteIcon: faviconLocation,
+          isLocalIcon: iconPath ? true : false,
           id: sequence + 1
         }
       )
@@ -138,7 +170,6 @@ exports.createAccount = async (event, newAccountData) => {
 exports.removeAccount = async (event, id) => {
 	try {
     const AccountList = await fs.readFile(AccountListPath);
-
     const { sequence, list } = JSON.parse(AccountList);
     const newAccountList = {
       sequence,
@@ -172,9 +203,15 @@ exports.removeAccount = async (event, id) => {
 
 exports.updateAccount = async (event, accountData) => {
 	try {
-    const { siteNameKr, siteNameEng, siteUrl, accountId, accountPwd, linkId, id } = accountData;
+    const {
+      siteNameKr, siteNameEng, siteUrl, accountId,
+      accountPwd, linkId, id, isLocalIcon, siteIcon, iconName
+    } = accountData;
+
+    iconPath = isLocalIcon ? iconPath : '';
+
     const url = siteUrl.match('http') ? siteUrl : 'https://' + siteUrl;
-    let faviconLocation = !iconPath ? await cheerio.fetch(url)
+    let faviconLocation = !iconPath || isLocalIcon ? await cheerio.fetch(url)
     .then((result) => {
       const { $ } = result;
       const { href } = $('link[rel="shortcut icon"]')[0].attribs
@@ -182,7 +219,14 @@ exports.updateAccount = async (event, accountData) => {
         || $('link[rel="apple-touch-icon"]')[0].attribs
         || $('link[rel="apple-touch-icon-precomposed"]')[0].attribs;
 
-      return href.match('http') || href.match('com') ? href : url + href;
+      if(href.match('http') || href.match('com')) { return href; }
+
+      const filterd = url.indexOf('/', 8);
+      if(filterd > 0) {
+        return url.substring(0, filterd) + href;
+      }
+
+      return url + href;
     })
     .catch((error) => {
       log.info(error.message);
@@ -201,12 +245,14 @@ exports.updateAccount = async (event, accountData) => {
       input.pipe(output);
 
       faviconLocation = path.normalize(faviconPath + outputName);
+    } else if (isLocalIcon) {
+      faviconLocation = siteIcon;
     }
 
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng, siteUrl, siteIcon: faviconLocation, accountId, accountPwd, linkId }
+            ? { ...v, siteNameKr, siteNameEng, siteUrl, siteIcon: faviconLocation, accountId, accountPwd, linkId, isLocalIcon, iconName }
             : { ...v })
     };
 

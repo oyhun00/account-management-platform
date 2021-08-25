@@ -169,7 +169,7 @@ const CustomList = styled(List)`
     color: #000;
 
     & span {
-      margin-left: 12px;
+      margin-left: 19px;
     }
   }
 

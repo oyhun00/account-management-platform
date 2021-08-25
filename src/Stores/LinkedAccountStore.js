@@ -11,7 +11,9 @@ class LinkedAccountStore {
     siteNameEng: '',
     accountId: '',
     accountPwd: '',
-    siteIcon: ''
+    siteIcon: '',
+    iconName: '',
+    iconUse: false
   };
 
   formOption = {
@@ -37,6 +39,8 @@ class LinkedAccountStore {
       siteNameKr: '',
       siteNameEng: '',
       siteIcon: '',
+      iconName: '',
+      iconUse: false
     };
   };
 
@@ -46,6 +50,15 @@ class LinkedAccountStore {
       isVisible: false
     };
     this.clearFormat();
+  };
+
+  deleteLocalIcon = () => {
+    this.linkedAccountFormat = {
+      ...this.linkedAccountFormat,
+      siteIcon: '',
+      iconName: '',
+      iconUse: false,
+    };
   };
 
   toggleCreateLinkedAccount = () => {
@@ -62,7 +75,19 @@ class LinkedAccountStore {
   };
 
   fileChangeHandle = () => {
-    ipcRenderer.invoke('link/getIconPath');
+    ipcRenderer.invoke('link/getIconPath')
+    .then(
+      action((result) => {
+        const { success } = result;
+
+        if (success) {
+          const { iconName } = result;
+
+          this.linkedAccountFormat.iconName = iconName;
+          this.linkedAccountFormat.iconUse = true;
+        }
+      })
+    );
   };
 
   getLinkedAccountList = () => {
@@ -119,8 +144,9 @@ class LinkedAccountStore {
           const { success, log } = result;
 
           if (success) {
-            const { linkedAccountData } = result;
-
+            const { linkedAccountData, accountData } = result;
+            
+            this.root.AccountStore.accountList = accountData;
             this.linkedAccountList = linkedAccountData;
 
             if (log) {

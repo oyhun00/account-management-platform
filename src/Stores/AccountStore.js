@@ -12,13 +12,15 @@ class AccountStore {
   };
 
   accountFormat = {
+    siteIcon: '',
+    isLocalIcon: false,
+    iconName: '',
     siteNameKr: '',
     siteNameEng: '',
     siteUrl: '',
     accountId: '',
     accountPwd: '',
-    siteIcon: '',
-    linkId: 0,
+    linkId: '',
     group: '',
   };
   
@@ -129,6 +131,7 @@ class AccountStore {
     if(value) {
       this.accountFormat = {
         ...this.accountFormat,
+        linkId: this.root.LinkedAccountStore.linkedAccountList[0].id,
         accountId: '',
         accountPwd: '',
       };
@@ -140,7 +143,19 @@ class AccountStore {
   };
 
   fileChangeHandle = () => {
-    ipcRenderer.invoke('main/getIconPath');
+    ipcRenderer.invoke('main/getIconPath')
+      .then(
+        action((result) => {
+          const { success } = result;
+
+          if (success) {
+            const { iconName } = result;
+
+            this.accountFormat.iconName = iconName;
+            this.accountFormat.isLocalIcon = true;
+          }
+        })
+      );
   };
 
   formChangeHandle = (e) => {
@@ -152,6 +167,14 @@ class AccountStore {
     }
   };
 
+  deleteLocalIcon = () => {
+    this.accountFormat = {
+      ...this.accountFormat,
+      iconName: '',
+      isLocalIcon: false,
+    };
+  };
+
   clearAccountFormat = () => {
     this.accountFormat = {
       ...this.accountFormat,
@@ -160,6 +183,8 @@ class AccountStore {
       siteUrl: '',
       accountId: '',
       accountPwd: '',
+      siteIcon: '',
+      isLocalIcon: false,
       linkId: '',
     };
     this.isLink = false;

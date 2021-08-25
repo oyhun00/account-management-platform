@@ -1,15 +1,21 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Button } from 'antd';
+import { Form, Input, Modal, Button, Tag } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
 const linkedAccountForm = observer(({ formOption }) => {
   const { isVisible, isUpdate } = formOption;
   const { LinkedAccountStore } = useStores();
-  const { linkedAccountFormat, formSubmit, formChangeHandle, fileChangeHandle, modalClose } = LinkedAccountStore;
-  const { siteNameKr, siteNameEng, accountId, accountPwd } = linkedAccountFormat;
+  const {
+    linkedAccountFormat, formSubmit, formChangeHandle,
+    fileChangeHandle, modalClose, deleteLocalIcon
+  } = LinkedAccountStore;
+  const {
+    siteNameKr, siteNameEng, accountId,
+    accountPwd, iconUse, iconName
+  } = linkedAccountFormat;
 
   return (
     <CustomModal
@@ -35,6 +41,14 @@ const linkedAccountForm = observer(({ formOption }) => {
         </Form.Item>
         <Form.Item label="">
           <Button size="default" icon={<UploadOutlined />} onClick={fileChangeHandle}>아이콘 선택</Button>
+          {
+            iconUse
+            ? (
+              <Tag closable onClose={deleteLocalIcon}>
+                {iconName}
+              </Tag>
+            ) : ''
+          }
         </Form.Item>
       </CustomForm>
     </CustomModal>

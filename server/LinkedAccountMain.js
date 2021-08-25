@@ -6,18 +6,42 @@ const log = require('electron-log');
 const storage = require('electron-json-storage');
 const defaultDataPath = storage.getDefaultDataPath();
 const LinkedAccountPath = defaultDataPath + '\\LinkedAccountList.json';
+const AccountListPath = defaultDataPath + '\\AccountList.json';
 let iconPath = '';
 
 exports.getIconPath = async () => {
-  dialog.showOpenDialog({
-    filters: [{ name: 'images', extensions: ['jpg', 'png', 'gif', 'ico']}],
-    properties: ['openFile',]
-  })
-    .then((result) => {
-      if(!result.canceled) {
-        iconPath = result.filePaths[0];
-      }
-    }).catch((err) => log.info(err))
+  try {
+    const _dialog = await dialog.showOpenDialog({
+      filters: [{ name: 'images', extensions: ['jpg', 'png', 'gif', 'ico']}],
+      properties: ['openFile',]
+    });
+
+    if(!_dialog.canceled) {
+      iconPath = _dialog.filePaths[0];
+      const iconName = iconPath.split('\\');
+
+      const result = {
+        success: true,
+        code: 1,
+        iconPath,
+        iconName: iconName[iconName.length - 1]
+      };
+
+      return result;
+    }
+    
+    iconPath = '';
+
+    return { success: false }
+  } catch (error) {
+    const result = {
+      success: false,
+      code: 2,
+      log: error.message
+    };
+
+    return result;
+  }
 };
 
 exports.getAccount = async () => {
@@ -72,7 +96,9 @@ exports.createAccount = async (event, newAccountData) => {
     const faviconPath = defaultDataPath + '\\image';
     const outputName = `\\${(sequence + 1) + newAccountData.siteNameEng}l.png`;
 
-    if(iconPath) {
+    iconPath = newAccountData.iconUse ? iconPath : '';
+    
+    if(iconPath && newAccountData.iconUse) {
       const input = afs.createReadStream(iconPath);
       const output = afs.createWriteStream(faviconPath + outputName);
 
@@ -89,6 +115,7 @@ exports.createAccount = async (event, newAccountData) => {
         }
       )
     };
+    
     fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountList), 'utf8');
     iconPath = '';
     const result = {
@@ -114,16 +141,27 @@ exports.removeAccount = async (event, id) => {
   try {
     const LinkedAccountList = await fs.readFile(LinkedAccountPath);
     const { sequence, list } = JSON.parse(LinkedAccountList);
-    const newAccountList = {
+    const newLinkedAccountList = {
       sequence,
       list: list.filter((v) => v.id !== id),
     };
-    fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountList), 'utf8');
+    fs.writeFile(LinkedAccountPath, JSON.stringify(newLinkedAccountList), 'utf8');
+
+    
+    const accountList = await fs.readFile(AccountListPath);
+    const _accountList = JSON.parse(accountList);
+    const newAccountList = {
+      list: _accountList.list.map((v) => v.linkId === id
+        ? { ...v, linkId: 0, siteIcon: v.isLocalIcon ? v.siteIcon : '' }
+        : { ...v }),
+    };
+    fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8');
 
     const result = {
       success: true,
       code: 1,
-      linkedAccountData: newAccountList.list,
+      accountData: newAccountList.list,
+      linkedAccountData: newLinkedAccountList.list,
       log: '성공적으로 삭제했어요.',
     };
 
@@ -141,14 +179,16 @@ exports.removeAccount = async (event, id) => {
 
 exports.updateAccount = async (event, accountData) => {
   try {
-    const { siteNameKr, siteNameEng, accountId, accountPwd, siteIcon, id } = accountData;
+    const { siteNameKr, siteNameEng, accountId, accountPwd, siteIcon, iconName, iconUse, id } = accountData;
     const LinkedAccountList = await fs.readFile(LinkedAccountPath);
     const { sequence, list } = JSON.parse(LinkedAccountList);
     const faviconPath = defaultDataPath + '\\image';
     const day = new Date();
     const outputName = `\\${id + siteNameEng + day.getMilliseconds()}l.png`;
     
-    if(iconPath) {
+    iconPath = iconUse ? iconPath : '';
+
+    if(iconPath && iconUse) {
       const input = afs.createReadStream(iconPath);
       const output = afs.createWriteStream(faviconPath + outputName);
 
@@ -158,7 +198,11 @@ exports.updateAccount = async (event, accountData) => {
     const newAccountDataList = {
       sequence,
       list: list.map((v) => v.id === id
-            ? { ...v, siteNameKr, siteNameEng, accountId, accountPwd, siteIcon: iconPath ? path.normalize(faviconPath + outputName) : siteIcon, }
+            ? {
+                ...v, siteNameKr, siteNameEng, accountId,
+                accountPwd, siteIcon: iconPath ? path.normalize(faviconPath + outputName) : siteIcon,
+                iconName, iconUse
+            }
             : { ...v })
     };
     fs.writeFile(LinkedAccountPath, JSON.stringify(newAccountDataList), 'utf8');
