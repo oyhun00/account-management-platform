@@ -126,15 +126,20 @@ class AccountStore {
   };
 
   linkedOption = (value) => {
-    this.isLink = value;
-
     if(value) {
-      this.accountFormat = {
-        ...this.accountFormat,
-        linkId: this.root.LinkedAccountStore.linkedAccountList[0].id,
-        accountId: '',
-        accountPwd: '',
-      };
+      if(this.root.LinkedAccountStore.linkedAccountList.length) {
+        this.accountFormat = {
+          ...this.accountFormat,
+          linkId: this.root.LinkedAccountStore.linkedAccountList[0].id,
+          accountId: '',
+          accountPwd: '',
+        };
+
+        this.isLink = value;
+      } else {
+        this.isLink = false;
+        message.error("연동 계정을 등록해주세요.");
+      }
     }
   };
 

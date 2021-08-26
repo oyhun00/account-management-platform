@@ -1,13 +1,13 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import CreateAccountCard from './CreateAccountCard';
 import LinkedAccountForm from './Form/LinkedAccountFrom';
 import AccountForm from './Form/AccountForm';
 import AccountCard from './AccountCard';
-import Loading from '../../Layout/Content/Util/Loading';
 
 const { Content } = Layout;
 
@@ -17,7 +17,7 @@ const ContentBox = observer(() => {
     getAccountList, accountList,
     accountFormOption, toggleCreateAccount
    } = AccountStore;
-  const { selectedGroup, groupList } = GroupStore;
+  const { selectedGroup } = GroupStore;
   const {
     getLinkedAccountList, linkedAccountList,
     toggleCreateLinkedAccount, formOption
@@ -52,7 +52,7 @@ const ContentBox = observer(() => {
   }, []);
 
   return (
-    <Suspense fallback={<Loading/>}>
+    <>
       <CustomContent>
         {
           accountFilteredData.length !== 0
@@ -73,21 +73,14 @@ const ContentBox = observer(() => {
           : (
             <EmptyWrap>
               <CustomEmpty>
-                {
-                  groupList.length !== 0
-                    ? (
-                      <Button
-                        type="primary"
-                        onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
-                      >
-                        계정 정보 등록
-                      </Button>
-                    ) : (
-                      <Button disabled>
-                        그룹을 등록하세요.
-                      </Button>
-                    )
-                }
+                <CustomButton
+                  type="primary"
+                  shape="round"
+                  onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
+                >
+                  <PlusOutlined />
+                  { selectedGroup ? '계정 정보 등록' : '연동 계정 등록' }
+                </CustomButton>
               </CustomEmpty>
             </EmptyWrap>
           )
@@ -100,7 +93,7 @@ const ContentBox = observer(() => {
       <LinkedAccountForm
         formOption={formOption}
       />
-    </Suspense>
+    </>
   );
 });
 
@@ -120,6 +113,16 @@ const CustomEmpty = styled(Empty)`
   display: table-cell;
   vertical-align: middle;
   height: 100%;
+`;
+
+const CustomButton = styled(Button)`
+  border: 0;
+  background: linear-gradient(45deg, #3b9c78, #2278ab, #7022ab);
+  padding: 4px 26px;
+
+  :hover, :active, :focus {
+    background: linear-gradient(45deg,#3b9c78,#2298ab,#c81ddc);
+  }
 `;
 
 export default ContentBox;

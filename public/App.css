@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "SDGothic";
+  font-weight: 300;
+  src: local('※'),
+  url("./fonts/AppleSDGothicNeoM.woff") format('woff'),
+  url("./fonts/AppleSDGothicNeoM.otf") format('otf');
+}
+
+@font-face {
+  font-family: "SDGothic";
+  font-weight: 400;
+  src: local('※'),
+  url("./fonts/AppleSDGothicNeoL.woff") format('woff'),
+  url("./fonts/AppleSDGothicNeoL.otf") format('otf');
+}
+
+@font-face {
+  font-family: "SDGothic";
+  font-weight: 500;
+  src: local('※'),
+  url("./fonts/AppleSDGothicNeoB.woff") format('woff'),
+  url("./fonts/AppleSDGothicNeoB.otf") format('otf');
+}

@@ -18,7 +18,7 @@ const GroupItem = observer(({ data }) => {
 
   const popMenu = (
     <>
-      <CustomList onClick={(e) => toggleUpdateGroup(e, id)}> 수정<EditOutlined /></CustomList>
+      <CustomList onClick={(e) => toggleUpdateGroup(e, id)}>수정<EditOutlined /></CustomList>
       <CustomList onClick={() => removeGroup(id)}>삭제<DeleteOutlined /></CustomList>
     </>
   );
@@ -39,7 +39,7 @@ const GroupItem = observer(({ data }) => {
         )
         : (
           <FlexBox>
-            {groupName}
+            <GroupName>{groupName}</GroupName>
             <Popover content={popMenu} trigger="focus" placement="rightTop">
               <ActionButton>
                 <MoreOutlined />
@@ -115,6 +115,11 @@ const CustomList = styled(List)`
   &:hover {
     opacity: 0.8;
   }
+`;
+
+const GroupName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export default GroupItem;

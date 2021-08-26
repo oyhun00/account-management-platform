@@ -44,9 +44,9 @@ const linkedAccountForm = observer(({ formOption }) => {
           {
             iconUse
             ? (
-              <Tag closable onClose={deleteLocalIcon}>
+              <CustomTag closable onClose={deleteLocalIcon}>
                 {iconName}
-              </Tag>
+              </CustomTag>
             ) : ''
           }
         </Form.Item>
@@ -112,6 +112,10 @@ const CustomForm = styled(Form)`
 
 const CustomInput = styled(Input)`
   border: 1px solid #454b52;
+`;
+
+const CustomTag = styled(Tag)`
+  margin-left: 10px;
 `;
 
 export default linkedAccountForm;

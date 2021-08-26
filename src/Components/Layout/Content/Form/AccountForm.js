@@ -64,9 +64,9 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
           {
             isLocalIcon
             ? (
-              <Tag closable onClose={deleteLocalIcon}>
+              <CustomTag closable onClose={deleteLocalIcon}>
                 {iconName}
-              </Tag>
+              </CustomTag>
             ) : ''
           }
         </Form.Item>
@@ -96,6 +96,7 @@ const CustomModal = styled(Modal)`
 
   .ant-btn {
     border: 1px solid #6c6e71;
+    padding: 4px 30px;
 
     > span { 
       background: transparent;
@@ -107,11 +108,12 @@ const CustomModal = styled(Modal)`
   }
 
   .ant-btn-primary {
-    background: #1890ff;
-    border-color: #1890ff;
+    border: 0;
+    background: linear-gradient(45deg, #3b9c78, #2278ab, #7022ab);
+    padding: 4px 40px;
     
-    :hover {
-      background: #65b5ff;
+    :hover, :active, :focus {
+      background: linear-gradient(45deg,#3b9c78,#2298ab,#c81ddc);
     }
   }
 
@@ -149,6 +151,10 @@ const CustomSelect = styled(Select)`
     border: 1px solid #454b52 !important;
     padding: 0.5px 11px !important;
   }
+`;
+
+const CustomTag = styled(Tag)`
+  margin-left: 10px;
 `;
 
 export default AccountForm;

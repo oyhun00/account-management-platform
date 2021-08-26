@@ -115,8 +115,8 @@ class GroupStore {
               if (success) {
                 const { data, log } = result;
                 _this.groupList = data;
-                _this.selectedGroup = data[data.length - 1].id;
-    
+                _this.selectedGroup = data.length ? data[data.length - 1].id : 0;
+
                 if (log) {
                   message.success(log);
                 }
