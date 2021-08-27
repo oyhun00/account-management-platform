@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const storage = require('electron-json-storage');
+const log = require('electron-log');
 const defaultDataPath = storage.getDefaultDataPath();
 const GroupListPath = defaultDataPath + '\\GroupList.json';
 const AccountListPath = defaultDataPath + '\\AccountList.json';

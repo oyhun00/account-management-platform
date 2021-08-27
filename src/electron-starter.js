@@ -1,23 +1,40 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
 const url = require('url');
 const path = require('path'); 
 const log = require('electron-log');
-const fs = require('fs');
-const storage = require('electron-json-storage');
-const defaultDataPath = storage.getDefaultDataPath();
+const { checkExists } = require('./util/fsModule');
+let tray = null;
 
-function createWindow () {
+const initTray = (win) => {
+  tray = new Tray(path.join(__dirname, '/../favicon.ico'));
+
+  const contextMenu = Menu.buildFromTemplate([
+    { label: '열기', type: 'normal', click: () => win.show() },
+    { label: '종료',
+      type: 'normal',
+      click: () => {
+        app.quitting = true;
+        app.quit();
+      }
+    }
+  ]);
+
+  tray.on('double-click', () => win.show());
+  tray.setToolTip('amp');
+  tray.setContextMenu(contextMenu);
+};
+
+const createWindow = () => {
   const win = new BrowserWindow({
-    width: 1200,
-    height: 600,
-    // autoHideGroupBar: true,
+    width: 1400,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
       preload: __dirname + '//preload.js',
       webSecurity: false
     },
     center: true,
-  })
+  });
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, '/../build/index.html'),
@@ -25,26 +42,37 @@ function createWindow () {
     slashes: true
   });
   
-  if(!fs.existsSync(defaultDataPath)) {
-    fs.mkdirSync(defaultDataPath);
-
-    const format = {
-      "sequence": 1,
-      "list": []
-    };
-    const linkedData = require('./TempData/AccountLinkage');
-
-    !fs.existsSync(defaultDataPath + '\\image') && fs.mkdirSync(defaultDataPath + '\\image');
-    fs.promises.writeFile(defaultDataPath + '\\AccountList.json', JSON.stringify(format));
-    fs.promises.writeFile(defaultDataPath + '\\LinkedAccountList.json', JSON.stringify(linkedData.data));
-    fs.promises.writeFile(defaultDataPath + '\\GroupList.json', JSON.stringify(format));
+  checkExists();
+  
+  if (!app.requestSingleInstanceLock()) {
+    app.quit();
+    tray.destroy();
+    win = null;
+  } else {
+    app.on('second-instance', () => {
+      if (win) {
+        if (win.isMinimized() || !win.isVisible()) { win.show(); }
+        win.focus();
+      }
+    });
   }
 
+  initTray(win);
+
+  win.on('close', (event) => {
+    if (app.quitting) { win = null; }
+    else {
+      event.preventDefault();
+      win.hide();
+    }
+  })
   win.loadURL(startUrl);
-  // win.setMenu(null);
+  win.setMenu(null);
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+});
 
 const groupMain = require('../server/GroupMain');
 const accountMain = require('../server/AccountMain');
@@ -71,13 +99,9 @@ ipcMain.handle('link/removeAccount', (event, id) => linkedAccountMain.removeAcco
 ipcMain.handle('link/updateAccount', (event, accountData) => linkedAccountMain.updateAccount(event, accountData));
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  if (process.platform !== 'darwin') { app.quit(); }
 })
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
+  if (BrowserWindow.getAllWindows().length === 0) { createWindow(); }
 })
