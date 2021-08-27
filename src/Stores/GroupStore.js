@@ -25,6 +25,10 @@ class GroupStore {
   };
 
   setSelectedGroup = (value) => {
+    if(this.selectedGroup === value && this.selectedGroup === 0) {
+      message.info('이미 표시중인 화면입니다.');
+    }
+
     this.selectedGroup = value;
   };
 
