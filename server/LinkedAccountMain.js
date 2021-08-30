@@ -147,10 +147,10 @@ exports.removeAccount = async (event, id) => {
     };
     fs.writeFile(LinkedAccountPath, JSON.stringify(newLinkedAccountList), 'utf8');
 
-    
     const accountList = await fs.readFile(AccountListPath);
     const _accountList = JSON.parse(accountList);
     const newAccountList = {
+      sequence: _accountList.sequence,
       list: _accountList.list.map((v) => v.linkId === id
         ? { ...v, linkId: 0, siteIcon: v.isLocalIcon ? v.siteIcon : '' }
         : { ...v }),

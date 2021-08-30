@@ -5,7 +5,7 @@ import useStores from '../../../Stores/UseStore';
 import { Layout, Row, Col, Empty, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateAccountCard from './CreateAccountCard';
-import LinkedAccountForm from './Form/LinkedAccountFrom';
+import LinkedAccountForm from './Form/linkedAccountFrom';
 import AccountForm from './Form/AccountForm';
 import AccountCard from './AccountCard';
 

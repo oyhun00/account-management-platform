@@ -48,7 +48,7 @@ const AccountCard = observer(({ data, linkedAccountList, selectedGroup }) => {
             </AccountRow>
             <AccountRow>
               <Title>PW</Title>
-              <span>{!linkId ? accountPwd : filteredLink.accountId}</span>
+              <span>{!linkId ? accountPwd : filteredLink.accountPwd}</span>
             </AccountRow>
           </PropWrap>
         </CustomRow>

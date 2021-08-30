@@ -6,7 +6,7 @@
 
 AMP로 계정을 기록하세요 ~.~
 
-[다운로드](https://drive.google.com/file/d/1aE3qFvGwuzI_RObue0LIpD3PSCC2Zvqi/view?usp=sharing)
+[다운로드](https://drive.google.com/file/d/1qYujdVQ-HAaJInm7tI9gk7W0BWA4DRtA/view?usp=sharing)
 
 ***
 

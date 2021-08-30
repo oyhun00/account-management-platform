@@ -144,7 +144,7 @@ exports.createAccount = async (event, newAccountData) => {
         }
       )
     };
-      
+
     fs.writeFile(AccountListPath, JSON.stringify(newAccountList), 'utf8');
     iconPath = '';
 
