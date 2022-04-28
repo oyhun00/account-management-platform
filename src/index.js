@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
@@ -16,5 +16,5 @@ ReactDOM.render(
       <App />
     </Suspense>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

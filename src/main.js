@@ -25,7 +25,7 @@ const initTray = (win) => {
 };
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  let win = new BrowserWindow({
     width: 1400,
     height: 900,
     webPreferences: {
