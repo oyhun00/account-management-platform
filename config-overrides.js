@@ -1,6 +1,5 @@
 const { 
   addDecoratorsLegacy,
-  disableEsLint,
   override,
 } = require("customize-cra");
 

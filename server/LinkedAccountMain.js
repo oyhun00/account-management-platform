@@ -2,7 +2,6 @@ const { dialog } = require('electron');
 const afs = require('fs');
 const fs = afs.promises;
 const path = require('path'); 
-const log = require('electron-log');
 const storage = require('electron-json-storage');
 const defaultDataPath = storage.getDefaultDataPath();
 const LinkedAccountPath = defaultDataPath + '\\LinkedAccountList.json';

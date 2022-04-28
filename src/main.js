@@ -1,12 +1,12 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
 const url = require('url');
-const path = require('path'); 
-const log = require('electron-log');
+const path = require('path');
 const { checkExists } = require('./util/fsModule');
+
 let tray = null;
 
 const initTray = (win) => {
-  tray = new Tray(path.join(__dirname, '/../favicon.ico'));
+  tray = new Tray(path.join(__dirname, '/../assets/favicon.ico'));
 
   const contextMenu = Menu.buildFromTemplate([
     { label: '열기', type: 'normal', click: () => win.show() },
@@ -36,11 +36,11 @@ const createWindow = () => {
     center: true,
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
+  const startUrl = win.loadURL(url.format({
     pathname: path.join(__dirname, '/../build/index.html'),
     protocol: 'file:',
     slashes: true
-  });
+  }));
   
   checkExists();
   
