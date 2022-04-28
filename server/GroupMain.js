@@ -1,77 +1,77 @@
 const fs = require('fs').promises;
 const storage = require('electron-json-storage');
-const log = require('electron-log');
+
 const defaultDataPath = storage.getDefaultDataPath();
-const GroupListPath = defaultDataPath + '\\GroupList.json';
-const AccountListPath = defaultDataPath + '\\AccountList.json';
+const GroupListPath = `${defaultDataPath}\\GroupList.json`;
+const AccountListPath = `${defaultDataPath}\\AccountList.json`;
 
 exports.getGroupList = async () => {
-	try { 
-		const groupList = await fs.readFile(GroupListPath);
-		const { list } = JSON.parse(groupList);
-		const result = {
-				success: true,
-				code: 1,
-				data: list,
-		};
+  try {
+    const groupList = await fs.readFile(GroupListPath);
+    const { list } = JSON.parse(groupList);
+    const result = {
+      success: true,
+      code: 1,
+      data: list,
+    };
 
-		return result;
-	} catch(error) {
-		const result = {
-				success: false,
-				code: 2,
-				log: error.message,
-		}
+    return result;
+  } catch (error) {
+    const result = {
+      success: false,
+      code: 2,
+      log: error.message,
+    };
 
-		return result;
-	}
+    return result;
+  }
 };
 
 exports.getFirstGroup = async () => {
-	try { 
-		const groupList = await fs.readFile(GroupListPath);
-		const { list } = JSON.parse(groupList);
+  try {
+    const groupList = await fs.readFile(GroupListPath);
+    const { list } = JSON.parse(groupList);
 
     if (!list[0]) {
       const result = {
         success: true,
-        code: 2
+        code: 2,
       };
 
       return result;
     }
 
     const result = {
-        success: true,
-        code: 1,
-        data: list[0].id,
+      success: true,
+      code: 1,
+      data: list[0].id,
     };
 
     return result;
-	} catch(error) {
-		const result = {
-				success: false,
-				code: 2,
-				log: error.message,
-		}
+  } catch (error) {
+    const result = {
+      success: false,
+      code: 2,
+      log: error.message,
+    };
 
-		return result;
-	}
+    return result;
+  }
 };
 
 exports.createGroup = async (event, newGroupName) => {
-	try {
+  try {
     const groupList = await fs.readFile(GroupListPath);
-    const { list, sequence }  = JSON.parse(groupList);
-    const _sequence = sequence + 1;
+    const { list, sequence } = JSON.parse(groupList);
+    const sq = sequence + 1;
     const newGroupList = {
-      sequence: _sequence,
+      sequence: sq,
       list: list.concat({
-        id: _sequence,
+        id: sq,
         groupName: newGroupName,
-        groupIndex: _sequence,
-        updateStatus: false
-      })
+        groupIndex: sequence + 1,
+        updateStatus: false,
+      }),
     };
 
     fs.writeFile(GroupListPath, JSON.stringify(newGroupList), 'utf8');
@@ -95,7 +95,7 @@ exports.createGroup = async (event, newGroupName) => {
 };
 
 exports.updateGroup = async (event, updateGroupData) => {
-	try {
+  try {
     const GroupList = await fs.readFile(GroupListPath);
     const { sequence } = JSON.parse(GroupList);
     const updateGroupList = {
@@ -110,7 +110,7 @@ exports.updateGroup = async (event, updateGroupData) => {
       code: 1,
       log: '성공적으로 수정했어요.',
     };
-    
+
     return result;
   } catch (error) {
     const result = {
@@ -123,20 +123,20 @@ exports.updateGroup = async (event, updateGroupData) => {
   }
 };
 
-exports.removeGroup =  async (event, id) => {
-	try {
+exports.removeGroup = async (event, id) => {
+  try {
     const GroupList = await fs.readFile(GroupListPath);
     const parseGroupList = JSON.parse(GroupList);
     const newGroupList = {
-      sequence : parseGroupList.sequence,
+      sequence: parseGroupList.sequence,
       list: parseGroupList.list.filter((v) => v.id !== id),
     };
 
     const AccountList = await fs.readFile(AccountListPath);
     const parseAccountList = JSON.parse(AccountList);
     const filteredAccount = {
-      sequence : parseAccountList.sequence,
-      list: parseAccountList.list.filter((v) => v.group !== id)
+      sequence: parseAccountList.sequence,
+      list: parseAccountList.list.filter((v) => v.group !== id),
     };
 
     fs.writeFile(AccountListPath, JSON.stringify(filteredAccount), 'utf8');
@@ -150,13 +150,13 @@ exports.removeGroup =  async (event, id) => {
     };
 
     return result;
-  } catch(error) {
+  } catch (error) {
     const result = {
       success: false,
       code: 2,
       log: error.message,
     };
-    
+
     return result;
   }
 };
