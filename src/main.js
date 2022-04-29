@@ -1,4 +1,6 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
+const {
+  app, BrowserWindow, ipcMain, Tray, Menu,
+} = require('electron');
 const url = require('url');
 const path = require('path');
 const { checkExists } = require('./util/fsModule');
@@ -10,13 +12,14 @@ const initTray = (win) => {
 
   const contextMenu = Menu.buildFromTemplate([
     { label: '열기', type: 'normal', click: () => win.show() },
-    { label: '종료',
+    {
+      label: '종료',
       type: 'normal',
       click: () => {
         app.quitting = true;
         app.quit();
-      }
-    }
+      },
+    },
   ]);
 
   tray.on('double-click', () => win.show());
@@ -30,8 +33,8 @@ const createWindow = () => {
     height: 900,
     webPreferences: {
       nodeIntegration: true,
-      preload: __dirname + '//preload.js',
-      webSecurity: false
+      preload: `${__dirname}//preload.js`,
+      webSecurity: false,
     },
     center: true,
   });
@@ -39,11 +42,11 @@ const createWindow = () => {
   const startUrl = win.loadURL(url.format({
     pathname: path.join(__dirname, '/../build/index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
   }));
-  
+
   checkExists();
-  
+
   if (!app.requestSingleInstanceLock()) {
     app.quit();
     tray.destroy();
@@ -60,15 +63,14 @@ const createWindow = () => {
   initTray(win);
 
   win.on('close', (event) => {
-    if (app.quitting) { win = null; }
-    else {
+    if (app.quitting) { win = null; } else {
       event.preventDefault();
       win.hide();
     }
-  })
+  });
   win.loadURL(startUrl);
   win.setMenu(null);
-}
+};
 
 app.whenReady().then(() => {
   createWindow();
@@ -100,8 +102,8 @@ ipcMain.handle('link/updateAccount', (event, accountData) => linkedAccountMain.u
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') { app.quit(); }
-})
+});
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) { createWindow(); }
-})
+});

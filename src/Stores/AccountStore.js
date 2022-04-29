@@ -1,4 +1,4 @@
-import { makeAutoObservable, action, toJS } from "mobx";
+import { makeAutoObservable, action, toJS } from 'mobx';
 import { message } from 'antd';
 
 const { ipcRenderer } = window;
@@ -8,7 +8,7 @@ class AccountStore {
 
   accountFormOption = {
     isUpdate: false,
-    isVisible: false
+    isVisible: false,
   };
 
   accountFormat = {
@@ -23,7 +23,7 @@ class AccountStore {
     linkId: '',
     group: '',
   };
-  
+
   isLink = false;
 
   constructor(root) {
@@ -35,32 +35,32 @@ class AccountStore {
     ipcRenderer.invoke('main/getAccountDetail', id)
       .then(
         action((result) => {
-        const { success, log } = result;
+          const { success, log } = result;
 
-        if (success) {
-          const { data } = result;
-          
-          this.accountFormat = {
-            ...data
-          };
+          if (success) {
+            const { data } = result;
 
-          this.accountFormOption = {
-            isUpdate: true,
-            isVisible: true
-          };
+            this.accountFormat = {
+              ...data,
+            };
 
-          if(data.linkId) {
-            this.isLink = true;
+            this.accountFormOption = {
+              isUpdate: true,
+              isVisible: true,
+            };
+
+            if (data.linkId) {
+              this.isLink = true;
+            }
+
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(log);
           }
-
-          if(log) {
-            message.success(log);
-          }
-        } else {
-          message.error(log);
-        }
-      })
-    );
+        }),
+      );
   };
 
   getAccountList = () => {
@@ -70,9 +70,9 @@ class AccountStore {
 
         if (success) {
           const { accountData } = result;
-          
+
           this.accountList = accountData;
-          
+
           if (log) {
             message.success(log);
           }
@@ -99,7 +99,7 @@ class AccountStore {
           } else {
             message.error(log);
           }
-        })
+        }),
       );
   };
 
@@ -108,28 +108,29 @@ class AccountStore {
   };
 
   formValidation = () => {
-    const { siteNameKr, siteUrl, accountId, accountPwd, linkId } = this.accountFormat;
-    
-    if(this.isLink) {
-      if(!siteNameKr || !siteUrl || !linkId) {
-        return false;
-      }
+    const {
+      siteNameKr, siteUrl, accountId, accountPwd, linkId,
+    } = this.accountFormat;
 
-      return true;
-    } else {
-      if(!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+    if (this.isLink) {
+      if (!siteNameKr || !siteUrl || !linkId) {
         return false;
       }
 
       return true;
     }
+    if (!siteNameKr || !siteUrl || !accountId || !accountPwd) {
+      return false;
+    }
+
+    return true;
   };
 
   linkedOption = (value) => {
     this.isLink = value;
 
-    if(value) {
-      if(this.root.LinkedAccountStore.linkedAccountList.length) {
+    if (value) {
+      if (this.root.LinkedAccountStore.linkedAccountList.length) {
         this.accountFormat = {
           ...this.accountFormat,
           linkId: this.root.LinkedAccountStore.linkedAccountList[0].id,
@@ -138,7 +139,7 @@ class AccountStore {
         };
       } else {
         this.isLink = false;
-        message.error("연동 계정을 등록해주세요.");
+        message.error('연동 계정을 등록해주세요.');
       }
     } else {
       this.accountFormat = {
@@ -166,7 +167,7 @@ class AccountStore {
             this.accountFormat.iconName = iconName;
             this.accountFormat.isLocalIcon = true;
           }
-        })
+        }),
       );
   };
 
@@ -176,7 +177,7 @@ class AccountStore {
     this.accountFormat = {
       ...this.accountFormat,
       [name]: value,
-    }
+    };
   };
 
   deleteLocalIcon = () => {
@@ -205,14 +206,15 @@ class AccountStore {
   modalClose = () => {
     this.accountFormOption = {
       isUpdate: false,
-      isVisible: false
+      isVisible: false,
     };
     this.clearAccountFormat();
   };
 
+  // eslint-disable-next-line consistent-return
   formSubmit = (_action) => {
-    if(!this.formValidation()) {
-      message.error("필수 입력 값을 확인해 주세요.");
+    if (!this.formValidation()) {
+      message.error('필수 입력 값을 확인해 주세요.');
 
       return false;
     }
@@ -239,7 +241,7 @@ class AccountStore {
           } else {
             message.error(log);
           }
-        })
+        }),
       );
   };
 }

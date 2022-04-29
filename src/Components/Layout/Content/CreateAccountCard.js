@@ -1,17 +1,14 @@
-import React from 'react';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import {
-  PlusOutlined
+  PlusOutlined,
 } from '@ant-design/icons';
 
-const AccountCard = () => {
-  return (
-    <CustomCard>
-      <CustomPlusOutlined style={{ fontSize: '32px', color: '#fff' }} />
-    </CustomCard>
-  );
-}
+const AccountCard = () => (
+  <CustomCard>
+    <CustomPlusOutlined style={{ fontSize: '32px', color: '#fff' }} />
+  </CustomCard>
+);
 
 const CustomCard = styled(Card)`
   margin: 12px;

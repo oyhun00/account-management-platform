@@ -1,2 +1,2 @@
-react: react-app-rewired start
+react: npm run react-start
 electron: node src/electron-wait-react

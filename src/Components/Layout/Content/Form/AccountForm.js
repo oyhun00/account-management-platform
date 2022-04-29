@@ -1,7 +1,8 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Select, Button, Tag } from 'antd';
+import {
+  Form, Input, Modal, Select, Button, Tag,
+} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
@@ -12,25 +13,24 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
   const { AccountStore } = useStores();
   const {
     accountFormat, formSubmit, formChangeHandle, fileChangeHandle,
-    linkIdChangeHandle, isLink, linkedOption, modalClose, deleteLocalIcon
+    linkIdChangeHandle, isLink, linkedOption, modalClose, deleteLocalIcon,
   } = AccountStore;
   const {
     siteNameKr, siteNameEng, siteUrl, isLocalIcon,
-    accountId, accountPwd, linkId, iconName
+    accountId, accountPwd, linkId, iconName,
   } = accountFormat;
-  const linkedData = linkedAccountList.map((v, index) => {
-      return <Option value={v.id} selected key={index}>{v.siteNameKr}</Option>
-  });
-  
+  // eslint-disable-next-line max-len
+  const linkedData = linkedAccountList.map((v) => <Option value={v.id} selected key={v.id}>{v.siteNameKr}</Option>);
+
   return (
     <CustomModal
-        title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
-        centered
-        visible={isVisible}
-        onOk={() => isUpdate ? formSubmit('update') : formSubmit('create')}
-        onCancel={modalClose}
-        width={500}
-      >
+      title={isUpdate ? '계정 정보 수정' : '계정 정보 등록'}
+      centered
+      visible={isVisible}
+      onOk={() => (isUpdate ? formSubmit('update') : formSubmit('create'))}
+      onCancel={modalClose}
+      width={500}
+    >
       <CustomForm layout="vertical" size="large">
         <Form.Item label="사이트 한글 이름">
           <CustomInput name="siteNameKr" value={siteNameKr} onChange={(e) => formChangeHandle(e)} />
@@ -44,7 +44,7 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
         <Form.Item label="계정 ID">
           <CustomSelect value={isLink} onChange={(e) => linkedOption(e)} style={{ width: '25%' }}>
             <Option value={false}>직접 입력</Option>
-            <Option value={true}>계정 연동</Option>
+            <Option value>계정 연동</Option>
           </CustomSelect>
           { isLink
             ? (
@@ -53,8 +53,7 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
               </CustomSelect>
             ) : (
               <CustomInput name="accountId" style={{ width: '70%' }} value={accountId} onChange={(e) => formChangeHandle(e)} />
-            )
-          }
+            )}
         </Form.Item>
         <Form.Item label="계정 PW">
           <CustomInput name="accountPwd" value={accountPwd} disabled={isLink} onChange={(e) => formChangeHandle(e)} />
@@ -63,11 +62,11 @@ const AccountForm = observer(({ accountFormOption, linkedAccountList }) => {
           <Button size="default" icon={<UploadOutlined />} onClick={fileChangeHandle}>아이콘 직접 선택</Button>
           {
             isLocalIcon
-            ? (
-              <CustomTag closable onClose={deleteLocalIcon}>
-                {iconName}
-              </CustomTag>
-            ) : ''
+              ? (
+                <CustomTag closable onClose={deleteLocalIcon}>
+                  {iconName}
+                </CustomTag>
+              ) : ''
           }
         </Form.Item>
       </CustomForm>

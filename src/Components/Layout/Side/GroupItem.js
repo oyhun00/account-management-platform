@@ -1,8 +1,8 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import useStores from '../../../Stores/UseStore';
-import { Input, Popover, Button, List } from 'antd';
+import {
+  Input, Popover, Button, List,
+} from 'antd';
 import {
   CloseOutlined,
   EditOutlined,
@@ -10,10 +10,13 @@ import {
   MoreOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
+import useStores from '../../../Stores/UseStore';
 
 const GroupItem = observer(({ data }) => {
   const { GroupStore } = useStores();
-  const { groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup } = GroupStore;
+  const {
+    groupUpdateValue, onChangeValue, updateGroup, toggleUpdateGroup, removeGroup,
+  } = GroupStore;
   const { id, groupName, updateStatus } = data;
 
   const popMenu = (
@@ -24,20 +27,19 @@ const GroupItem = observer(({ data }) => {
   );
 
   return (
-    <>
-      {updateStatus
-        ? (
+    <div>
+      {
+        updateStatus ? (
           <FlexBox>
             <div>
               <CustomInput name="groupUpdateValue" value={groupUpdateValue} onChange={onChangeValue} />
             </div>
             <IconWrap>
-              <CheckOutlined onClick={() => updateGroup(id)}/>
+              <CheckOutlined onClick={() => updateGroup(id)} />
               <CloseOutlined onClick={(e) => toggleUpdateGroup(e, id)} />
             </IconWrap>
           </FlexBox>
-        )
-        : (
+        ) : (
           <FlexBox>
             <GroupName>{groupName}</GroupName>
             <Popover content={popMenu} trigger="focus" placement="rightTop">
@@ -46,9 +48,10 @@ const GroupItem = observer(({ data }) => {
               </ActionButton>
             </Popover>
           </FlexBox>
-        )}
-    </>
-  )
+        )
+      }
+    </div>
+  );
 });
 
 const CustomInput = styled(Input)`

@@ -7,7 +7,7 @@ class RootStore {
   constructor() {
     this.LinkedAccountStore = new LinkedAccountStore(this);
     this.AccountStore = new AccountStore(this);
-    this.GroupStore = new GroupStore(this); 
+    this.GroupStore = new GroupStore(this);
     this.UtilStore = new UtilStore(this);
   }
 }

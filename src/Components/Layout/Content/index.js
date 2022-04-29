@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import useStores from '../../../Stores/UseStore';
-import { Layout, Row, Col, Empty, Button } from 'antd';
+import {
+  Layout, Row, Col, Empty, Button,
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import useStores from '../../../Stores/UseStore';
 import CreateAccountCard from './CreateAccountCard';
 import LinkedAccountForm from './Form/linkedAccountFrom';
 import AccountForm from './Form/AccountForm';
@@ -13,77 +15,104 @@ const { Content } = Layout;
 
 const ContentBox = observer(() => {
   const { AccountStore, GroupStore, LinkedAccountStore } = useStores();
-  const { 
+  const {
     getAccountList, accountList,
-    accountFormOption, toggleCreateAccount
-   } = AccountStore;
+    accountFormOption, toggleCreateAccount,
+  } = AccountStore;
   const { selectedGroup } = GroupStore;
   const {
     getLinkedAccountList, linkedAccountList,
-    toggleCreateLinkedAccount, formOption
+    toggleCreateLinkedAccount, formOption,
   } = LinkedAccountStore;
-  
+
+  const accountFiltering = useCallback(() => {
+    if (selectedGroup !== 0) {
+      return accountList.reduce((acc, cur) => {
+        if (cur.group === selectedGroup) {
+          acc.push(
+            <Col
+              key={cur.id}
+              xl={{ span: 6 }}
+              lg={{ span: 8 }}
+              md={{ span: 12 }}
+              sm={{ span: 24 }}
+              xs={{ span: 24 }}
+            >
+              <AccountCard
+                data={cur}
+                linkedAccountList={linkedAccountList}
+              />
+            </Col>,
+          );
+        }
+        return acc;
+      }, []);
+    }
+
+    return linkedAccountList.reduce((acc, cur) => {
+      acc.push(
+        <Col
+          key={cur.id}
+          xl={{ span: 6 }}
+          lg={{ span: 8 }}
+          md={{ span: 12 }}
+          sm={{ span: 24 }}
+          xs={{ span: 24 }}
+        >
+          <AccountCard
+            selectedGroup={selectedGroup}
+            data={cur}
+          />
+        </Col>,
+      );
+      return acc;
+    }, []);
+  }, [accountList, linkedAccountList, selectedGroup]);
+
+  const accountFilteredData = useMemo(
+    () => accountFiltering(selectedGroup),
+    [accountFiltering, selectedGroup],
+  );
+
   useEffect(() => {
     getAccountList();
     getLinkedAccountList();
-  }, [getAccountList, getLinkedAccountList, selectedGroup]);
-
-  const accountFilteredData = selectedGroup !== 0
-  ? accountList.reduce((acc, cur) => {
-    if(cur.group === selectedGroup) acc.push(
-      <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
-        <AccountCard
-          data={cur}
-          linkedAccountList={linkedAccountList} />
-      </Col>
-    );
-    return acc;
-  }, [])
-  : linkedAccountList.reduce((acc, cur) => {
-    acc.push(
-      <Col key={cur.id} xl={{ span: 6 }} lg={{ span: 8 }} md={{ span: 12 }} sm={{ span: 24 }} xs={{ span: 24 }}>
-        <AccountCard
-          selectedGroup={selectedGroup}
-          data={cur}
-        />
-      </Col>
-    )
-    return acc;
-  }, []);
+  }, [getAccountList, getLinkedAccountList]);
 
   return (
     <>
       <CustomContent>
         {
           accountFilteredData.length !== 0
-          ? (
-            <Row>
-              {accountFilteredData}
-              <Col
-                xl={{ span: 6 }}
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-                onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}>
-                  <CreateAccountCard/>
-              </Col>
-            </Row> 
-          )
-          : (
-            <EmptyWrap>
-              <CustomEmpty>
-                <CustomButton
-                  type="primary"
-                  shape="round"
+            ? (
+              <Row>
+                {accountFilteredData}
+                <Col
+                  xl={{ span: 6 }}
+                  lg={{ span: 8 }}
+                  md={{ span: 12 }}
+                  sm={{ span: 24 }}
+                  xs={{ span: 24 }}
                   onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
                 >
-                  <PlusOutlined />
-                  { selectedGroup ? '계정 정보 등록' : '연동 계정 등록' }
-                </CustomButton>
-              </CustomEmpty>
-            </EmptyWrap>
-          )
+                  <CreateAccountCard />
+                </Col>
+              </Row>
+            )
+            : (
+              <EmptyWrap>
+                <CustomEmpty>
+                  <CustomButton
+                    type="primary"
+                    shape="round"
+                    onClick={selectedGroup ? toggleCreateAccount : toggleCreateLinkedAccount}
+                  >
+                    <PlusOutlined />
+                    { selectedGroup ? '계정 정보 등록' : '연동 계정 등록' }
+                  </CustomButton>
+                </CustomEmpty>
+              </EmptyWrap>
+            )
         }
       </CustomContent>
       <AccountForm

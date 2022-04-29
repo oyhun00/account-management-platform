@@ -1,6 +1,6 @@
-const { 
+const {
   addDecoratorsLegacy,
   override,
-} = require("customize-cra");
+} = require('customize-cra');
 
 module.exports = override(addDecoratorsLegacy());

@@ -1,7 +1,8 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Form, Input, Modal, Button, Tag } from 'antd';
+import {
+  Form, Input, Modal, Button, Tag,
+} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import useStores from '../../../../Stores/UseStore';
 
@@ -10,22 +11,22 @@ const linkedAccountForm = observer(({ formOption }) => {
   const { LinkedAccountStore } = useStores();
   const {
     linkedAccountFormat, formSubmit, formChangeHandle,
-    fileChangeHandle, modalClose, deleteLocalIcon
+    fileChangeHandle, modalClose, deleteLocalIcon,
   } = LinkedAccountStore;
   const {
     siteNameKr, siteNameEng, accountId,
-    accountPwd, iconUse, iconName
+    accountPwd, iconUse, iconName,
   } = linkedAccountFormat;
 
   return (
     <CustomModal
-        title={isUpdate ? '연동계정 정보 수정' : '연동계정 정보 등록'}
-        centered
-        visible={isVisible}
-        onOk={() => isUpdate ? formSubmit('update') : formSubmit('create')}
-        onCancel={modalClose}
-        width={500}
-      >
+      title={isUpdate ? '연동계정 정보 수정' : '연동계정 정보 등록'}
+      centered
+      visible={isVisible}
+      onOk={() => (isUpdate ? formSubmit('update') : formSubmit('create'))}
+      onCancel={modalClose}
+      width={500}
+    >
       <CustomForm layout="vertical" size="large">
         <Form.Item label="한글 이름">
           <CustomInput name="siteNameKr" value={siteNameKr} onChange={(e) => formChangeHandle(e)} />
@@ -43,11 +44,11 @@ const linkedAccountForm = observer(({ formOption }) => {
           <Button size="default" icon={<UploadOutlined />} onClick={fileChangeHandle}>아이콘 선택</Button>
           {
             iconUse
-            ? (
-              <CustomTag closable onClose={deleteLocalIcon}>
-                {iconName}
-              </CustomTag>
-            ) : ''
+              ? (
+                <CustomTag closable onClose={deleteLocalIcon}>
+                  {iconName}
+                </CustomTag>
+              ) : ''
           }
         </Form.Item>
       </CustomForm>

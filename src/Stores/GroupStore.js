@@ -1,4 +1,4 @@
-import { makeAutoObservable, action } from "mobx";
+import { makeAutoObservable, action } from 'mobx';
 import { message, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -25,7 +25,7 @@ class GroupStore {
   };
 
   setSelectedGroup = (value) => {
-    if(this.selectedGroup === value && this.selectedGroup === 0) {
+    if (this.selectedGroup === value && this.selectedGroup === 0) {
       message.info('이미 표시중인 화면입니다.');
     }
 
@@ -52,7 +52,7 @@ class GroupStore {
           } else {
             message.error(result.log);
           }
-        })
+        }),
       );
   };
 
@@ -72,12 +72,12 @@ class GroupStore {
           } else {
             message.error(result.log);
           }
-        })
+        }),
       );
   };
 
   addGroup = () => {
-    if(!this.groupAddValue) {
+    if (!this.groupAddValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
@@ -86,7 +86,7 @@ class GroupStore {
       .then(
         action((result) => {
           const { success } = result;
-          
+
           if (success) {
             const { data, log } = result;
             this.groupList = data;
@@ -99,12 +99,12 @@ class GroupStore {
           } else {
             message.error(result.log);
           }
-        })
+        }),
       );
   };
 
   removeGroup = (id) => {
-    const _this = this;
+    const that = this;
 
     Modal.confirm({
       title: '정말로 삭제하시겠어요?',
@@ -115,11 +115,11 @@ class GroupStore {
           .then(
             action((result) => {
               const { success } = result;
-          
+
               if (success) {
                 const { data, log } = result;
-                _this.groupList = data;
-                _this.selectedGroup = data.length ? data[data.length - 1].id : 0;
+                that.groupList = data;
+                that.selectedGroup = data.length ? data[data.length - 1].id : 0;
 
                 if (log) {
                   message.success(log);
@@ -127,7 +127,7 @@ class GroupStore {
               } else {
                 message.error(result.log);
               }
-            })
+            }),
           );
       },
       onCancel() {
@@ -137,29 +137,29 @@ class GroupStore {
 
   toggleUpdateGroup = (e, id) => {
     e.stopPropagation();
-    
+
     const { groupName } = this.groupList.find((v) => v.id === id);
 
     this.groupUpdateValue = groupName;
 
     const addedGroupList = this.groupList.map(
-      (v) => v.id === id
-        ? { ...v, updateStatus: !v.updateStatus } 
-        : { ...v, updateStatus: v.updateStatus }
-    )
+      (v) => (v.id === id
+        ? { ...v, updateStatus: !v.updateStatus }
+        : { ...v, updateStatus: v.updateStatus }),
+    );
     this.groupList = addedGroupList;
   };
 
   updateGroup = (id) => {
-    if(!this.groupUpdateValue) {
+    if (!this.groupUpdateValue) {
       message.warning('최소 1글자 이상 입력하세요.');
       return;
     }
-    
+
     const updateGroupList = this.groupList.map(
-      (v) => v.id === id
-        ? { ...v, groupName: this.groupUpdateValue, updateStatus: false } 
-        : { ...v }
+      (v) => (v.id === id
+        ? { ...v, groupName: this.groupUpdateValue, updateStatus: false }
+        : { ...v }),
     );
 
     ipcRenderer.invoke('side/updateGroup', updateGroupList)
@@ -175,11 +175,10 @@ class GroupStore {
             }
 
             this.groupList = updateGroupList;
-          }
-          else {
+          } else {
             message.error(result.log);
           }
-        })
+        }),
       );
   };
 }

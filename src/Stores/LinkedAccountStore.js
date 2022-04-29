@@ -1,4 +1,4 @@
-import { makeAutoObservable, action, toJS } from "mobx";
+import { makeAutoObservable, action, toJS } from 'mobx';
 import { message } from 'antd';
 
 const { ipcRenderer } = window;
@@ -13,12 +13,12 @@ class LinkedAccountStore {
     accountPwd: '',
     siteIcon: '',
     iconName: '',
-    iconUse: false
+    iconUse: false,
   };
 
   formOption = {
     isUpdate: false,
-    isVisible: false
+    isVisible: false,
   };
 
   constructor(root) {
@@ -27,9 +27,11 @@ class LinkedAccountStore {
   }
 
   formValidation = () => {
-    const { siteNameKr, siteNameEng, accountId, accountPwd } = this.linkedAccountFormat;
+    const {
+      siteNameKr, siteNameEng, accountId, accountPwd,
+    } = this.linkedAccountFormat;
 
-    if(!siteNameKr || !siteNameEng || !accountId || !accountPwd) { return false; }
+    if (!siteNameKr || !siteNameEng || !accountId || !accountPwd) { return false; }
 
     return true;
   };
@@ -40,14 +42,14 @@ class LinkedAccountStore {
       siteNameEng: '',
       siteIcon: '',
       iconName: '',
-      iconUse: false
+      iconUse: false,
     };
   };
 
   modalClose = () => {
     this.formOption = {
       isUpdate: false,
-      isVisible: false
+      isVisible: false,
     };
     this.clearFormat();
   };
@@ -71,23 +73,23 @@ class LinkedAccountStore {
     this.linkedAccountFormat = {
       ...this.linkedAccountFormat,
       [name]: value,
-    }
+    };
   };
 
   fileChangeHandle = () => {
     ipcRenderer.invoke('link/getIconPath')
-    .then(
-      action((result) => {
-        const { success } = result;
+      .then(
+        action((result) => {
+          const { success } = result;
 
-        if (success) {
-          const { iconName } = result;
+          if (success) {
+            const { iconName } = result;
 
-          this.linkedAccountFormat.iconName = iconName;
-          this.linkedAccountFormat.iconUse = true;
-        }
-      })
-    );
+            this.linkedAccountFormat.iconName = iconName;
+            this.linkedAccountFormat.iconUse = true;
+          }
+        }),
+      );
   };
 
   getLinkedAccountList = () => {
@@ -105,36 +107,36 @@ class LinkedAccountStore {
           } else {
             message.error(log);
           }
-        }
-      ));
+        }),
+      );
   };
 
   getLinkedAccountDetail = (id) => {
     ipcRenderer.invoke('link/getAccountDetail', id)
       .then(
         action((result) => {
-        const { success, log } = result;
+          const { success, log } = result;
 
-        if (success) {
-          const { data } = result;
+          if (success) {
+            const { data } = result;
 
-          this.linkedAccountFormat = {
-            ...data
-          };
+            this.linkedAccountFormat = {
+              ...data,
+            };
 
-          this.formOption = {
-            isUpdate: true,
-            isVisible: true
-          };
+            this.formOption = {
+              isUpdate: true,
+              isVisible: true,
+            };
 
-          if(log) {
-            message.success(log);
+            if (log) {
+              message.success(log);
+            }
+          } else {
+            message.error(log);
           }
-        } else {
-          message.error(log);
-        }
-      })
-    );
+        }),
+      );
   };
 
   removeLinkedAccount = (id) => {
@@ -145,7 +147,7 @@ class LinkedAccountStore {
 
           if (success) {
             const { linkedAccountData, accountData } = result;
-            
+
             this.root.AccountStore.accountList = accountData;
             this.linkedAccountList = linkedAccountData;
 
@@ -155,13 +157,14 @@ class LinkedAccountStore {
           } else {
             message.error(log);
           }
-        })
+        }),
       );
   };
 
+  // eslint-disable-next-line consistent-return
   formSubmit = (_action) => {
-    if(!this.formValidation()) {
-      message.error("필수 입력 값을 확인해 주세요.");
+    if (!this.formValidation()) {
+      message.error('필수 입력 값을 확인해 주세요.');
 
       return false;
     }
@@ -186,7 +189,7 @@ class LinkedAccountStore {
           } else {
             message.error(log);
           }
-        })
+        }),
       );
   };
 }

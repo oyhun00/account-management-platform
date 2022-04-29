@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { Menu, Input, Row, Col } from 'antd';
+import {
+  Menu, Input, Row, Col,
+} from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
@@ -12,26 +14,30 @@ import GroupItem from './GroupItem';
 
 const Side = observer(() => {
   const { GroupStore } = useStores();
-  const { 
+  const {
     setSelectedGroup, selectedGroup, setAddStatus, isAdd,
-    getGroupList, groupList, addGroup, onChangeValue
+    getGroupList, groupList, addGroup, onChangeValue,
   } = GroupStore;
 
   useEffect(() => {
     getGroupList();
   }, [getGroupList]);
-  
-  const groupItem = groupList.map((v) =>
-    (
-      <CustomMenuItem key={v.id} onClick={() => setSelectedGroup(v.id)}>
-        <GroupItem data={v} />
-      </CustomMenuItem>
-    )
-  );
-  
+
+  const groupItem = groupList.map((v) => (
+    <CustomMenuItem key={v.id} onClick={() => setSelectedGroup(v.id)}>
+      <GroupItem data={v} />
+    </CustomMenuItem>
+  ));
+
   return (
     <CustomSider>
-      <CustomMenu defaultSelectedKeys={[selectedGroup.toString()]} defaultOpenKeys={[`sub${selectedGroup.toString()}`]} selectedKeys={[selectedGroup.toString()]} mode="inline" theme="dark">
+      <CustomMenu
+        defaultSelectedKeys={[selectedGroup.toString()]}
+        defaultOpenKeys={[`sub${selectedGroup.toString()}`]}
+        selectedKeys={[selectedGroup.toString()]}
+        mode="inline"
+        theme="dark"
+      >
         {groupItem}
       </CustomMenu>
       {
@@ -41,8 +47,8 @@ const Side = observer(() => {
               <Col span={20}>
                 <CustomInput name="groupAddValue" onChange={onChangeValue} />
               </Col>
-              <CustomPlusIconWrap span={4} onClick={addGroup} >
-                <PlusOutlined/>
+              <CustomPlusIconWrap span={4} onClick={addGroup}>
+                <PlusOutlined />
               </CustomPlusIconWrap>
             </CustomRow>
           )
@@ -53,13 +59,11 @@ const Side = observer(() => {
           {
             isAdd
               ? (
-                <>
-                  <CloseOutlined/>
-                </>
+                <CloseOutlined />
               )
               : (
                 <>
-                  <CustomPlusOutlined/>
+                  <CustomPlusOutlined />
                   <AddComment>그룹 추가</AddComment>
                 </>
               )

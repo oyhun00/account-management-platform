@@ -1,15 +1,12 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import { Spin, Space } from 'antd';
 
-const Loading = observer(() => {
-  return (
-    <CustomSpace size="middle">
-      <CustomSpin size="large" />
-    </CustomSpace>
-  )
-});
+const Loading = observer(() => (
+  <CustomSpace size="middle">
+    <CustomSpin size="large" />
+  </CustomSpace>
+));
 
 const CustomSpace = styled(Space)`
   position: absolute;

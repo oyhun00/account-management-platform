@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx';
 
 class UtilStore {
   isLoading = false;
@@ -7,7 +7,6 @@ class UtilStore {
     this.root = root;
     makeAutoObservable(this);
   }
-
 }
 
 export default UtilStore;

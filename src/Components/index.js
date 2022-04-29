@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 import { Layout } from 'antd';
 import Side from './Layout/Side';
 import ContentBox from './Layout/Content';
 import useStores from '../Stores/UseStore';
-import Loading from '../Components/Layout/Content/Util/Loading';
+import Loading from './Layout/Content/Util/Loading';
 
 const { Sider } = Layout;
 
@@ -21,10 +21,10 @@ const MainComponent = observer(() => {
   return (
     <>
       <CustomSider>
-        <Side/>
+        <Side />
       </CustomSider>
       <CustomMainLayout>
-        <ContentBox/>
+        <ContentBox />
       </CustomMainLayout>
       { isLoading ? <Loading /> : '' }
     </>
