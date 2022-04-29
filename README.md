@@ -1,7 +1,8 @@
 # 계정 장부 프로그램
 친구에게 *'여기저기 가입되어 있는 계정이 너무 많아서 계정 정보를 자주 잊어버린다. 보기 쉽고 편한 장부같은 프로그램 만들어주면 좋겠다.'* 라는 요청을 받아 제작하게 되었습니다.
 
-[다운로드](https://drive.google.com/file/d/1YNwHzbvjKJiKg0HCRiXdEVXyMuFTRh-X/view?usp=sharing)
+[Windows](https://drive.google.com/file/d/1YNwHzbvjKJiKg0HCRiXdEVXyMuFTRh-X/view?usp=sharing)
+[Mac](https://drive.google.com/file/d/1tkdG2Wz6HH3pHwZr6OB2BSMB6FscmDuZ/view?usp=sharing)
 
 ## 스크린샷
 <img src="https://user-images.githubusercontent.com/27776795/165788540-f5c05041-4b1b-4c26-951f-0dd048169750.png" width="49%" title="메인 화면" alt="메인 화면"></img>
