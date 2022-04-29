@@ -5,6 +5,10 @@ const url = require('url');
 const path = require('path');
 const { checkExists } = require('./util/fsModule');
 
+const groupMain = require('../server/GroupMain');
+const accountMain = require('../server/AccountMain');
+const linkedAccountMain = require('../server/LinkedAccountMain');
+
 let tray = null;
 
 const initTray = (win) => {
@@ -35,8 +39,10 @@ const createWindow = () => {
       nodeIntegration: true,
       preload: `${__dirname}//preload.js`,
       webSecurity: false,
+      devTools: false,
     },
     center: true,
+    autoHideMenuBar: true,
   });
 
   const startUrl = win.loadURL(url.format({
@@ -75,10 +81,6 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 });
-
-const groupMain = require('../server/GroupMain');
-const accountMain = require('../server/AccountMain');
-const linkedAccountMain = require('../server/LinkedAccountMain');
 
 ipcMain.handle('side/getGroupList', groupMain.getGroupList);
 ipcMain.handle('side/getFirstGroup', groupMain.getFirstGroup);

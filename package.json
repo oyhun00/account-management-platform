@@ -34,11 +34,12 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "electron-builder": "^23.0.3",
+    "electron": "^11.4.11",
     "prettier": "2.6.2"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "electron": "^11.4.11",
     "antd": "^4.16.11",
     "cheerio-httpcli": "^0.8.2",
     "electron-json-storage": "^4.5.0",
